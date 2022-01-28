@@ -65,6 +65,7 @@ export default {
         document.addEventListener('mousemove', this.onMouseMoveLeftHandle);
         // Create event listener for mouse up and remove mouse move event listener
         document.onmouseup = ()=>{
+          this.$emit('change',  this.getRange());
           document.removeEventListener('mousemove', this.onMouseMoveLeftHandle);
           document.onmouoseup = null;
         };
@@ -80,6 +81,7 @@ export default {
         document.addEventListener('mousemove', this.onMouseMoveRightHandle);
         // Create and remove event listener for mouse up (removes previous event listener)
         document.onmouseup = ()=>{
+          this.$emit('change',  this.getRange());
           document.removeEventListener('mousemove', this.onMouseMoveRightHandle);
           document.onmouoseup = null;
         };
@@ -94,7 +96,9 @@ export default {
         // Create event listener for mouse move in document
         document.addEventListener('mousemove', this.onMouseMoveMiddleHandle);
         // Create and remove event listener for mouse up (removes previous event listener)
+        // Emit event with values
         document.onmouseup = ()=>{
+          this.$emit('change', this.getRange());
           document.removeEventListener('mousemove', this.onMouseMoveMiddleHandle);
           document.onmouoseup = null;
         };
@@ -111,8 +115,10 @@ export default {
         percMargin = Math.min(percMargin, percMarginRightHandle - 100*el.offsetWidth/totalWidth); // Limit on the right side
         percMargin = Math.max(percMargin, 0); // Limit on the left side
         this.posLeftHandle =  percMargin + "%";
-
+        // Update middle bar
         this.calcMiddleHandlePosition();
+        // Emit values
+        this.$emit('change', this.getRange());
       },
 
       
@@ -125,8 +131,10 @@ export default {
         percMargin = Math.min(percMargin, 100 - 100*el.offsetWidth/totalWidth); // Limit on the right side
         percMargin = Math.max(percMargin, percMarginLeftHandle + 100*el.offsetWidth/totalWidth); // Limit on the left side
         this.posRightHandle =  percMargin + "%";
-
+        // Update middle bar
         this.calcMiddleHandlePosition();
+        // Emit values
+        this.$emit('change', this.getRange());
       },
 
 
@@ -151,7 +159,9 @@ export default {
         this.posLeftHandle = percMargin - widthHandleLeft - sidePadding + "%";
         this.posRightHandle = percMargin + widthHandleMiddle + sidePadding + "%";
         this.posMiddleHandle = percMargin + '%';
-        
+
+        // Emit values
+        this.$emit('change', this.getRange());
       },
 
 
@@ -168,6 +178,15 @@ export default {
 
         this.posMiddleHandle =  pLeft + widthHandleLeft + Math.min(this.paddingRatio * width * 0.5, this.maxPadding/2) + '%';
         this.middleHandleWidth = width - Math.min(width * this.paddingRatio, this.maxPadding) + '%';
+      },
+
+
+
+      // Get range in floats
+      getRange: function(){
+        let pLeft = parseFloat(this.posLeftHandle.replace('%', ''));
+        let pRight = parseFloat(this.posRightHandle.replace('%', ''));
+        return [pLeft, pRight];
       },
 
     },
@@ -212,7 +231,8 @@ export default {
 }
 
 .rangeHandleMiddle {
-  opacity: 0.5
+  opacity: 0.5;
+  padding: 0;
 }
 
 </style>

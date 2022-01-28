@@ -15,7 +15,7 @@
         </div>
       </div>
 
-      <range-slider></range-slider>
+      <range-slider @change="onRangeSliderChange($event)"></range-slider>
 
     </div>
 </template>
@@ -47,7 +47,9 @@ export default {
       }
     },
     methods: {
-
+      onRangeSliderChange: function(rangeArray){
+        console.log(...rangeArray)
+      }
 
     },
     components: {
