@@ -1,25 +1,21 @@
 <template>
     <div id="app-rangeslider">
       <!-- https://javascript.info/mouse-drag-and-drop -->
-      <div class="rangeslider position-absolute bottom-0 rigth-0 left-0" style="width:100%; height:10%;">
+      <div class="rangeslider">
 
         <!-- Left handle https://unicode-table.com/en/2039/ -->
-        <button @mousedown="onMouseDownLeftHandle" class="rangeHandle" ref="leftHandle" :style="{'left': posLeftHandle}">  	
+        <button @mousedown="onMouseDownLeftHandle" class="rangeHandle rangeHandleLeft" ref="leftHandle" style="left: 25%">  	
           &#8249;
         </button>
         <!-- Right handle -->
-        <button @mousedown="onMouseDownRightHandle" class="rangeHandle" ref="rightHandle" :style="{'left': posRightHandle}">
+        <button @mousedown="onMouseDownRightHandle" class="rangeHandle rangeHandleRight" ref="rightHandle" style="left: 75%">
           &#8250;
         </button>
         
         <!-- Middle handle -->
-        <button @mousedown="onMouseDownMiddleHandle" @dragstart="function(){return false}" class="rangeHandle rangeHandleMiddle" ref="middleHandle" :style="{'left': posMiddleHandle, 'width': middleHandleWidth}">
+        <button @mousedown="onMouseDownMiddleHandle" @dragstart="function(){return false}" class="rangeHandle rangeHandleMiddle" ref="middleHandle" style="left: 28%, width: 40%">
         </button>
 
-
-        <div style="text-align: center">
-          {{posLeftHandle}} , {{posRightHandle}}, {{posMiddleHandle}}
-        </div>
       </div>
     </div>
 </template>
@@ -38,6 +34,10 @@ export default {
       
     },
     mounted (){
+      // Find HTML elements
+      this.leftHandleEl = this.$el.getElementsByClassName("rangeHandleLeft")[0];
+      this.rightHandleEl = this.$el.getElementsByClassName("rangeHandleRight")[0];
+      this.middleHandleEl = this.$el.getElementsByClassName("rangeHandleMiddle")[0];
       this.calcMiddleHandlePosition();
     },
     setup() {
@@ -45,10 +45,10 @@ export default {
     },
     data (){
       return {
-        posLeftHandle: '25%',
-        posRightHandle: '75%',
-        posMiddleHandle: '28%',
-        middleHandleWidth: '40%',
+        // HTML Elements
+        leftHandleEl: undefined,
+        rightHandleEl: undefined,
+        middleHandleEl: undefined,
 
         // Spacing between side handles and middle handle
         paddingRatio: 0.1,
@@ -108,13 +108,16 @@ export default {
 
       // Move left handle
       onMouseMoveLeftHandle: function(event){
-        let el = this.$refs.leftHandle; // Get element
+        //let el = this.$refs.leftHandle; // Get element
+        let el = this.leftHandleEl;
         let totalWidth = el.parentElement.offsetWidth; // Get total width of container in pixels
         let percMargin = (100*(event.pageX - el.offsetWidth/2)/totalWidth); // Get margin from mouse position
-        let percMarginRightHandle = parseFloat(this.posRightHandle.replace('%', '')); // Transform percent css format to float
+        let posRightHandle = this.rightHandleEl.style.left;
+        let percMarginRightHandle = parseFloat(posRightHandle.replace('%', '')); // Transform percent css format to float
         percMargin = Math.min(percMargin, percMarginRightHandle - 100*el.offsetWidth/totalWidth); // Limit on the right side
         percMargin = Math.max(percMargin, 0); // Limit on the left side
-        this.posLeftHandle =  percMargin + "%";
+        
+        this.leftHandleEl.style.left = percMargin + "%";
         // Update middle bar
         this.calcMiddleHandlePosition();
         // Emit values
@@ -124,13 +127,17 @@ export default {
       
       // Move right handle
       onMouseMoveRightHandle: function(event){
-        let el = this.$refs.rightHandle; // Get element
+        //let el = this.$refs.rightHandle; // Get element
+        let el = this.rightHandleEl;
         let totalWidth = el.parentElement.offsetWidth; // Get total width of container in pixels
         let percMargin = (100*(event.pageX - el.offsetWidth/2)/totalWidth); // Get margin from mouse position in percentage
-        let percMarginLeftHandle = parseFloat(this.posLeftHandle.replace('%', '')); // Get position of other handle. Transform percent css format to float
+
+        let posLeftHandle = this.leftHandleEl.style.left;
+        let percMarginLeftHandle = parseFloat(posLeftHandle.replace('%', '')); // Get position of other handle. Transform percent css format to float
         percMargin = Math.min(percMargin, 100 - 100*el.offsetWidth/totalWidth); // Limit on the right side
         percMargin = Math.max(percMargin, percMarginLeftHandle + 100*el.offsetWidth/totalWidth); // Limit on the left side
-        this.posRightHandle =  percMargin + "%";
+
+        this.rightHandleEl.style.left = percMargin + "%";
         // Update middle bar
         this.calcMiddleHandlePosition();
         // Emit values
@@ -140,14 +147,18 @@ export default {
 
       // Move middle handle
       onMouseMoveMiddleHandle: function(event){
-        let el = this.$refs.middleHandle;
+        //let el = this.$refs.middleHandle;
+        let el = this.middleHandleEl;
         let totalWidth = el.parentElement.offsetWidth; // Get total width of container in pixels
         let percMargin = (100*(event.pageX - el.offsetWidth/2)/totalWidth); // Get margin from mouse position in percentage
         // Get positions of side handles in percentage
-        let percMarginLeftHandle = parseFloat(this.posLeftHandle.replace('%', '')); // Transform percent css format to float
-        let percMarginRightHandle = parseFloat(this.posRightHandle.replace('%', '')); // Transform percent css format to float
+        let posLeftHandle = this.leftHandleEl.style.left;
+        let posRightHandle = this.rightHandleEl.style.left;
+        let percMarginLeftHandle = parseFloat(posLeftHandle.replace('%', '')); // Transform percent css format to float
+        let percMarginRightHandle = parseFloat(posRightHandle.replace('%', '')); // Transform percent css format to float
         // Get width of side handles
-        let handleSideEl = this.$refs.leftHandle;
+        //let handleSideEl = this.$refs.leftHandle;
+        let handleSideEl = this.leftHandleEl;
         let widthHandleLeft = 100*handleSideEl.offsetWidth/totalWidth;
         let widthHandleMiddle = 100*(el.offsetWidth)/totalWidth;
         // Limit movement
@@ -156,9 +167,9 @@ export default {
         percMargin = Math.max(percMargin, widthHandleLeft + sidePadding); // Left side
 
         // Calculate left and right handle positions (as in calcMiddleHandlePosition)
-        this.posLeftHandle = percMargin - widthHandleLeft - sidePadding + "%";
-        this.posRightHandle = percMargin + widthHandleMiddle + sidePadding + "%";
-        this.posMiddleHandle = percMargin + '%';
+        this.leftHandleEl.style.left = percMargin - widthHandleLeft - sidePadding + "%";
+        this.rightHandleEl.style.left = percMargin + widthHandleMiddle + sidePadding + "%";
+        this.middleHandleEl.style.left = percMargin + '%';
 
         // Emit values
         this.$emit('change', this.getRange());
@@ -167,25 +178,31 @@ export default {
 
       // Calculate width and position of middle handle
       calcMiddleHandlePosition: function(){
-        let el = this.$refs.leftHandle;
+        //let el = this.$refs.leftHandle;
+        let el = this.leftHandleEl;
         let totalWidth = el.parentElement.offsetWidth;
         let widthHandleLeft = 100*el.offsetWidth/totalWidth;
 
-        let pRight = parseFloat(this.posRightHandle.replace('%', ''));
-        let pLeft = parseFloat(this.posLeftHandle.replace('%', ''));
+        let posRightHandle = this.rightHandleEl.style.left;
+        let posLeftHandle = this.leftHandleEl.style.left;
+
+        let pRight = parseFloat(posRightHandle.replace('%', ''));
+        let pLeft = parseFloat(posLeftHandle.replace('%', ''));
         
         let width = pRight - pLeft - widthHandleLeft;
 
-        this.posMiddleHandle =  pLeft + widthHandleLeft + Math.min(this.paddingRatio * width * 0.5, this.maxPadding/2) + '%';
-        this.middleHandleWidth = width - Math.min(width * this.paddingRatio, this.maxPadding) + '%';
+        this.middleHandleEl.style.left = pLeft + widthHandleLeft + Math.min(this.paddingRatio * width * 0.5, this.maxPadding/2) + '%';
+        this.middleHandleEl.style.width = width - Math.min(width * this.paddingRatio, this.maxPadding) + '%';
       },
 
 
 
       // Get range in floats
       getRange: function(){
-        let pLeft = parseFloat(this.posLeftHandle.replace('%', ''));
-        let pRight = parseFloat(this.posRightHandle.replace('%', ''));
+        let posLeftHandle = this.leftHandleEl.style.left;
+        let posRightHandle = this.rightHandleEl.style.left;
+        let pLeft = parseFloat(posLeftHandle.replace('%', ''));
+        let pRight = parseFloat(posRightHandle.replace('%', ''));
         return [pLeft, pRight];
       },
 
@@ -194,7 +211,7 @@ export default {
 
     },
     computed: {
-      
+
     },
     
 }
@@ -205,12 +222,16 @@ export default {
 
 <style scoped>
 .rangeslider {
+  position: relative;
   background-color: rgba(198, 239, 255, 0.8);
-  width: 100%; 
+  width: 100%;
+  height: 50px;
+  max-height: 50px;
   border-top-right-radius: 0.25rem;
   border-top-left-radius: 0.25rem;
   padding: 1rem 1.25rem;
   border: 1px solid rgba(0,0,0,.125);
+  display: inline-block;
 }
 
 .rangeHandle {
@@ -223,7 +244,11 @@ export default {
   border-radius: 0.2rem;
   background-color: rgba(107, 193, 228, 0.8);
   color: rgba(4, 85, 117, 0.8);
-  user-select: none
+  user-select: none;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .rangeHandle:hover {
