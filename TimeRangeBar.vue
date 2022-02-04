@@ -69,17 +69,18 @@ export default {
 
         // TODO instead of creating again months, set the width of the unseen elements to zero and then hid them.
         // This way we always have all the months and we just change the width. Animations then can work here
-        
-        this.months = []; // Vue does not read properly this.months, are some are left. Why?
-        this.$nextTick(() => {
-            this.createHTMLTimeline(); 
-        });
+
+        //this.months = []; // Vue does not read properly this.months, are some are left. Why?
+        //this.$nextTick(() => {
+            //this.createHTMLTimeline(); 
+            this.updateHTMLTimeline();
+        //});
         
       },
 
       // Creates the years and months arrays (HTML elements by vue) according to end and start date
       createHTMLTimeline: function(){
-        let startMonth = this.startDate.getMonth() + 1;
+        let startMonth = this.startDate.getMonth();
         let startDay = this.startDate.getDate();
         let endMonth = this.endDate.getMonth();
         let endDay = this.endDate.getDate();
@@ -93,10 +94,10 @@ export default {
         
         // Start and end year are different
         if (totalYears != 0){
-          this.years = [{num: startYear, ww: (12-startMonth + (31-startDay)/31)/12}];// Todo: number of days is relative to the month
-          this.months = [{num: startMonth -1, ww: (31-startDay)/31, key: (startMonth-1) + "-" + startYear, name: this.monthNum2Str(startMonth-1)}];
+          this.years = [{num: startYear, ww: (11-startMonth + (31-startDay)/31)/12}];// Todo: number of days is relative to the month
+          this.months = [{num: startMonth, ww: (31-startDay)/31, key: startMonth + "-" + startYear, name: this.monthNum2Str(startMonth)}];
           // Fill months from first year
-          for (let i = startMonth; i < 12; i++){
+          for (let i = startMonth + 1; i < 12; i++){
             this.months.push({num: i, ww: 1, key: i + "-" + startYear, name: this.monthNum2Str(i)});
           }
 
@@ -122,11 +123,88 @@ export default {
         } 
         // Start and end year are the same
         else {
-          this.years = [{num: startYear, ww: ((endMonth + endDay/31) - (12 - startMonth + (31-startDay)/31)) / 12}];
+          this.years = [{num: startYear, ww: ((endMonth + endDay/31) - (11 - startMonth + (31-startDay)/31)) / 12}];
         }
 
         
         // Calculate ww according to number of years/months
+        this.calcWidthPercentage();
+        
+        //console.log(...this.months);
+
+      },
+
+
+      // Updates the width and visibility of the months and years according to the start and end dates
+      updateHTMLTimeline: function(){
+        let startYear = this.startDate.getFullYear();
+        let startMonth = this.startDate.getMonth();
+        let startDay = this.startDate.getDate();
+        let endYear = this.endDate.getFullYear();
+        let endMonth = this.endDate.getMonth();
+        let endDay = this.endDate.getDate();
+        let totalYears = endYear - startYear;
+        // Find reactive array indexes
+        let sIdxMonths;
+        let sIdxYears;
+        
+        this.months.forEach((mm, index) => {
+          if (mm.key.includes(startYear) && mm.key.includes(startMonth + '-'))
+            sIdxMonths = index;
+        })
+        this.years.forEach((yy, index) => {
+          if (yy.num == startYear)
+            sIdxYears = index;
+        })
+        // Set everything to zero, then assign
+        this.years.forEach(yy => yy.ww = 0);
+        this.months.forEach(mm => mm.ww = 0);
+        
+        // Set weights
+        // Iterate over years
+        for (let idxY = startYear; idxY <= endYear; idxY++){
+          let sM = 0;
+          let eM = 11;
+          let sumM = 0;
+          if (idxY == startYear) // We are in the last year
+            sM = startMonth;
+          if (idxY == endYear)
+            eM = endMonth;
+          // Iterate over the months of the year
+          for (let idxM = sM; idxM <= eM; idxM++){
+            // Optimize? save in a separate array and later assign
+            let monthlyWeight = 0;
+            if (idxM == sM) // First month
+              //monthWW.push((31-startDay)/31);
+              monthlyWeight = (31-startDay+1)/31;
+            else if (idxY == endYear && idxM == endMonth) // Last month
+              //monthWW.push(endDay/31);
+              monthlyWeight = endDay/31;
+            else
+              //monthWW.push(1);
+              monthlyWeight = 1;
+            // Store weight
+            this.months[sIdxMonths].ww = monthlyWeight;
+            // Increase monthly index
+            sIdxMonths++;
+            // Store sum for yearly weight
+            sumM += monthlyWeight;
+
+          }
+          // Calculate year weights based on the months
+          this.years[sIdxYears].ww = sumM/12;
+          // Increase yearly index
+          sIdxYears++;          
+        }
+        
+        // Calculate ww according to number of years/months
+        this.calcWidthPercentage();
+
+      },
+
+
+      // Calculate width percentage according to weight
+      calcWidthPercentage: function(){
         // For months
         let totalMonthWW = 0;
         this.months.forEach(mm => totalMonthWW += mm.ww); // Calculate total month proportion or width
@@ -135,9 +213,6 @@ export default {
         let totalYearWW = 0;
         this.years.forEach(yy => totalYearWW += yy.ww); // Calculate total month proportion or width
         this.years.forEach(yy => yy.ww = 100 * yy.ww/totalYearWW); // Apply width according to element width
-        
-        //console.log(...this.months);
-
       },
 
 
