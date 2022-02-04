@@ -264,6 +264,7 @@ export default {
 .rangeHandleMiddle {
   opacity: 0.5;
   padding: 0;
+  cursor: grab;
 }
 
 </style>

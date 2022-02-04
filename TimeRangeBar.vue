@@ -391,7 +391,7 @@ export default {
   align-items: center;
   justify-content: center;
 
-  background-color: rgb(149, 224, 255,0.7);
+  background-color: rgb(149, 224, 255,0.9);
   
 }
 
