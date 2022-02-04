@@ -3,14 +3,19 @@
 
       <div class="container-flex position-absolute bottom-0 left-0 right-0" ref="hi" style="width:100%;">
       
-        <range-slider @change="onRangeSliderChange($event)" style="height: 50px"></range-slider>
+        <range-slider 
+            @change="onRangeSliderChange($event)" 
+            @mousedown="onRangeSliderMouseDown($event)" 
+            @mouseup="onRangeSliderMouseUp($event)"
+            @drag="onRangeSliderDrag($event)" 
+          style="height: 50px"></range-slider>
         
         <div class="timeline">
-          <button class="yearButton m-0 p-0" @click="onYearClicked($event)" :key="yy.num" :id="yy.num" v-for="yy in years" :style="{width: yy.ww + '%'}">{{yy.num}}</button>
+          <button v-for="yy in years" class="m-0 p-0" :class="[yy.ww == 0 ? 'hiddenClass' : yy.num % 2 == 0 ? 'yearButton' : 'yearButton even']" @click="onYearClicked($event)" :key="yy.num" :id="yy.num" :title="yy.num" :style="{width: yy.ww + '%'}">{{yy.num}}</button>
         </div>
 
         <div class="timeline" ref="monthTimeline">
-          <button class="monthButton m-0 p-0" :key="mm.num" v-for="mm in months" :style="{width: mm.ww + '%'}">{{mm.name}}</button>
+          <button v-for="mm in months" class="m-0 p-0" :class="[mm.ww == 0 ? 'hiddenClass' : 'monthButton']" :key="mm.key" :title="mm.title" :style="{width: mm.ww + '%'}">{{mm.name}}</button>
         </div>
         
       </div>
@@ -38,11 +43,37 @@ export default {
 
       // Month names
       this.monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      this.monthAbbr = [
+        ['J', 'Jan', 'January'],
+        ['F', 'Feb', 'February'],
+        ['M', 'Mar', 'March'],
+        ['A', 'Apr', 'April'],
+        ['M', 'May', 'May'],
+        ['J', 'Jun', 'June'],
+        ['J', 'Jul', 'July'],
+        ['A', 'Aug', 'August'],
+        ['S', 'Sep', 'September'],
+        ['O', 'Oct', 'October'],
+        ['N', 'Nov', 'November'],
+        ['D', 'Dec', 'December']
+      ];
 
+      // Range slider states
+      this.isRangeChanging = false;
+      this.isRangeDragging = false;
+      // Range array // TODO: initialize with values default values from RangeSlider. Could put a emit on mounted in range slider to set it
+      this.rangeArray = [25, 75];
+      // Update rate
+      this.dayIncrement = 5;
+      this.FRAMERATE = 40;
       
     },
     mounted (){
       this.createHTMLTimeline();
+      window.addEventListener('resize', this.setMonthNames);
+    },
+    unmounted() {
+      window.removeEventListener('resize', this.setMonthNames);
     },
     setup() {
         
@@ -56,27 +87,110 @@ export default {
     methods: {
       // USER HTML ACTIONS
       onRangeSliderChange: function(rangeArray){
-        //console.log(...rangeArray)
-        if (rangeArray[0] < 0.1){          
-          console.log(this.years);
+        this.rangeArray = rangeArray;
+      },
+
+      onRangeSliderDrag: function(rangeArray){
+        this.rangeArray = rangeArray;
+        this.isRangeDragging = true;
+      },
+      // Range slider clicked
+      // This event is also capturing general mouse down, not only emit. One solution is to check if the event (rangeArray) is an array
+      // The other solution is to make a custom event, like rangedown, instead of the general mousedown
+      onRangeSliderMouseDown: function(rangeArray){
+        // Mouse event has undefined length
+        if (rangeArray.length == 2){
+          this.isRangeChanging = true;
+          this.updateRangeSlider();
+        }
+      },
+      // Range slider is not clicked anymore
+      onRangeSliderMouseUp: function(rangeArray){
+        this.isRangeChanging = false;
+        this.isRangeDragging = false;
+      },
+
+      // Update loop according to range slider
+      updateRangeSlider: function(){
+        // Middle handle (dragging)
+        if (this.isRangeDragging){
+          if (this.rangeArray[0] < 10){
+            this.dayIncrement = 10 - this.rangeArray[0];
+            if (this.decreaseStartingDate())
+              this.decreaseEndingDate();
+            this.updateHTMLTimeline();
+          } else if (this.rangeArray[1] > 90){
+            this.dayIncrement = this.rangeArray[1] - 90;
+            if (this.increaseEndingDate())
+              this.increaseStartDate();
+            this.updateHTMLTimeline();
+          }
+        } 
+        // Right-Left handles
+        else {
+          if (this.rangeArray[0] < 10){     
+            this.dayIncrement = 10 - this.rangeArray[0]; 
+            this.decreaseStartingDate();
+            this.updateHTMLTimeline();
+          }
+          else if (this.rangeArray[1] > 90){
+            this.dayIncrement = this.rangeArray[1] - 90;
+            this.increaseEndingDate();
+            this.updateHTMLTimeline();
+          }
+        }
+        // Update loop
+        if (this.isRangeChanging){
+          setTimeout(() => {
+              this.updateRangeSlider()
+            }, this.FRAMERATE);
         }
       },
 
+      // Display the year on the timeline
       onYearClicked: function(event){
         let year = parseInt(event.target.id);
-        this.startDate = new Date(year - 1, 11, 1);
-        this.endDate = new Date(year + 1, 0, 31);
+        let sDate = new Date(Math.max(new Date(year - 1, 11, 1), this.limStartDate)); // Limit start date
+        let eDate = new Date(Math.min(new Date(year + 1, 0, 31), this.limEndDate)); // Limit end date
+        // If year is clicked twice, open timeline
+        if (sDate.toISOString() == this.startDate.toISOString() && eDate.toISOString() == this.endDate.toISOString()){
+          this.startDate = new Date(this.limStartDate);
+          this.endDate = new Date(this.limEndDate);
+        } else{
+          this.startDate = sDate;
+          this.endDate = eDate;
+        }
 
-        // TODO instead of creating again months, set the width of the unseen elements to zero and then hid them.
-        // This way we always have all the months and we just change the width. Animations then can work here
-
-        //this.months = []; // Vue does not read properly this.months, are some are left. Why?
-        //this.$nextTick(() => {
-            //this.createHTMLTimeline(); 
-            this.updateHTMLTimeline();
-        //});
-        
+        this.updateHTMLTimeline();
       },
+
+      // Decrease starting date (returns false if the starting date does not decrease)
+      decreaseStartingDate(){
+        this.startDate.setDate(this.startDate.getDate() - this.dayIncrement);
+        if (this.startDate < this.limStartDate){
+          this.startDate = new Date(Math.max(this.limStartDate, this.startDate));
+          return false;
+        }
+        return true;
+      },
+      // Decrease ending date
+      decreaseEndingDate(){
+        this.endDate.setDate(this.endDate.getDate() - this.dayIncrement);
+      },
+      // Increase starting date
+      increaseStartDate(){
+        this.startDate.setDate(this.startDate.getDate() + this.dayIncrement);
+      },
+      // Increase ending date (returns false if the ending date does not increase)
+      increaseEndingDate(){
+        this.endDate.setDate(this.endDate.getDate() + this.dayIncrement);
+        if (this.endDate > this.limEndDate){
+          this.endDate = new Date(Math.min(this.limEndDate, this.endDate));
+          return false;
+        }
+        return true;
+      },
+
 
       // Creates the years and months arrays (HTML elements by vue) according to end and start date
       createHTMLTimeline: function(){
@@ -95,10 +209,10 @@ export default {
         // Start and end year are different
         if (totalYears != 0){
           this.years = [{num: startYear, ww: (11-startMonth + (31-startDay)/31)/12}];// Todo: number of days is relative to the month
-          this.months = [{num: startMonth, ww: (31-startDay)/31, key: startMonth + "-" + startYear, name: this.monthNum2Str(startMonth)}];
+          this.months = [{num: startMonth, ww: (31-startDay)/31, key: startMonth + "-" + startYear, year: startYear, name: this.monthNum2Str(startMonth)}];
           // Fill months from first year
           for (let i = startMonth + 1; i < 12; i++){
-            this.months.push({num: i, ww: 1, key: i + "-" + startYear, name: this.monthNum2Str(i)});
+            this.months.push({num: i, ww: 1, key: i + "-" + startYear, year: startYear, name: this.monthNum2Str(i)});
           }
 
           // Fill years
@@ -107,16 +221,16 @@ export default {
               this.years.push({num: startYear + i, ww: 1});
               // Fill months
               for (let j = 0; j<12; j++){
-                this.months.push({num: j, ww: 1, key: j + "-" + (startYear+i), name: this.monthNum2Str(j)});
+                this.months.push({num: j, ww: 1, key: j + "-" + (startYear+i), year: (startYear + i), name: this.monthNum2Str(j)});
               }
             } else { // Last year is not necessarily complete
               this.years.push({num: endYear, ww: (endMonth + endDay/31)/12});// Todo: number of days is relative to the month
               // Fill months last year
               for (let j = 0; j<=endMonth; j++){
                 if (j != endMonth)
-                  this.months.push({num: j, ww: 1, key: j + "-" + (endYear), name: this.monthNum2Str(j)});
+                  this.months.push({num: j, ww: 1, key: j + "-" + (endYear), year: endYear,  name: this.monthNum2Str(j)});
                 else
-                  this.months.push({num: j, ww: endDay/31, key: j + "-" + (endYear), name: this.monthNum2Str(j)});
+                  this.months.push({num: j, ww: endDay/31, key: j + "-" + (endYear), year: endYear, name: this.monthNum2Str(j)});
               } 
             }
           }
@@ -129,6 +243,8 @@ export default {
         
         // Calculate ww according to number of years/months
         this.calcWidthPercentage();
+        // Change month name according to width in pixels
+        this.setMonthNames();
         
         //console.log(...this.months);
 
@@ -144,12 +260,13 @@ export default {
         let endMonth = this.endDate.getMonth();
         let endDay = this.endDate.getDate();
         let totalYears = endYear - startYear;
+        //if (startMonth == 1) debugger;
         // Find reactive array indexes
         let sIdxMonths;
         let sIdxYears;
         
         this.months.forEach((mm, index) => {
-          if (mm.key.includes(startYear) && mm.key.includes(startMonth + '-'))
+          if (mm.key == startMonth + '-' + startYear)
             sIdxMonths = index;
         })
         this.years.forEach((yy, index) => {
@@ -166,22 +283,19 @@ export default {
           let sM = 0;
           let eM = 11;
           let sumM = 0;
-          if (idxY == startYear) // We are in the last year
+          if (idxY == startYear) // We are in the first year
             sM = startMonth;
-          if (idxY == endYear)
+          if (idxY == endYear) // We are in the first year
             eM = endMonth;
           // Iterate over the months of the year
           for (let idxM = sM; idxM <= eM; idxM++){
             // Optimize? save in a separate array and later assign
             let monthlyWeight = 0;
-            if (idxM == sM) // First month
-              //monthWW.push((31-startDay)/31);
+            if (idxM == sM && idxY == startYear) // First month
               monthlyWeight = (31-startDay+1)/31;
             else if (idxY == endYear && idxM == endMonth) // Last month
-              //monthWW.push(endDay/31);
               monthlyWeight = endDay/31;
             else
-              //monthWW.push(1);
               monthlyWeight = 1;
             // Store weight
             this.months[sIdxMonths].ww = monthlyWeight;
@@ -199,8 +313,12 @@ export default {
         
         // Calculate ww according to number of years/months
         this.calcWidthPercentage();
+        // Change month name according to width in pixels
+        this.setMonthNames();
 
       },
+
+
 
 
       // Calculate width percentage according to weight
@@ -215,6 +333,26 @@ export default {
         this.years.forEach(yy => yy.ww = 100 * yy.ww/totalYearWW); // Apply width according to element width
       },
 
+      // Change the month name according to the width in pixels
+      setMonthNames: function(){
+        let totalWidth = this.$refs.monthTimeline.offsetWidth;
+        this.months.forEach(mm => {
+          let pixelWidth = mm.ww/100 * totalWidth;
+          if (pixelWidth < 20)
+            mm.name = '';
+          else if (pixelWidth < 40)
+            mm.name = this.monthAbbr[mm.num][0];
+          else if (pixelWidth < 60)
+            mm.name = this.monthAbbr[mm.num][1];
+          else
+            mm.name = this.monthAbbr[mm.num][2];
+
+          // Define title for tootlip
+          mm.title = this.monthAbbr[mm.num][2] + ", " + mm.year;
+        });
+        
+      },
+
 
 
       // Month num to Month string
@@ -223,12 +361,15 @@ export default {
       },
 
 
+      
+
+
     },
     components: {
       'range-slider': RangeSlider
     },
     computed: {
-      
+
     },
     
 }
@@ -243,7 +384,6 @@ export default {
   overflow: hidden;
   position: relative;
   width: 100%;
-  /* text-overflow:ellipsis; */ 
   height: 20px;
 
   font-size: 12;
@@ -251,16 +391,38 @@ export default {
   align-items: center;
   justify-content: center;
 
-  background-color: rgb(149, 224, 255,0.7)
+  background-color: rgb(149, 224, 255,0.7);
+  
+}
+
+.hiddenClass {
+  opacity: 0;
+  border: none;
 }
 
 .monthButton, .yearButton{
   height: 100%;
   border: 1px solid #02488e33;
   background: none;
+  transition: width 0.5s;
+
+  -ms-user-select:none;
+  -moz-user-select:none;
+  -webkit-user-select:none;
+  -webkit-touch-callout: none;
+  -khtml-user-select: none;
+  user-select:none;
 }
 
-.monthButton:hover, .yearButton:hover {
+.yearButton.even {
+  background: rgba(0, 81, 255, 0.05);
+}
+
+.monthButton {
+  cursor: default;
+}
+/*.monthButton:hover,*/
+.yearButton:hover {
   background: #e3f8ff7d;
 }
 </style>

@@ -13,7 +13,7 @@
         </button>
         
         <!-- Middle handle -->
-        <button @mousedown="onMouseDownMiddleHandle" @dragstart="function(){return false}" class="rangeHandle rangeHandleMiddle" ref="middleHandle" style="left: 28%, width: 40%">
+        <button @mousedown="onMouseDownMiddleHandle" class="rangeHandle rangeHandleMiddle" ref="middleHandle" style="left: 28%, width: 40%">
         </button>
 
       </div>
@@ -65,10 +65,12 @@ export default {
         document.addEventListener('mousemove', this.onMouseMoveLeftHandle);
         // Create event listener for mouse up and remove mouse move event listener
         document.onmouseup = ()=>{
-          this.$emit('change',  this.getRange());
+          this.$emit('mouseup',  this.getRange());
           document.removeEventListener('mousemove', this.onMouseMoveLeftHandle);
           document.onmouoseup = null;
         };
+        // Emit onmousedown
+        this.$emit('mousedown', this.getRange());
         // Relocate on mouse down
         this.onMouseMoveLeftHandle(event);
       },
@@ -81,10 +83,12 @@ export default {
         document.addEventListener('mousemove', this.onMouseMoveRightHandle);
         // Create and remove event listener for mouse up (removes previous event listener)
         document.onmouseup = ()=>{
-          this.$emit('change',  this.getRange());
+          this.$emit('mouseup',  this.getRange());
           document.removeEventListener('mousemove', this.onMouseMoveRightHandle);
           document.onmouoseup = null;
         };
+        // Emit onmousedown
+        this.$emit('mousedown', this.getRange());
         // Relocate on mouse down
         this.onMouseMoveRightHandle(event);
       },
@@ -98,10 +102,12 @@ export default {
         // Create and remove event listener for mouse up (removes previous event listener)
         // Emit event with values
         document.onmouseup = ()=>{
-          this.$emit('change', this.getRange());
+          this.$emit('mouseup', this.getRange());
           document.removeEventListener('mousemove', this.onMouseMoveMiddleHandle);
           document.onmouoseup = null;
         };
+        // Emit onmousedown
+        this.$emit('mousedown', this.getRange());
         // Relocate on mouse down
         this.onMouseMoveMiddleHandle(event);
       },
@@ -172,7 +178,7 @@ export default {
         this.middleHandleEl.style.left = percMargin + '%';
 
         // Emit values
-        this.$emit('change', this.getRange());
+        this.$emit('drag', this.getRange());
       },
 
 
