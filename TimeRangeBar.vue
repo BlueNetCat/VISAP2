@@ -1,19 +1,27 @@
 <template>
     <div id="app-timebar">
 
-      <div class="container-flex position-absolute bottom-0 left-0 right-0" ref="hi" style="width:100%;">
-      
+      <div class="container-flex position-absolute bottom-0 left-0 right-0" style="width:100%;">
+        <!-- Start and ending date -->
+        <div class="infoStartEndDate p-2 notextselect">
+          <div >Start: {{startStr}}</div>
+          <div>End: {{endStr}}</div>
+        </div>
+
+        <!-- Range slider -->
         <range-slider 
             @change="onRangeSliderChange($event)" 
             @mousedown="onRangeSliderMouseDown($event)" 
             @mouseup="onRangeSliderMouseUp($event)"
             @drag="onRangeSliderDrag($event)" 
           style="height: 50px"></range-slider>
-        
+
+        <!-- Year calendar -->
         <div class="timeline">
           <button v-for="yy in years" class="m-0 p-0" :class="[yy.ww == 0 ? 'hiddenClass' : yy.num % 2 == 0 ? 'yearButton' : 'yearButton even']" @click="onYearClicked($event)" :key="yy.num" :id="yy.num" :title="yy.num" :style="{width: yy.ww + '%'}">{{yy.num}}</button>
         </div>
 
+        <!-- Month calendar -->
         <div class="timeline" ref="monthTimeline">
           <button v-for="mm in months" class="m-0 p-0" :class="[mm.ww == 0 ? 'hiddenClass' : 'monthButton']" :key="mm.key" :title="mm.title" :style="{width: mm.ww + '%'}">{{mm.name}}</button>
         </div>
@@ -82,6 +90,10 @@ export default {
       return {
         months: [],
         years: [],
+        selStartDate: new Date(),
+        selEndDate: new Date(),
+        startStr: '',
+        endStr: '',
       }
     },
     methods: {
@@ -118,12 +130,12 @@ export default {
             this.dayIncrement = 10 - this.rangeArray[0];
             if (this.decreaseStartingDate())
               this.decreaseEndingDate();
-            this.updateHTMLTimeline();
+           //this.updateHTMLTimeline();
           } else if (this.rangeArray[1] > 90){
             this.dayIncrement = this.rangeArray[1] - 90;
             if (this.increaseEndingDate())
               this.increaseStartDate();
-            this.updateHTMLTimeline();
+            //this.updateHTMLTimeline();
           }
         } 
         // Right-Left handles
@@ -131,14 +143,17 @@ export default {
           if (this.rangeArray[0] < 10){     
             this.dayIncrement = 10 - this.rangeArray[0]; 
             this.decreaseStartingDate();
-            this.updateHTMLTimeline();
+            //this.updateHTMLTimeline();
           }
           else if (this.rangeArray[1] > 90){
             this.dayIncrement = this.rangeArray[1] - 90;
             this.increaseEndingDate();
-            this.updateHTMLTimeline();
+            //this.updateHTMLTimeline();
           }
         }
+        // Update HTML timeline
+        this.updateHTMLTimeline();
+
         // Update loop
         if (this.isRangeChanging){
           setTimeout(() => {
@@ -189,6 +204,16 @@ export default {
           return false;
         }
         return true;
+      },
+
+
+      // Update selected start-end dates
+      updateStartEndInfo(){
+        let totalTime = this.endDate.getTime() - this.startDate.getTime();
+        this.selStartDate.setTime(this.startDate.getTime() + totalTime*this.rangeArray[0]/100);
+        this.selEndDate.setTime(this.startDate.getTime() + totalTime * this.rangeArray[1]/100);
+        this.startStr = this.selStartDate.toDateString().substring(4);
+        this.endStr = this.selEndDate.toDateString().substring(4);
       },
 
 
@@ -245,9 +270,10 @@ export default {
         this.calcWidthPercentage();
         // Change month name according to width in pixels
         this.setMonthNames();
-        
-        //console.log(...this.months);
+        // Update selected start-end dates
+        this.updateStartEndInfo();
 
+        //console.log(...this.months);
       },
 
 
@@ -315,6 +341,8 @@ export default {
         this.calcWidthPercentage();
         // Change month name according to width in pixels
         this.setMonthNames();
+        // Update selected start-end dates
+        this.updateStartEndInfo();
 
       },
 
@@ -404,14 +432,16 @@ export default {
   height: 100%;
   border: 1px solid #02488e33;
   background: none;
-  transition: width 0.5s;
-
+ 
   -ms-user-select:none;
   -moz-user-select:none;
   -webkit-user-select:none;
   -webkit-touch-callout: none;
   -khtml-user-select: none;
   user-select:none;
+
+  opacity: 1;
+  transition: width 0.15s, opacity 0.5s;
 }
 
 .yearButton.even {
@@ -424,5 +454,17 @@ export default {
 /*.monthButton:hover,*/
 .yearButton:hover {
   background: #e3f8ff7d;
+}
+
+.notextselect {
+  user-select:none;
+}
+
+.infoStartEndDate {
+  font-size: 13;
+  width: fit-content;
+  background: #e3f8ffb2;
+  border-top-right-radius: 0.2rem;
+  border-top-left-radius: 0.2rem;
 }
 </style>

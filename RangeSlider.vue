@@ -207,8 +207,9 @@ export default {
       getRange: function(){
         let posLeftHandle = this.leftHandleEl.style.left;
         let posRightHandle = this.rightHandleEl.style.left;
+        let widthRigthHandle = 100*this.rightHandleEl.offsetWidth/this.rightHandleEl.parentElement.offsetWidth;
         let pLeft = parseFloat(posLeftHandle.replace('%', ''));
-        let pRight = parseFloat(posRightHandle.replace('%', ''));
+        let pRight = parseFloat(posRightHandle.replace('%', '')) + widthRigthHandle;
         return [pLeft, pRight];
       },
 
