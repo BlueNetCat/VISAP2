@@ -2,29 +2,36 @@
     <div id="app-timebar">
 
       <div class="container-flex position-absolute bottom-0 left-0 right-0" style="width:100%;">
-        <!-- Start and ending date -->
-        <div class="infoStartEndDate p-2 notextselect">
-          <div >Start: {{startStr}}</div>
-          <div>End: {{endStr}}</div>
-        </div>
 
-        <!-- Range slider -->
-        <range-slider 
-            @change="onRangeSliderChange($event)" 
-            @mousedown="onRangeSliderMouseDown($event)" 
-            @mouseup="onRangeSliderMouseUp($event)"
-            @drag="onRangeSliderDrag($event)" 
-          style="height: 50px"></range-slider>
+        <!-- One row containing two columns. Col1 is start-end info. Col2 is timeline-->
+        <div class="row justify-content-start m-0">
+          <div class="col-sm-2 p-0" style="max-width: 130px; min-width: 130px">
+            <!-- Start and ending date -->
+            <div class="infoStartEndDate p-2 h-100 notextselect">
+              <div >Start: {{startStr}}</div>
+              <div>End: {{endStr}}</div>
+            </div>
+          </div>
+          <div class="col p-0">
+            <!-- Range slider -->
+            <range-slider 
+                @change="onRangeSliderChange($event)" 
+                @mousedown="onRangeSliderMouseDown($event)" 
+                @mouseup="onRangeSliderMouseUp($event)"
+                @drag="onRangeSliderDrag($event)" 
+              style="height: 50px"></range-slider>
 
-        <!-- Year calendar -->
-        <div class="timeline">
-          <button v-for="yy in years" class="m-0 p-0" :class="[yy.ww == 0 ? 'hiddenClass' : yy.num % 2 == 0 ? 'yearButton' : 'yearButton even']" @click="onYearClicked($event)" :key="yy.num" :id="yy.num" :title="yy.num" :style="{width: yy.ww + '%'}">{{yy.num}}</button>
-        </div>
+            <!-- Year calendar -->
+            <div class="timeline">
+              <button v-for="yy in years" class="m-0 p-0" :class="[yy.ww == 0 ? 'hiddenClass' : yy.num % 2 == 0 ? 'yearButton' : 'yearButton even']" @click="onYearClicked($event)" :key="yy.num" :id="yy.num" :title="yy.num" :style="{width: yy.ww + '%'}">{{yy.num}}</button>
+            </div>
 
-        <!-- Month calendar -->
-        <div class="timeline" ref="monthTimeline">
-          <button v-for="mm in months" class="m-0 p-0" :class="[mm.ww == 0 ? 'hiddenClass' : 'monthButton']" :key="mm.key" :title="mm.title" :style="{width: mm.ww + '%'}">{{mm.name}}</button>
-        </div>
+            <!-- Month calendar -->
+            <div class="timeline" ref="monthTimeline">
+              <button v-for="mm in months" class="m-0 p-0" :class="[mm.ww == 0 ? 'hiddenClass' : 'monthButton']" :key="mm.key" :title="mm.title" :style="{width: mm.ww + '%'}">{{mm.name}}</button>
+            </div>
+
+          </div>
         
       </div>
     </div>
@@ -462,9 +469,15 @@ export default {
 
 .infoStartEndDate {
   font-size: 13;
-  width: fit-content;
-  background: #e3f8ffb2;
+  /*width: fit-content;*/
+  background: rgba(198, 239, 255, 0.8);
   border-top-right-radius: 0.2rem;
   border-top-left-radius: 0.2rem;
+
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+  justify-content: center;
 }
 </style>
