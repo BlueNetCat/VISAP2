@@ -8,8 +8,8 @@
           <div class="col-sm-2 p-0" style="max-width: 130px; min-width: 130px">
             <!-- Start and ending date -->
             <div class="infoStartEndDate p-2 h-100 notextselect">
-              <div >Start: {{startStr}}</div>
-              <div>End: {{endStr}}</div>
+              <div><b>Start:</b> {{startStr}}</div>
+              <div><b>End:</b> {{endStr}}</div>
             </div>
           </div>
           <div class="col p-0">
@@ -28,7 +28,7 @@
 
             <!-- Month calendar -->
             <div class="timeline" ref="monthTimeline">
-              <button v-for="mm in months" class="m-0 p-0" :class="[mm.ww == 0 ? 'hiddenClass' : 'monthButton']" :key="mm.key" :title="mm.title" :style="{width: mm.ww + '%'}">{{mm.name}}</button>
+              <button v-for="mm in months" class="m-0 p-0" :class="[mm.ww == 0 ? 'hiddenClass' : 'monthButton']" @click="onMonthClicked($event)" :key="mm.key" :id="mm.key" :title="mm.title" :style="{width: mm.ww + '%'}">{{mm.name}}</button>
             </div>
 
           </div>
@@ -183,6 +183,19 @@ export default {
           this.endDate = eDate;
         }
 
+        this.updateHTMLTimeline();
+      },
+
+      // Display +2 -2 months on the timeline
+      onMonthClicked: function(event){
+        let month = parseInt(event.target.id.split('-')[0]);
+        let year = parseInt(event.target.id.split('-')[1]);
+        let selDate = new Date(year, month);
+        let sDate = new Date(Math.max(this.limStartDate, selDate.setMonth(selDate.getMonth() - 2)));
+        let eDate = new Date(Math.min(this.limEndDate, selDate.setMonth(selDate.getMonth() + 5)));
+        this.startDate = sDate;
+        this.endDate = eDate;
+        
         this.updateHTMLTimeline();
       },
 
@@ -456,9 +469,9 @@ export default {
 }
 
 .monthButton {
-  cursor: default;
+  /*cursor: default;*/
 }
-/*.monthButton:hover,*/
+.monthButton:hover,
 .yearButton:hover {
   background: #e3f8ff7d;
 }
@@ -473,6 +486,8 @@ export default {
   background: rgba(198, 239, 255, 0.8);
   border-top-right-radius: 0.2rem;
   border-top-left-radius: 0.2rem;
+
+  border-right: 2px solid #02488e33;
 
   align-items: center;
   display: flex;

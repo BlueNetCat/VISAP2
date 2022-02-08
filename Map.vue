@@ -118,7 +118,8 @@ export default {
           name: 'data',
           zIndex: -1,
           //opacity: 0.9
-        })
+        }),
+        // tracks geojson
       };
     this.$options.layerData = undefined;
     this.$options.pixelColor = [0, 0, 0, 0];
