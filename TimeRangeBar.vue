@@ -193,6 +193,14 @@ export default {
         let selDate = new Date(year, month);
         let sDate = new Date(Math.max(this.limStartDate, selDate.setMonth(selDate.getMonth() - 2)));
         let eDate = new Date(Math.min(this.limEndDate, selDate.setMonth(selDate.getMonth() + 5)));
+        // If month is clicked twice, open year
+        // TODO: USER TEST - MAYBE CONFUSING?
+        if (sDate.toISOString() == this.startDate.toISOString() && eDate.toISOString() == this.endDate.toISOString()){
+          this.onYearClicked({target: {id: year}});
+          return;
+        }
+
+
         this.startDate = sDate;
         this.endDate = eDate;
         
