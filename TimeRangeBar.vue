@@ -242,6 +242,8 @@ export default {
         this.selEndDate.setTime(this.startDate.getTime() + totalTime * this.rangeArray[1]/100);
         this.startStr = this.selStartDate.toDateString().substring(4);
         this.endStr = this.selEndDate.toDateString().substring(4);
+        // Emit
+        this.$emit('change', [this.selStartDate, this.selEndDate]);
       },
 
 
@@ -476,9 +478,6 @@ export default {
   background: rgba(0, 81, 255, 0.05);
 }
 
-.monthButton {
-  /*cursor: default;*/
-}
 .monthButton:hover,
 .yearButton:hover {
   background: #e3f8ff7d;

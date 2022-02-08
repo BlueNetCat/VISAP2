@@ -10,8 +10,12 @@
       </div>
       <!-- Legend -->
       <!--wms-legend @legendClicked="changeStyle($event)" ref="legendWMS" class="position-absolute top-0 end-0 d-sm-flex me-2 mt-5"></wms-legend-->
+      
       <!-- Time Range Bar -->
-      <time-range-bar><time-range-bar>
+      <time-range-bar @change="onTimeRangeChange($event)"></time-range-bar>
+
+      <!-- Track info panel -->
+      <!--track-panel></track-panel-->
     </div>
 </template>
 
@@ -33,8 +37,8 @@ export default {
   name: 'app-map',
   created (){
     // Declare non-reactive variables
-    this.$options.map= undefined;
-    this.$options.layers = {
+    this.map= undefined;
+    this.layers = {
         bathymetry: new ol.layer.Tile({
             name: 'bathymetry',
             source: new ol.source.XYZ ({ // https://openlayers.org/en/latest/examples/xyz.html
@@ -121,8 +125,14 @@ export default {
         }),
         // tracks geojson
       };
-    this.$options.layerData = undefined;
-    this.$options.pixelColor = [0, 0, 0, 0];
+    this.layerData = undefined;
+    this.pixelColor = [0, 0, 0, 0];
+
+    // Load fishing tracks
+    // if (window.serverConnection)
+    // getTrackLines('http://localhost:8080/trackLines', 'data/trackLines.json');
+    // getTrackLines('data/trackLines.json', undefined);
+    this.fishingTracks = new FishingTracks('data/trackLines.json', undefined, this.onLoadTracks);//new TrackLines(address, staticFile, onLoadTracks)
   },
   mounted () {
     this.initMap();
@@ -130,8 +140,8 @@ export default {
   },
   umounted () {
     this.$refs.OLMap.removeEventListener('mousemove', this.onMouseMove);
-    this.$options.map.un('moveend', this.onMapMoveEnd);
-    this.$options.map.un('movestart', this.onMapMoveStart); 
+    this.map.un('moveend', this.onMapMoveEnd);
+    this.map.un('movestart', this.onMapMoveStart); 
   },
   data () {
     return {
@@ -148,18 +158,18 @@ export default {
     // Figure clicked (TODO: emit)
     initMap: function () {
       // Initialize map
-      this.$options.map = new ol.Map({
+      this.map = new ol.Map({
         layers : [
           // Data layer
-          //this.$options.layers.data,
+          //this.layers.data,
           // Bathymetry
-          this.$options.layers.bathymetry,
+          this.layers.bathymetry,
           // Graticule layer
-          this.$options.layers.graticule,
+          this.layers.graticule,
           // 12 nm
-          this.$options.layers.eez12nm,
+          this.layers.eez12nm,
           // Shoreline
-          this.$options.layers.shoreline,
+          this.layers.shoreline,
           
           
         ],
@@ -176,18 +186,18 @@ export default {
       document.getElementsByClassName('ol-attribution')[0].style.top = '.5em';
 
       // Declare onmapmove events
-      this.$options.map.on('moveend', this.onMapMoveEnd);
-      this.$options.map.on('movestart', this.onMapMoveStart);
+      this.map.on('moveend', this.onMapMoveEnd);
+      this.map.on('movestart', this.onMapMoveStart);
 
       // Register tile load progress
-      this.registerLoadTilesEvents(this.$options.layers.bathymetry.getSource());
+      this.registerLoadTilesEvents(this.layers.bathymetry.getSource());
     },
 
 
     // Get layer function
     getMapLayer: function(layerName){
       let selLayer;
-      this.$options.map.getLayers().forEach(layerItem => {
+      this.map.getLayers().forEach(layerItem => {
         //console.log(layerItem.get('name'));
         if (layerItem.get('name') == layerName)
           selLayer = layerItem;
@@ -223,7 +233,7 @@ export default {
       if (this.isMapMoving)
         return;
       // Get lat long coordinates
-      let coord = this.$options.map.getCoordinateFromPixel([event.clientX, event.clientY]);
+      let coord = this.map.getCoordinateFromPixel([event.clientX, event.clientY]);
       coord = ol.proj.transform(coord, 'EPSG:3857', 'EPSG:4326');
       // Emit
       this.$emit('mouseMove', coord);
@@ -291,7 +301,7 @@ export default {
       // Get canvas
       let tmpCnv = layer.getRenderer().getImage();
       // Get data
-      this.$options.layerData = tmpCnv.getContext("2d").getImageData(0,0,tmpCnv.width,tmpCnv.height);
+      this.layerData = tmpCnv.getContext("2d").getImageData(0,0,tmpCnv.width,tmpCnv.height);
       // Store width to access pixels
       this.layerDataWidth = tmpCnv.width;
     },
@@ -300,13 +310,20 @@ export default {
     // Get pixel data
     getDataAtPixel: function(x , y){
       let imgArrayPos = (x + y * this.layerDataWidth) * 4; // + 1,2,3 if you want (R)GBA
-      let imgData = this.$options.layerData.data;
-      let color = this.$options.pixelColor;
+      let imgData = this.layerData.data;
+      let color = this.pixelColor;
       color[0] = imgData[imgArrayPos]
       color[1] = imgData[imgArrayPos+1]
       color[2] = imgData[imgArrayPos+2]
       color[3] = imgData[imgArrayPos+3];
       return color;
+    },
+
+
+    // The time range has changed. Update the track lines
+    onTimeRangeChange: function(dates){
+      // Set starting and ending dates in fishing tracks
+      this.fishingTracks.setStartEndDates(dates[0], dates[1]); 
     },
     
 
@@ -348,8 +365,29 @@ export default {
     
     // Get OL map object
     getOLMap: function(){
-      return this.$options.map;
-    }
+      return this.map;
+    },
+
+
+
+
+    // CALLBACKS
+    // Once the fishing tracks have been loaded
+    onLoadTracks: function(){
+      // Add to layer
+      this.map.addLayer(this.fishingTracks.getLayer());
+      // TODO;
+      // Update start and end dates
+      // Get start and end from timerange
+      //this.fishingTracks.setStartEndDates(); // Set starting and ending dates in fishing tracks
+      
+      // Track lines overlay
+      let gjson = this.fishingTracks.getGeoJSON();
+      // OPTIONS:
+      // PAINT IN A CANVAS -> TRANSFORM TO IMAGE -> MAKE IMAGE AS BACKGROUND OF TIMERANGE
+      // OVERLAY, BUT BELOW TIMERANGE?
+      // CREATE A VUE OVERLAY INSIDE TIMERANGE?
+    },
 
 
   },
