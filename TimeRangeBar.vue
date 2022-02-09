@@ -244,6 +244,7 @@ export default {
         this.endStr = this.selEndDate.toDateString().substring(4);
         // Emit
         this.$emit('change', [this.selStartDate, this.selEndDate]);
+        this.$emit('changeLimits', [this.startDate, this.endDate]);
       },
 
 

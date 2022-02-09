@@ -11,8 +11,11 @@
       <!-- Legend -->
       <!--wms-legend @legendClicked="changeStyle($event)" ref="legendWMS" class="position-absolute top-0 end-0 d-sm-flex me-2 mt-5"></wms-legend-->
       
+      <!-- Tracks on the timeline -->
+      <tracks-timeline ref="tracksTimeLine"></tracks-timeline>
+
       <!-- Time Range Bar -->
-      <time-range-bar @change="onTimeRangeChange($event)"></time-range-bar>
+      <time-range-bar @change="onTimeRangeChange($event)" @changeLimits="onTimeRangeChangeLimits($event)"></time-range-bar>
 
       <!-- Track info panel -->
       <!--track-panel></track-panel-->
@@ -31,6 +34,7 @@
 
 <script>
 import TimeRangeBar from "TimeRangeBar.vue";
+import TracksTimeLine from "TracksTimeLine.vue";
 //import WMSLegend from "WMSLegend.vue";
 
 export default {
@@ -323,7 +327,12 @@ export default {
     // The time range has changed. Update the track lines
     onTimeRangeChange: function(dates){
       // Set starting and ending dates in fishing tracks
-      this.fishingTracks.setStartEndDates(dates[0], dates[1]); 
+      this.fishingTracks.setStartEndDates(dates[0], dates[1]);
+    },
+     // The timeline has changed. Update the track lines
+    onTimeRangeChangeLimits: function(dates){
+      // Set starting and ending dates of tracks-timeline
+      this.$refs.tracksTimeLine.setStartEndDates(dates[0], dates[1]);
     },
     
 
@@ -383,6 +392,10 @@ export default {
       
       // Track lines overlay
       let gjson = this.fishingTracks.getGeoJSON();
+      if (this.$refs.tracksTimeLine){
+        this.$refs.tracksTimeLine.setFeatures(gjson.features);
+      }
+      
       // OPTIONS:
       // PAINT IN A CANVAS -> TRANSFORM TO IMAGE -> MAKE IMAGE AS BACKGROUND OF TIMERANGE
       // OVERLAY, BUT BELOW TIMERANGE?
@@ -392,7 +405,8 @@ export default {
 
   },
   components: {
-    "time-range-bar": TimeRangeBar
+    "time-range-bar": TimeRangeBar,
+    "tracks-timeline": TracksTimeLine,
     //"wms-legend": WMSLegend
   },
   computed: {
