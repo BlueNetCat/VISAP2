@@ -117,7 +117,8 @@ export default {
         //let el = this.$refs.leftHandle; // Get element
         let el = this.leftHandleEl;
         let totalWidth = el.parentElement.offsetWidth; // Get total width of container in pixels
-        let percMargin = (100*(event.pageX - el.offsetWidth/2)/totalWidth); // Get margin from mouse position
+        let relMouseX = event.pageX - el.parentElement.offsetLeft; // Correct when container has side elements
+        let percMargin = (100*(relMouseX - el.offsetWidth/2)/totalWidth); // Get margin from mouse position
         let posRightHandle = this.rightHandleEl.style.left;
         let percMarginRightHandle = parseFloat(posRightHandle.replace('%', '')); // Transform percent css format to float
         percMargin = Math.min(percMargin, percMarginRightHandle - 100*el.offsetWidth/totalWidth); // Limit on the right side
@@ -136,7 +137,8 @@ export default {
         //let el = this.$refs.rightHandle; // Get element
         let el = this.rightHandleEl;
         let totalWidth = el.parentElement.offsetWidth; // Get total width of container in pixels
-        let percMargin = (100*(event.pageX - el.offsetWidth/2)/totalWidth); // Get margin from mouse position in percentage
+        let relMouseX = event.pageX - el.parentElement.offsetLeft;
+        let percMargin = (100*(relMouseX - el.offsetWidth/2)/totalWidth); // Get margin from mouse position in percentage
 
         let posLeftHandle = this.leftHandleEl.style.left;
         let percMarginLeftHandle = parseFloat(posLeftHandle.replace('%', '')); // Get position of other handle. Transform percent css format to float
@@ -156,7 +158,8 @@ export default {
         //let el = this.$refs.middleHandle;
         let el = this.middleHandleEl;
         let totalWidth = el.parentElement.offsetWidth; // Get total width of container in pixels
-        let percMargin = (100*(event.pageX - el.offsetWidth/2)/totalWidth); // Get margin from mouse position in percentage
+        let relMouseX = event.pageX - el.parentElement.offsetLeft;
+        let percMargin = (100*(relMouseX - el.offsetWidth/2)/totalWidth); // Get margin from mouse position in percentage
         // Get positions of side handles in percentage
         let posLeftHandle = this.leftHandleEl.style.left;
         let posRightHandle = this.rightHandleEl.style.left;
@@ -207,8 +210,9 @@ export default {
       getRange: function(){
         let posLeftHandle = this.leftHandleEl.style.left;
         let posRightHandle = this.rightHandleEl.style.left;
+        let widthRigthHandle = 100*this.rightHandleEl.offsetWidth/this.rightHandleEl.parentElement.offsetWidth;
         let pLeft = parseFloat(posLeftHandle.replace('%', ''));
-        let pRight = parseFloat(posRightHandle.replace('%', ''));
+        let pRight = parseFloat(posRightHandle.replace('%', '')) + widthRigthHandle;
         return [pLeft, pRight];
       },
 
