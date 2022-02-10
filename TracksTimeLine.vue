@@ -1,10 +1,14 @@
 <template>
     <div id="tracks-timeline">
         <!-- A div with the same width as TimeRange -->
-        <div class="container-flex maindiv position-absolute  left-0 right-0" style="user-select: none; right: 0; bottom: 120px; z-index: 1; opacity: 1; left: 130px">
+        <!--div class="container-flex maindiv position-absolute  left-0 right-0" style="user-select: none; right: 0; bottom: 120px; z-index: 1; opacity: 1; left: 130px"-->
+        <div class="position-relative" style="height: 30px">
+
+          <div class="tracksContainer" ref="tracksContainer">
             <div :key="ff.properties.id" v-for="ff in features" :style="setFeatureStyle(ff)">
                 &#11044;
             </div>
+          </div>
         </div>
 
     </div>
@@ -32,7 +36,7 @@ export default {
 
   },
   mounted () {
-
+    this.setBackgroundGradient();
   },
   data () {
     return {
@@ -73,17 +77,18 @@ export default {
           'font-size': '0.5rem',
           position: 'absolute',
           left: leftPercentage + '%',
-          top: top*2 + 'px',
+          top: (8 + top*5) + '%',
           opacity: opacity,
           '-webkit-text-stroke-width': '0.5px',
-        '-webkit-text-stroke-color': 'black',
+          '-webkit-text-stroke-color': 'black',
+          transition: 'left 0.3s, opacity 0.5s',
         }
       // If it is not visible, hide it
       } else {
         return {
           'font-size': '0.5rem',
           position: 'absolute',
-          left: '0%',
+          left: leftPercentage + '%',//'0%',
           top: '0px',
           opacity: 0, 
         }
@@ -100,9 +105,24 @@ export default {
       this.startDate.setTime(sDate.getTime());
       this.endDate.setTime(eDate.getTime());
       //this.features.pop();
-      this.features.push([]);
+      this.features.push([]); // TODO: FIX TRICK, DIRTY HACK
       this.features.pop();
     },
+
+    setBackgroundGradient: function(){
+      return;
+      let color = [160, 215, 242];
+      let linearGradient = 'linear-gradient(90deg, '+
+        'rgba(' + color + ',0) 0%, '+
+        'rgba(' + color + ',0.8) 10%, '+
+        'rgba(' + color + ',0.8) 90%, '+
+        'rgba(' + color + ', 0) 100%';
+
+      this.$refs.tracksContainer.style.background = linearGradient
+      
+      
+      this.$refs.tracksContainer.style['box-shadow'] = '0 0 2px ' + linearGradient;// rgb(' + color + ')';
+    }
 
   },
   components: {
@@ -120,9 +140,16 @@ export default {
 
 
 <style scoped>
-
-.maindiv {
-  background: rgba(198, 239, 255, 0.8);
+.tracksContainer {
+  height:100%; 
+  width: calc(100% - 130px); 
+  left: 130px; 
+  position: relative; 
+  border-radius: 1rem;
+  
+  background: linear-gradient(90deg, rgba(160, 215, 242 ,0) 0%, rgba(160, 215, 242,0.8) 10%, rgba(160, 215, 242,0.8) 90%, rgba(160, 215, 242, 0) 100%);
+  box-shadow: 0 -1px 2px rgba(160, 215, 242,0.8);
 }
+
 
 </style>

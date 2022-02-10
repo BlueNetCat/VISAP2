@@ -1,7 +1,7 @@
 <template>
     <div id="app-timebar">
 
-      <div class="container-flex position-absolute bottom-0 left-0 right-0" style="width:100%;">
+      <div class="container-flex bottom-0 left-0 right-0" style="width:100%;">
 
         <!-- One row containing two columns. Col1 is start-end info. Col2 is timeline-->
         <div class="row justify-content-start m-0">
