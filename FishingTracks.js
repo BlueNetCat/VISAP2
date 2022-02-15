@@ -7,10 +7,14 @@ class FishingTracks {
     selEndDate = new Date();
     limStartDate = new Date();
     limEndDate = new Date();
-    geoJSONData = {
+    
+    // Static variables (singleton architecture)
+    static geoJSONData = {
         'type': 'FeatureCollection',
         'features': []
     };
+    static selectedTrack = undefined;
+
     trackLinesLayer = undefined;
 
 
@@ -101,7 +105,7 @@ class FishingTracks {
                 
             }
 
-            this.geoJSONData.features.push(feature);
+            FishingTracks.geoJSONData.features.push(feature);
         }
         //console.log(JSON.stringify(geoJSONData)); // To write static file
 
@@ -123,7 +127,7 @@ class FishingTracks {
 
         // Create OL Layer
         // Create URL
-        let dataStr = JSON.stringify(this.geoJSONData);
+        let dataStr = JSON.stringify(FishingTracks.geoJSONData);
         let dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
         // Create layer
         //let vectorTrackLines = new ol.layer.Vector({
@@ -161,23 +165,32 @@ class FishingTracks {
                 })
             })
         }
+
+        
         
         let port = feature.A.info.Port;
         let date = new Date(feature.A.info.Date);
         let zonaPort = feature.A.info.Port;
         let colorPort = palette[port].color;
-        //debugger;
+
+        // Check if this is the selected feature
+        let isSelected = false;
+        if (feature.A.info.Id == FishingTracks.selectedTrack)
+            isSelected = true;
+
         let portStyle = new ol.style.Style({
             stroke: new ol.style.Stroke({
                 color: 'rgba(' + colorPort + ', 1)',
-                width: 2,
-            })
+                width: isSelected ? 6 : 2,
+            }),
+            zIndex: isSelected ? 100 : 1,
         })
         let borderStyle = new ol.style.Style({
             stroke: new ol.style.Stroke({
                 color: 'rgba(0,0,0,0.6)', 
-                width: 4,
-            })
+                width: isSelected ? 12 : 4,
+            }),
+            zIndex: isSelected ? 100 : 1,
         })
         
         return [borderStyle, portStyle]
@@ -193,8 +206,26 @@ class FishingTracks {
         return this.trackLinesLayer;
     }
     // Returns geojson
-    getGeoJSON(){
-        return this.geoJSONData;
+    static getGeoJSON(){
+        return FishingTracks.geoJSONData;
+    }
+    // Set selected track
+    static setSelectedTrack(id){
+        FishingTracks.selectedTrack = id;
+    }
+    // Get selected track
+    static getSelectedTrack(){
+        return FishingTracks.selectedTrack;
+    }
+    // Get feature by id
+    static getFeatureById(id){
+        let feature = undefined;
+        FishingTracks.geoJSONData.features.forEach(ff => {
+            if (ff.properties.info.Id == id){
+                feature = ff;
+            }
+        });
+        return feature;
     }
 
 
@@ -205,10 +236,13 @@ class FishingTracks {
         this.selStartDate.setTime(sDate.getTime());
         this.selEndDate.setTime(eDate.getTime());
 
+        this.updateStyle();
+    }
+
+    updateStyle(){
         // Update styles
         if (this.trackLinesLayer !== undefined)
             this.trackLinesLayer.getSource().dispatchEvent('change');
-
     }
 
 

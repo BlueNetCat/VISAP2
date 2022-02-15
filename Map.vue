@@ -1,24 +1,39 @@
 <template>
-    <div id="app-map">
-      <!-- OL map -->
-      <div id="map" ref="OLMap" class="map position-absolute vh-100 vw-100"></div>
+    <div id="app-map" style="height: inherit">
+      <!-- LAYOUT -->
+      <div class="container-flex" style="display: flex; flex-direction: column; height: inherit">
+
+        <!-- OL map -->
+        <div class="row m-0" style="background: red; width: -webkit-fill-available; height: -webkit-fill-available;">
+          <div id="map" ref="OLMap" class="map p-0"></div>
+        </div>
+
+        <!-- Time Range Bar -->
+        <div class="row m-0" style="bottom:0; height: 100px; align-content: end; width: -webkit-fill-available;">
+            <time-range-bar class="p-0" @change="onTimeRangeChange($event)" @changeLimits="onTimeRangeChangeLimits($event)"></time-range-bar>
+        </div>
+
+      </div>
+
+
+      <!-- OVERLAYS -->
       <!-- Progress bar load tiles -->
-      <div v-show="!progress.isLoaded" class="position-absolute m-0 btn-dark" style="width: 100%; height: 10px; opacity: 0.8" :style="{'max-width': progress.progressPercent + '%'}">
+      <div v-show="!progress.isLoaded" class="position-absolute m-0 btn-dark" style="width: 100%; height: 10px; opacity: 0.8; top:0" :style="{'max-width': progress.progressPercent + '%'}">
         <div class="spinner-border text-dark" style="position: relative; margin-top: 20px; margin-left: 20px" role="status">
           <span class="visually-hidden">Loading...</span>
         </div>
       </div>
-      <!-- Legend -->
-      <!--wms-legend @legendClicked="changeStyle($event)" ref="legendWMS" class="position-absolute top-0 end-0 d-sm-flex me-2 mt-5"></wms-legend-->
-      
-      <!-- Tracks on the timeline -->
-      <tracks-timeline ref="tracksTimeLine"></tracks-timeline>
 
-      <!-- Time Range Bar -->
-      <time-range-bar @change="onTimeRangeChange($event)" @changeLimits="onTimeRangeChangeLimits($event)"></time-range-bar>
+      <!-- Tracks on the timeline -->
+      <tracks-timeline ref="tracksTimeLine" style="bottom: 120px;position: relative;"></tracks-timeline>
 
       <!-- Track info panel -->
       <!--track-panel></track-panel-->
+
+      <!-- Legend -->
+      <!--wms-legend @legendClicked="changeStyle($event)" ref="legendWMS" class="position-absolute top-0 end-0 d-sm-flex me-2 mt-5"></wms-legend-->
+      
+
     </div>
 </template>
 
@@ -332,7 +347,8 @@ export default {
      // The timeline has changed. Update the track lines
     onTimeRangeChangeLimits: function(dates){
       // Set starting and ending dates of tracks-timeline
-      this.$refs.tracksTimeLine.setStartEndDates(dates[0], dates[1]);
+      if (this.$refs.tracksTimeLine)
+        this.$refs.tracksTimeLine.setStartEndDates(dates[0], dates[1]);
     },
     
 
@@ -377,6 +393,21 @@ export default {
       return this.map;
     },
 
+    // Receive selected track and show it
+    // This event can come from HaulInfo.vue
+    setSelectedTrack: function(id){
+      // If id is undefined, it hides the selected mark
+      if (this.$refs.tracksTimeLine){
+        if (id == undefined)
+          this.$refs.tracksTimeLine.hideSelectedTrack(id);
+        else{
+          this.$refs.tracksTimeLine.showSelectedTrack(id);
+        }
+        // Update styles
+          this.fishingTracks.updateStyle();
+      }
+    },
+
 
 
 
@@ -391,7 +422,8 @@ export default {
       //this.fishingTracks.setStartEndDates(); // Set starting and ending dates in fishing tracks
       
       // Track lines overlay
-      let gjson = this.fishingTracks.getGeoJSON();
+      //let gjson = this.fishingTracks.getGeoJSON();
+      let gjson = FishingTracks.getGeoJSON();
       if (this.$refs.tracksTimeLine){
         this.$refs.tracksTimeLine.setFeatures(gjson.features);
       }
