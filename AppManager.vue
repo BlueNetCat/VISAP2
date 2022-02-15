@@ -9,7 +9,7 @@
       </div>
       <!-- Side panel -->
       <div>
-        <app-side-panel></app-side-panel>
+        <app-side-panel @selectedTrack='selectedTrack'></app-side-panel>
       </div>
 
     </div>
@@ -44,6 +44,11 @@ export default {
     }
   },
   methods: {
+    // INTERNAL EVENTS
+    selectedTrack: function(id){
+      // Send this message to map
+      this.$refs.map.setSelectedTrack(id);
+    }
   },
   components: {
     "ol-map": Map,

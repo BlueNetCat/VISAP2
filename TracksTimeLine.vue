@@ -5,7 +5,7 @@
         <div class="position-relative" style="height: 30px">
 
           <div class="tracksContainer" ref="tracksContainer">
-            <div :key="ff.properties.id" v-for="ff in features" :style="setFeatureStyle(ff)">
+            <div class="trackMark" :class="{active: ff.selected}" :key="ff.properties.id" v-for="ff in features" :style="setFeatureStyle(ff)">
                 &#11044;
             </div>
           </div>
@@ -16,6 +16,7 @@
 
 
 <script>
+// REQUIERES palette.js
 // Import components here
 
 export default {
@@ -36,7 +37,7 @@ export default {
 
   },
   mounted () {
-    this.setBackgroundGradient();
+
   },
   data () {
     return {
@@ -55,27 +56,26 @@ export default {
 
       // Left position according to start and end date
       let leftPercentage = 100*(currDate.getTime() - this.startDate.getTime()) / (this.endDate.getTime() - this.startDate.getTime());
-      // Limit on the right side to avoid overflow
+      // Limit on the sides to avoid overflow
       leftPercentage = Math.min(97, leftPercentage);
+      leftPercentage = Math.max(0, leftPercentage);
       // Opacity on the edges
-      let opacity = 1;
+      let opacity = 0.5;
       if (leftPercentage < 10)
-        opacity = leftPercentage/10;
+        opacity *= leftPercentage/10;
       else if (leftPercentage > 90)
-        opacity = (100-leftPercentage)/10;
+        opacity *= (100-leftPercentage)/10;
       // Port
       let port = ff.properties.info.Port;
       // Top position according to port
       let top = this.portOrder[port];
 
       // Color according to port from palette.js
-      let colorPort = palette ? palette[port].color : [255, 0,0];
+      let colorPort = palette ? palette[port].color : [0, 255,0];
 
       if (visible){
         return {
-          color: 'rgba(' + colorPort + ',0.5)',
-          'font-size': '0.5rem',
-          position: 'absolute',
+          color: 'rgba(' + colorPort + ', 1.0)',
           left: leftPercentage + '%',
           top: (8 + top*5) + '%',
           opacity: opacity,
@@ -86,10 +86,9 @@ export default {
       // If it is not visible, hide it
       } else {
         return {
-          'font-size': '0.5rem',
-          position: 'absolute',
+          color: 'rgba(' + colorPort + ', 1.0)',
           left: leftPercentage + '%',//'0%',
-          top: '0px',
+          top: (8 + top*5) + '%',
           opacity: 0, 
         }
       }
@@ -105,23 +104,23 @@ export default {
       this.startDate.setTime(sDate.getTime());
       this.endDate.setTime(eDate.getTime());
       //this.features.pop();
-      this.features.push([]); // TODO: FIX TRICK, DIRTY HACK
+      this.features.push([]); // TODO: FIX TRICK, DIRTY HACK. FORCES setFeaturesStyle() in Vue
       this.features.pop();
     },
-
-    setBackgroundGradient: function(){
-      return;
-      let color = [160, 215, 242];
-      let linearGradient = 'linear-gradient(90deg, '+
-        'rgba(' + color + ',0) 0%, '+
-        'rgba(' + color + ',0.8) 10%, '+
-        'rgba(' + color + ',0.8) 90%, '+
-        'rgba(' + color + ', 0) 100%';
-
-      this.$refs.tracksContainer.style.background = linearGradient
-      
-      
-      this.$refs.tracksContainer.style['box-shadow'] = '0 0 2px ' + linearGradient;// rgb(' + color + ')';
+    // Show selected track
+    showSelectedTrack: function(id){
+      this.features.forEach(ff => {
+        if (ff.properties.info.Id == id){
+          ff.selected = true;
+        } else
+          ff.selected = false;
+      });
+    },
+    // Hides the selected track (none selected)
+    hideSelectedTrack: function(){
+      this.features.forEach(ff => {
+        ff.selected = false;
+      });
     }
 
   },
@@ -146,10 +145,31 @@ export default {
   left: 130px; 
   position: relative; 
   border-radius: 1rem;
+  user-select: none;
   
   background: linear-gradient(90deg, rgba(160, 215, 242 ,0) 0%, rgba(160, 215, 242,0.8) 10%, rgba(160, 215, 242,0.8) 90%, rgba(160, 215, 242, 0) 100%);
   box-shadow: 0 -1px 2px rgba(160, 215, 242,0.8);
 }
 
+.trackMark {
+  position: absolute;
+  font-size: 0.5rem;
+}
+
+@keyframes selectedTrackAnimation {
+  0% { text-shadow: 0px 0px 4px black; }
+  50% { text-shadow: 0px 0px 0px black; }
+  100% { text-shadow: 0px 0px 4px black; }
+}
+
+.trackMark.active {
+  font-size: 1rem;
+  opacity: 1 !important;
+  z-index: 1;
+  margin-top: -6.5px;
+  margin-left: -4px;
+  text-shadow: 0px 0px 4px black;
+  animation: selectedTrackAnimation 1s infinite;
+}
 
 </style>

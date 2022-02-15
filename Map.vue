@@ -393,6 +393,21 @@ export default {
       return this.map;
     },
 
+    // Receive selected track and show it
+    // This event can come from HaulInfo.vue
+    setSelectedTrack: function(id){
+      // If id is undefined, it hides the selected mark
+      if (this.$refs.tracksTimeLine){
+        if (id == undefined)
+          this.$refs.tracksTimeLine.hideSelectedTrack(id);
+        else{
+          this.$refs.tracksTimeLine.showSelectedTrack(id);
+        }
+        // Update styles
+          this.fishingTracks.updateStyle();
+      }
+    },
+
 
 
 
@@ -407,7 +422,8 @@ export default {
       //this.fishingTracks.setStartEndDates(); // Set starting and ending dates in fishing tracks
       
       // Track lines overlay
-      let gjson = this.fishingTracks.getGeoJSON();
+      //let gjson = this.fishingTracks.getGeoJSON();
+      let gjson = FishingTracks.getGeoJSON();
       if (this.$refs.tracksTimeLine){
         this.$refs.tracksTimeLine.setFeatures(gjson.features);
       }
