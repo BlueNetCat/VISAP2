@@ -120,5 +120,7 @@ export default {
 </script>
 
 <style scoped>
-
+#haul-info {
+  font-size:12px;
+}
 </style>

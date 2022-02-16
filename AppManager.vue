@@ -1,19 +1,14 @@
 <template>
+<!-- Container -->
   <div id="app-manager">
-    <!-- Container -->
-    <div style="display: flex; flex-direction: row; width: 100%; height: 100%">
-      <!-- Map -->
-      <div style="width: -webkit-fill-available; height: -webkit-fill-available;">
-        <ol-map ref="map"></ol-map>
-        <animation-canvas ref="animcanvas"></animation-canvas>
-      </div>
-      <!-- Side panel -->
-      <div>
-        <app-side-panel @selectedTrack='selectedTrack'></app-side-panel>
-      </div>
 
-    </div>
-
+    <!-- Map  container-->
+    <ol-map id="ol-map" ref="map"></ol-map>
+    <!-- <animation-canvas ref="animcanvas"></animation-canvas> SHOULD BE ON MAP-->
+    
+    <!-- Side panel -->
+    <!-- <div style="height: 100%; width: auto"> -->
+    <app-side-panel @selectedTrack='selectedTrack'></app-side-panel>
 
   </div>
 </template>
@@ -68,6 +63,23 @@ export default {
 
 
 <style scoped>
+
+#app-manager {
+  display: flex;
+  flex-direction: row;
+  width: 100vw;
+  height: 100vh;
+  position: absolute;
+  overflow: hidden;
+}
+
+
+#ol-map {
+  /* background: red; */
+  width: 100%; 
+  height: 100%;
+}
+
 #animationCanvas {
   background: none;
 }

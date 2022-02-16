@@ -2,7 +2,7 @@
   <div id="app-side" style="display:flex; height: 100%">
 
     <!-- Tabs -->
-    <div class="position-relative" ref="buttonGroup" style="margin-top:50px; height: fit-content; display:flex; flex-direction:column">
+    <div class="position-relative" ref="buttonGroup" style="margin-top:50px; display:flex; flex-direction:column">
       <div  class="btn tab vertical-button" :class="{active: tab.isSelected}" type="button" :title="tab.name" :id="tab.id" @click="onTabClicked" :key="tab.name" v-for="tab in tabs">
        {{tab.name}}
       </div>
@@ -50,8 +50,11 @@ export default {
   },
   mounted () {
     // Move tab buttons to be inside the window
-    this.$refs.buttonGroup.style['margin-left'] = -this.$refs.buttonGroup.offsetHeight + 'px';
-    this.$refs.buttonGroup.style['margin-left'] = -this.$refs.buttonGroup.offsetWidth + 'px';
+    // this.$refs.buttonGroup.style['margin-left'] = -this.$refs.buttonGroup.offsetHeight + 'px';
+    let tabButtonGroup = this.$refs.buttonGroup;
+    //tabButtonGroup.style['margin-left'] = - Math.max(this.$refs.buttonGroup.offsetWidth, 28) + 'px';
+    tabButtonGroup.style['margin-left'] = - this.$refs.buttonGroup.offsetWidth + 'px';
+
 
     // HACK Fix Force openlayers canvas -> In the previous coude I am modifing the position of the tab buttons and the canvas does not
     // cover the whole window. Openlayers reacts to window resize events, therefore we can trigger the window event so that the
@@ -162,7 +165,7 @@ export default {
   -ms-transform: scale(-1);
   -o-transform: scale(-1);
   transform: scale(-1); 
-  writing-mode: vertical-rl;
+  writing-mode: vertical-lr;
   text-orientation: sideways;
   padding: 8px 4px 8px 4px ;
   font-size: 12px;
@@ -186,6 +189,7 @@ export default {
   color: rgb(0, 0, 0);
   background-color: #a0d7f2;
   border-color: #72b0cf;
+  min-width: 18px;
 }
 .tab.active {
   color: rgb(0, 0, 0);

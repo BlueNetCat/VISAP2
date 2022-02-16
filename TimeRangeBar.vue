@@ -439,13 +439,13 @@ export default {
 
 <style scoped>
 .timeline {
-  white-space:nowrap;
+  white-space: nowrap;
   overflow: hidden;
   position: relative;
   width: 100%;
   height: 20px;
 
-  font-size: 12;
+  font-size: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -489,7 +489,7 @@ export default {
 }
 
 .infoStartEndDate {
-  font-size: 13;
+  font-size: 13px;
   /*width: fit-content;*/
   background: rgba(198, 239, 255, 0.8);
   border-top-right-radius: 0.2rem;

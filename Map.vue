@@ -1,31 +1,26 @@
 <template>
-    <div id="app-map" style="height: inherit">
+    <div id="app-map">
       <!-- LAYOUT -->
-      <div class="container-flex" style="display: flex; flex-direction: column; height: inherit">
+      <!-- OL map -->
+      <div id="map" ref="OLMap"></div>
 
-        <!-- OL map -->
-        <div class="row m-0" style="background: red; width: -webkit-fill-available; height: -webkit-fill-available;">
-          <div id="map" ref="OLMap" class="map p-0"></div>
-        </div>
+      <!-- Time Range Bar -->
+      <time-range-bar id="time-range-bar" @change="onTimeRangeChange($event)" @changeLimits="onTimeRangeChangeLimits($event)"></time-range-bar>
+      
 
-        <!-- Time Range Bar -->
-        <div class="row m-0" style="bottom:0; height: 100px; align-content: end; width: -webkit-fill-available;">
-            <time-range-bar class="p-0" @change="onTimeRangeChange($event)" @changeLimits="onTimeRangeChangeLimits($event)"></time-range-bar>
-        </div>
-
-      </div>
+      
 
 
       <!-- OVERLAYS -->
       <!-- Progress bar load tiles -->
-      <div v-show="!progress.isLoaded" class="position-absolute m-0 btn-dark" style="width: 100%; height: 10px; opacity: 0.8; top:0" :style="{'max-width': progress.progressPercent + '%'}">
+      <!-- <div v-show="!progress.isLoaded" class="position-absolute m-0 btn-dark" style="width: 100%; height: 10px; opacity: 0.8; top:0" :style="{'max-width': progress.progressPercent + '%'}">
         <div class="spinner-border text-dark" style="position: relative; margin-top: 20px; margin-left: 20px" role="status">
           <span class="visually-hidden">Loading...</span>
         </div>
-      </div>
+      </div> -->
 
       <!-- Tracks on the timeline -->
-      <tracks-timeline ref="tracksTimeLine" style="bottom: 120px;position: relative;"></tracks-timeline>
+      <tracks-timeline ref="tracksTimeLine" style="bottom: 120px; position: relative; z-index: 2"></tracks-timeline>
 
       <!-- Track info panel -->
       <!--track-panel></track-panel-->
@@ -458,8 +453,21 @@ export default {
 
 
 <style scoped>
-.map {
+
+#map {
   background: #f8f4f0;
+  width: 100%;
+  height: calc(100% - 90px);
+  height: -webkit-calc(100% - 90px); 
+  height:    -moz-calc(100% - 90px); 
+  height:      -o-calc(100% - 90px);
+}
+
+#time-range-bar {
+  background:white;
+  bottom: 0; 
+  height: 90px; 
+  width: 100%;
 }
 
 </style>
