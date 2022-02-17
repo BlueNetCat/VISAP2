@@ -36,7 +36,7 @@ export default {
     this.selTrack = this.options[0];
   },
   mounted(){
-    this.getFishingTracks();
+    //this.getFishingTracks();
     this.getSelectedFishingTrack();
   },
   unmounted(){
@@ -80,14 +80,31 @@ export default {
 
     // PRIVATE METHODS
     // Get Fishing Tracks from FishingTracks.js
-    getFishingTracks: function(){
-      // Get geojson from FishingTracks
-      let gjsonData= FishingTracks.getGeoJSON();
-      if (gjsonData === undefined)
-        if (gjsonData.features === undefined){
-          console.error("Cannot get fishing tracks.")
-          return;
-        }
+    // getFishingTracks: function(){
+    //   // Get geojson from FishingTracks
+    //   let gjsonData= FishingTracks.getGeoJSON();
+    //   // If data is not loaded yet --> DIRTY HACK. THIS SHOULD BE A SET FROM CALLBACK INSIDE FISHING TRACKS?
+    //   if (gjsonData.features.length === 0){
+    //     // Set timeout and try again
+    //     setTimeout(this.getFishingTracks, 1000);
+    //   } else {
+    //     console.log("Fishing tracks loaded.");
+    //   }
+    //   // Process features to fit into select HTML
+    //   let features = gjsonData.features;
+    //   features.forEach((ff, index) => {
+    //     let info = ff.properties.info;
+    //     info.name = info.Port + " - " + info.Data;
+    //     this.options[index] = info;
+    //   });
+    //   // Order by date
+    //   this.options.sort((a, b) => {
+    //       return a.Date - b.Date;
+    //   });
+    // },
+
+    // Set Fishing tracks once they are loaded
+    setFishingTracks: function(gjsonData){
       // Process features to fit into select HTML
       let features = gjsonData.features;
       features.forEach((ff, index) => {
@@ -102,12 +119,24 @@ export default {
     },
 
     getSelectedFishingTrack: function(){
-      let selId = FishingTracks.getSelectedTrack();
+      let selId = FishingTracks.getSelectedTrack(); // This is a general application state. Maybe it should not be stored there
       this.options.forEach(oo =>{
         if (selId == oo.Id)
           this.selTrack = oo;
       });
-    }
+    },
+
+
+    // PUBLIC METHODS
+    // Set the selected fishing track in the select html element
+    setSelectedFishingTrack: function(id){
+      this.options.forEach(oo =>{
+        if (id == oo.Id)
+          this.selTrack = oo;
+      });
+    },
+
+    
 
   },
   components: {

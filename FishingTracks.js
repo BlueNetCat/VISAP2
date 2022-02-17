@@ -165,8 +165,6 @@ class FishingTracks {
                 })
             })
         }
-
-        
         
         let port = feature.A.info.Port;
         let date = new Date(feature.A.info.Date);

@@ -5,7 +5,7 @@
         
 
           <div class="tracksContainer" ref="tracksContainer">
-            <div class="trackMark" :class="{active: ff.selected}" :key="ff.properties.id" v-for="ff in features" :style="setFeatureStyle(ff)">
+            <div class="trackMark" :class="{active: ff.selected}" @click="onTrackClicked" :id="ff.properties.id" :key="ff.properties.id" v-for="ff in features" :style="setFeatureStyle(ff)">
                 &#11044;
             </div>
           </div>
@@ -94,6 +94,13 @@ export default {
       }
     },
 
+
+    onTrackClicked: function(event){
+      let id = event.target.id;
+      //this.showSelectedTrack(id); // It is already called from Map.vue
+      this.$emit('clickTrackMark', id);
+    },
+
     // PUBLIC METHODS
     // Set the geojson features
     setFeatures: function(inFeatures){
@@ -159,6 +166,7 @@ export default {
 .trackMark {
   position: absolute;
   font-size: 0.5rem;
+  cursor: pointer;
 }
 
 @keyframes selectedTrackAnimation {

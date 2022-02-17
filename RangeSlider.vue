@@ -216,6 +216,18 @@ export default {
         return [pLeft, pRight];
       },
 
+
+      // PUBLIC METHODS
+      // Set the range
+      setRange: function(inRange){
+        // Set handles
+        this.leftHandleEl.style.left = inRange[0] + '%';
+        let widthRigthHandle = 100*this.rightHandleEl.offsetWidth/this.rightHandleEl.parentElement.offsetWidth;
+        this.rightHandleEl.style.left = (inRange[1]-widthRigthHandle) + '%';
+        // Set middle bar
+        this.calcMiddleHandlePosition();
+      }
+
     },
     components: {
 

@@ -5,7 +5,10 @@
       <div id="map" ref="OLMap"></div>
 
       <!-- Time Range Bar -->
-      <time-range-bar id="time-range-bar" @change="onTimeRangeChange($event)" @changeLimits="onTimeRangeChangeLimits($event)"></time-range-bar>
+      <time-range-bar ref="timeRangeBar" id="time-range-bar" 
+        @changeSelDates="onTimeRangeChange($event)" 
+        @changeLimits="onTimeRangeChangeLimits($event)">
+      </time-range-bar>
       
 
       
@@ -20,7 +23,7 @@
       </div> -->
 
       <!-- Tracks on the timeline -->
-      <tracks-timeline ref="tracksTimeLine" style="bottom: 120px; position: relative; z-index: 2"></tracks-timeline>
+      <tracks-timeline ref="tracksTimeLine" @clickTrackMark="setSelectedTrack" style="bottom: 120px; position: relative; z-index: 2"></tracks-timeline>
 
       <!-- Track info panel -->
       <!--track-panel></track-panel-->
@@ -389,8 +392,9 @@ export default {
     },
 
     // Receive selected track and show it
-    // This event can come from HaulInfo.vue
+    // This event can come from HaulInfo.vue or TracksTimeLine
     setSelectedTrack: function(id){
+      
       // If id is undefined, it hides the selected mark
       if (this.$refs.tracksTimeLine){
         if (id == undefined)
@@ -398,9 +402,22 @@ export default {
         else{
           this.$refs.tracksTimeLine.showSelectedTrack(id);
         }
-        // Update styles
-          this.fishingTracks.updateStyle();
       }
+
+      // Center timeline
+      if (this.$refs['timeRangeBar']){
+        let feature = FishingTracks.getFeatureById(id);
+        let trackDate = new Date(feature.properties.info.Date);
+        this.$refs['timeRangeBar'].centerOnDate(trackDate);
+      }
+
+      // Emit to open side panel fishing tracks
+      this.$emit('onTrackClicked', id);
+
+      // Update map style
+      FishingTracks.setSelectedTrack(id);
+      this.fishingTracks.updateStyle();
+      
     },
 
 
@@ -422,6 +439,9 @@ export default {
       if (this.$refs.tracksTimeLine){
         this.$refs.tracksTimeLine.setFeatures(gjson.features);
       }
+
+      // Emit geojson loaded
+      this.$emit('onFishingTracksLoad', gjson);
       
       // OPTIONS:
       // PAINT IN A CANVAS -> TRANSFORM TO IMAGE -> MAKE IMAGE AS BACKGROUND OF TIMERANGE
@@ -455,13 +475,14 @@ export default {
 <style scoped>
 
 #map {
-  background: #f8f4f0;
+  background: #a0d7f2;
   width: 100%;
   height: calc(100% - 90px);
   height: -webkit-calc(100% - 90px); 
   height:    -moz-calc(100% - 90px); 
   height:      -o-calc(100% - 90px);
 }
+
 
 #time-range-bar {
   background:white;
