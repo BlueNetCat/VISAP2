@@ -405,18 +405,27 @@ export default {
       }
 
       // Center timeline
+      let feature = FishingTracks.getFeatureById(id);
       if (this.$refs['timeRangeBar']){
-        let feature = FishingTracks.getFeatureById(id);
         let trackDate = new Date(feature.properties.info.Date);
         this.$refs['timeRangeBar'].centerOnDate(trackDate);
       }
 
-      // Emit to open side panel fishing tracks
-      this.$emit('onTrackClicked', id);
+      // Center map to track
+      let view = this.map.getView();
+      let coord = feature.geometry.coordinates[0];
+      view.animate({
+        center: ol.proj.fromLonLat([coord[0] + 0.3, coord[1]]),
+        zoom: 9.5,
+        duration: 1000,
+      });
 
       // Update map style
       FishingTracks.setSelectedTrack(id);
       this.fishingTracks.updateStyle();
+
+      // Emit to open side panel fishing tracks
+      this.$emit('onTrackClicked', id);
       
     },
 
