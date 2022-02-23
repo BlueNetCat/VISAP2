@@ -206,6 +206,26 @@ export default {
       this.map.on('moveend', this.onMapMoveEnd);
       this.map.on('movestart', this.onMapMoveStart);
 
+      // Declare interactions
+      // Interaction (tracks clicked)
+      const selectInteraction = new ol.interaction.Select({style: null});
+      selectInteraction.on('select', (e) => {
+        // Nothing clicked
+        if (e.selected[0] === undefined)
+          return false;
+        // Track line is cliked
+        if (e.selected[0].getProperties().featType == "trackLine"){
+          this.setSelectedTrack(e.selected[0].getProperties().id);
+        }
+        // Port is clicked
+        // else if (e.selected[0].getProperties().featType == "port") {
+        //   portClicked(e);
+        // }
+      });
+
+      // Add interaction to map
+      this.map.addInteraction(selectInteraction);
+      
       // Register tile load progress
       this.registerLoadTilesEvents(this.layers.bathymetry.getSource());
     },
