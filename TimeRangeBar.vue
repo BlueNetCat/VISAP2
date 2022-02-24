@@ -4,7 +4,7 @@
       <div class="container-flex bottom-0 left-0 right-0" style="width:100%;">
 
         <!-- One row containing two columns. Col1 is start-end info. Col2 is timeline-->
-        <div class="row justify-content-start m-0">
+        <div class="row justify-content-start m-0" style="flex-wrap: nowrap">
           <div class="col-sm-2 p-0" style="max-width: 130px; min-width: 130px">
             <!-- Start and ending date -->
             <div class="infoStartEndDate p-2 h-100 notextselect">
@@ -15,6 +15,7 @@
           <div class="col p-0">
             <!-- Range slider -->
             <range-slider 
+                ref="rangeSlider"
                 @change="onRangeSliderChange($event)" 
                 @mousedown="onRangeSliderMouseDown($event)" 
                 @mouseup="onRangeSliderMouseUp($event)"
@@ -158,6 +159,11 @@ export default {
             //this.updateHTMLTimeline();
           }
         }
+        // Update selected start and end dates
+        let totalTime = this.endDate.getTime() - this.startDate.getTime();
+        this.selStartDate.setTime(this.startDate.getTime() + totalTime*this.rangeArray[0]/100);
+        this.selEndDate.setTime(this.startDate.getTime() + totalTime * this.rangeArray[1]/100);
+
         // Update HTML timeline
         this.updateHTMLTimeline();
 
@@ -178,11 +184,20 @@ export default {
         if (sDate.toISOString() == this.startDate.toISOString() && eDate.toISOString() == this.endDate.toISOString()){
           this.startDate = new Date(this.limStartDate);
           this.endDate = new Date(this.limEndDate);
+          this.selStartDate = new Date(this.startDate.getFullYear(), this.startDate.getMonth() + 1, this.startDate.getDate());
+          this.selEndDate = new Date(this.endDate.getFullYear(), this.endDate.getMonth() - 1, this.startDate.getDate());
         } else{
           this.startDate = sDate;
           this.endDate = eDate;
+          // Change selected dates to cover the whole year
+          this.selStartDate = new Date(Math.max(new Date(year, 0, 1), this.limStartDate)); // Limit selected start date
+          this.selEndDate = new Date(Math.min(new Date(year, 11, 31), this.limEndDate)); // Limit selected start date
         }
 
+        console.log(this.selStartDate);
+
+        // Set handles in range slider
+        this.setRangeSlider();
         this.updateHTMLTimeline();
       },
 
@@ -203,10 +218,19 @@ export default {
 
         this.startDate = sDate;
         this.endDate = eDate;
+        // Change selected dates to cover the months
+        this.selStartDate = new Date(this.startDate.getTime());
+        this.selStartDate.setDate(this.selStartDate.getDate() + 15); // Add half a month
+        this.selEndDate = new Date(this.endDate.getTime());
+        this.selEndDate.setDate(this.selEndDate.getDate() - 15); // Remove half a month
         
+        // Set handles in range slider
+        this.setRangeSlider();
         this.updateHTMLTimeline();
       },
 
+
+      // INTERNAL METHODS
       // Decrease starting date (returns false if the starting date does not decrease)
       decreaseStartingDate(){
         this.startDate.setDate(this.startDate.getDate() - this.dayIncrement);
@@ -237,13 +261,11 @@ export default {
 
       // Update selected start-end dates
       updateStartEndInfo(){
-        let totalTime = this.endDate.getTime() - this.startDate.getTime();
-        this.selStartDate.setTime(this.startDate.getTime() + totalTime*this.rangeArray[0]/100);
-        this.selEndDate.setTime(this.startDate.getTime() + totalTime * this.rangeArray[1]/100);
+        
         this.startStr = this.selStartDate.toDateString().substring(4);
         this.endStr = this.selEndDate.toDateString().substring(4);
         // Emit
-        this.$emit('change', [this.selStartDate, this.selEndDate]);
+        this.$emit('changeSelDates', [this.selStartDate, this.selEndDate]);
         this.$emit('changeLimits', [this.startDate, this.endDate]);
       },
 
@@ -296,6 +318,12 @@ export default {
           this.years = [{num: startYear, ww: ((endMonth + endDay/31) - (11 - startMonth + (31-startDay)/31)) / 12}];
         }
 
+
+        // Set selected start and end dates
+        this.selStartDate = new Date(startYear, startMonth + 1, startDay);
+        this.selEndDate = new Date(endYear, endMonth - 1, endDay);
+        this.setRangeSlider();
+        
         
         // Calculate ww according to number of years/months
         this.calcWidthPercentage();
@@ -317,7 +345,7 @@ export default {
         let endMonth = this.endDate.getMonth();
         let endDay = this.endDate.getDate();
         let totalYears = endYear - startYear;
-        //if (startMonth == 1) debugger;
+        
         // Find reactive array indexes
         let sIdxMonths;
         let sIdxYears;
@@ -368,6 +396,7 @@ export default {
           sIdxYears++;          
         }
         
+        
         // Calculate ww according to number of years/months
         this.calcWidthPercentage();
         // Change month name according to width in pixels
@@ -412,15 +441,85 @@ export default {
         
       },
 
-
-
       // Month num to Month string
       monthNum2Str: function(monthNum){
         return this.monthNames[monthNum];
       },
 
+      // Set time range slider according to selected start and end dates
+      setRangeSlider: function(){
+        let sTime = this.startDate.getTime();
+        let eTime = this.endDate.getTime();
+
+        // Calculate percentages
+        let timespan = eTime - sTime;
+        let sPercentage = 100 * (this.selStartDate.getTime() - sTime )/timespan;
+        let ePercentage = 100 - 100 * (eTime - this.selEndDate.getTime())/timespan;
+
+        
+        if (this.$refs.rangeSlider){
+          this.$refs.rangeSlider.setRange([sPercentage, ePercentage]);
+        }
+      },
+
+
 
       
+      // Makes sure the selected date is in range
+      setSelStartDate: function(sDate){
+        // Limit selected start date
+        this.selStartDate = new Date(Math.max(this.limStartDate, sDate));
+        // Set visible starting date one month before selected
+        this.startDate = new Date(this.selStartDate.getTime());
+        this.startDate.setMonth(this.startDate.getMonth() - 1);
+        // Limit start date
+        this.startDate = new Date(Math.max(this.limStartDate, this.startDate));
+      },
+      // Makes sure the selected date is in range
+      setSelEndDate: function(eDate){
+        // Limit selected end date
+        this.selEndDate = new Date(Math.min(this.limEndDate, eDate));
+        // Set visible starting date one month after selected
+        this.endDate = new Date(this.selEndDate.getTime());
+        this.endDate.setMonth(this.endDate.getMonth() + 1);
+        // Limit end date
+        this.endDate = new Date(Math.min(this.limEndDate, this.endDate));
+      },
+
+      
+
+      // PUBLIC METHODS
+      // Set the starting and ending dates
+      // setSelectedStartEndDates: function(sDate, eDate){
+      //   this.setSelStartDate(sDate);
+      //   this.setSelEndDate(eDate);
+      // },
+
+      // Center the date on a specific date
+      centerOnDate: function(cDate){
+        let timespan = this.selEndDate.getTime() - this.selStartDate.getTime();
+        
+        // Use half of the timespan
+        this.setSelStartDate(cDate.setTime(cDate.getTime() - timespan/2));
+        this.setSelEndDate(cDate.setTime(cDate.getTime() + timespan));
+
+        
+        console.log(this.selStartDate);
+
+        // Set handles in range slider
+        this.setRangeSlider();
+        this.updateHTMLTimeline();
+        // Emit selected dates. This updates the FishingTracks style
+        this.$emit('changeSelDates', [this.selStartDate, this.selEndDate]);
+    
+      },
+
+      // Centers on a date and change the time range
+      focusOnDate: function(fDate, rangeTime){
+        // TODO
+      },
+
+
 
 
     },
@@ -439,13 +538,13 @@ export default {
 
 <style scoped>
 .timeline {
-  white-space:nowrap;
+  white-space: nowrap;
   overflow: hidden;
   position: relative;
   width: 100%;
   height: 20px;
 
-  font-size: 12;
+  font-size: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -489,7 +588,7 @@ export default {
 }
 
 .infoStartEndDate {
-  font-size: 13;
+  font-size: 13px;
   /*width: fit-content;*/
   background: rgba(198, 239, 255, 0.8);
   border-top-right-radius: 0.2rem;

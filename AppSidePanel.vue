@@ -2,7 +2,7 @@
   <div id="app-side" style="display:flex; height: 100%">
 
     <!-- Tabs -->
-    <div class="position-relative" ref="buttonGroup" style="margin-top:50px; height: fit-content; display:flex; flex-direction:column">
+    <div class="position-relative" ref="buttonGroup" style="margin-top:50px; display:flex; flex-direction:column; height: fit-content;">
       <div  class="btn tab vertical-button" :class="{active: tab.isSelected}" type="button" :title="tab.name" :id="tab.id" @click="onTabClicked" :key="tab.name" v-for="tab in tabs">
        {{tab.name}}
       </div>
@@ -13,12 +13,13 @@
     <div class="collapse width" :class="{show: isPanelOpen}" style="overflow: auto; transition: width 0.5s">
 
       <!-- Info container -->
-      <div class="side-panel-content g-0" style="">
-        <haul-info @selectedTrack="selectedTrack" ref="haul-info" v-if="selTab == 'tracks'"></haul-info>
-        <div v-else-if="selTab === 'effort'">
+      <div class="side-panel-content g-0">
+        <haul-info @selectedTrack="selectedTrack" ref="haul-info" v-show="selTab == 'tracks'">
+        </haul-info>
+        <div v-show="selTab === 'effort'">
           <h4>Fishing Effort</h4>
         </div>
-        <div v-else-if="selTab === 'weather'">
+        <div v-show="selTab === 'weather'">
           <h4>Weather and sea conditions</h4>
         </div>
       </div>
@@ -50,8 +51,11 @@ export default {
   },
   mounted () {
     // Move tab buttons to be inside the window
-    this.$refs.buttonGroup.style['margin-left'] = -this.$refs.buttonGroup.offsetHeight + 'px';
-    this.$refs.buttonGroup.style['margin-left'] = -this.$refs.buttonGroup.offsetWidth + 'px';
+    // this.$refs.buttonGroup.style['margin-left'] = -this.$refs.buttonGroup.offsetHeight + 'px';
+    let tabButtonGroup = this.$refs.buttonGroup;
+    //tabButtonGroup.style['margin-left'] = - Math.max(this.$refs.buttonGroup.offsetWidth, 28) + 'px';
+    tabButtonGroup.style['margin-left'] = - this.$refs.buttonGroup.offsetWidth + 'px';
+
 
     // HACK Fix Force openlayers canvas -> In the previous coude I am modifing the position of the tab buttons and the canvas does not
     // cover the whole window. Openlayers reacts to window resize events, therefore we can trigger the window event so that the
@@ -123,19 +127,30 @@ export default {
     // OPTION 2- We consider FishingTracks class as singleton and we call it directly from HaulInfo.vue. We can make this call
     // iteratively until fishing tracks exist. Not so clean, as the tab Fishing Tracks should only exist once the fishing tracks
     // have been loaded. If there is an error with loading the fishing tracks, the tab should not exist?
-    setFishingTracks: function(tracks){
-      if (this.$refs['haul-info'])
-        this.$refs['haul-info'].setTracks(tracks);
-    },
-    // Opens fishing tracks panels. If open, keeps it open
-    openFishingTracks: function(fishingTrack){
-      // Unselect all first
-        Object.keys(this.tabs).forEach(kk => this.tabs[kk].isSelected = false);
+
+    // setFishingTracks: function(tracks){
+    //   if (this.$refs['haul-info'])
+    //     this.$refs['haul-info'].setTracks(tracks);
+    // },
+
+    // Opens the fishing tracks tab with the corresponding track id selected
+    openFishingTab: function(id){
       // Select tab
+      // Unselect all first
+      Object.keys(this.tabs).forEach(kk => this.tabs[kk].isSelected = false);
+      // Select tracks tab
       this.tabs.tracks.isSelected = true;
-      // Open panel
+      this.selTab = 'tracks';
+      // Set track id on tracks tab
+      this.$refs["haul-info"].setSelectedFishingTrack(id);
+      // Open panel if it is not open already
       this.openPanel();
     },
+
+    // Set the fishing tracks once they are loaded. This event comes from Map.vue
+    setFishingTracks: function(geojson){
+      this.$refs["haul-info"].setFishingTracks(geojson);
+    }
 
   },
   components: {
@@ -162,7 +177,7 @@ export default {
   -ms-transform: scale(-1);
   -o-transform: scale(-1);
   transform: scale(-1); 
-  writing-mode: vertical-rl;
+  writing-mode: vertical-lr;
   text-orientation: sideways;
   padding: 8px 4px 8px 4px ;
   font-size: 12px;
@@ -186,6 +201,7 @@ export default {
   color: rgb(0, 0, 0);
   background-color: #a0d7f2;
   border-color: #72b0cf;
+  min-width: 18px;
 }
 .tab.active {
   color: rgb(0, 0, 0);
@@ -200,6 +216,6 @@ export default {
   flex-direction: column;
   align-items: center;
   background: #e3f4ff;; 
-  height: 100%;
+  /* height: 100%; */
 }
 </style>

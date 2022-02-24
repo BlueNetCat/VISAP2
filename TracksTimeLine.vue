@@ -2,14 +2,14 @@
     <div id="tracks-timeline">
         <!-- A div with the same width as TimeRange -->
         <!--div class="container-flex maindiv position-absolute  left-0 right-0" style="user-select: none; right: 0; bottom: 120px; z-index: 1; opacity: 1; left: 130px"-->
-        <div class="position-relative" style="height: 30px">
+        
 
           <div class="tracksContainer" ref="tracksContainer">
-            <div class="trackMark" :class="{active: ff.selected}" :key="ff.properties.id" v-for="ff in features" :style="setFeatureStyle(ff)">
+            <div class="trackMark" :class="{active: ff.selected}" @click="onTrackClicked" :id="ff.properties.id" :key="ff.properties.id" v-for="ff in features" :style="setFeatureStyle(ff)">
                 &#11044;
             </div>
           </div>
-        </div>
+        
 
     </div>
 </template>
@@ -55,7 +55,7 @@ export default {
       let visible = currDate > this.startDate && currDate < this.endDate;
 
       // Left position according to start and end date
-      let leftPercentage = 100*(currDate.getTime() - this.startDate.getTime()) / (this.endDate.getTime() - this.startDate.getTime());
+      let leftPercentage = -1 + 100*(currDate.getTime() - this.startDate.getTime()) / (this.endDate.getTime() - this.startDate.getTime());
       // Limit on the sides to avoid overflow
       leftPercentage = Math.min(97, leftPercentage);
       leftPercentage = Math.max(0, leftPercentage);
@@ -92,6 +92,13 @@ export default {
           opacity: 0, 
         }
       }
+    },
+
+
+    onTrackClicked: function(event){
+      let id = event.target.id;
+      //this.showSelectedTrack(id); // It is already called from Map.vue
+      this.$emit('clickTrackMark', id);
     },
 
     // PUBLIC METHODS
@@ -139,9 +146,14 @@ export default {
 
 
 <style scoped>
+#tracks-timeline {
+  position: relative;
+  width: calc(100% - 130px); 
+  height:30px;
+}
+
 .tracksContainer {
   height:100%; 
-  width: calc(100% - 130px); 
   left: 130px; 
   position: relative; 
   border-radius: 1rem;
@@ -154,6 +166,7 @@ export default {
 .trackMark {
   position: absolute;
   font-size: 0.5rem;
+  cursor: pointer;
 }
 
 @keyframes selectedTrackAnimation {

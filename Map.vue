@@ -1,31 +1,29 @@
 <template>
-    <div id="app-map" style="height: inherit">
+    <div id="app-map">
       <!-- LAYOUT -->
-      <div class="container-flex" style="display: flex; flex-direction: column; height: inherit">
+      <!-- OL map -->
+      <div id="map" ref="OLMap"></div>
 
-        <!-- OL map -->
-        <div class="row m-0" style="background: red; width: -webkit-fill-available; height: -webkit-fill-available;">
-          <div id="map" ref="OLMap" class="map p-0"></div>
-        </div>
+      <!-- Time Range Bar -->
+      <time-range-bar ref="timeRangeBar" id="time-range-bar" 
+        @changeSelDates="onTimeRangeChange($event)" 
+        @changeLimits="onTimeRangeChangeLimits($event)">
+      </time-range-bar>
+      
 
-        <!-- Time Range Bar -->
-        <div class="row m-0" style="bottom:0; height: 100px; align-content: end; width: -webkit-fill-available;">
-            <time-range-bar class="p-0" @change="onTimeRangeChange($event)" @changeLimits="onTimeRangeChangeLimits($event)"></time-range-bar>
-        </div>
-
-      </div>
+      
 
 
       <!-- OVERLAYS -->
       <!-- Progress bar load tiles -->
-      <div v-show="!progress.isLoaded" class="position-absolute m-0 btn-dark" style="width: 100%; height: 10px; opacity: 0.8; top:0" :style="{'max-width': progress.progressPercent + '%'}">
+      <!-- <div v-show="!progress.isLoaded" class="position-absolute m-0 btn-dark" style="width: 100%; height: 10px; opacity: 0.8; top:0" :style="{'max-width': progress.progressPercent + '%'}">
         <div class="spinner-border text-dark" style="position: relative; margin-top: 20px; margin-left: 20px" role="status">
           <span class="visually-hidden">Loading...</span>
         </div>
-      </div>
+      </div> -->
 
       <!-- Tracks on the timeline -->
-      <tracks-timeline ref="tracksTimeLine" style="bottom: 120px;position: relative;"></tracks-timeline>
+      <tracks-timeline ref="tracksTimeLine" @clickTrackMark="setSelectedTrack" style="bottom: 120px; position: relative; z-index: 2"></tracks-timeline>
 
       <!-- Track info panel -->
       <!--track-panel></track-panel-->
@@ -208,6 +206,26 @@ export default {
       this.map.on('moveend', this.onMapMoveEnd);
       this.map.on('movestart', this.onMapMoveStart);
 
+      // Declare interactions
+      // Interaction (tracks clicked)
+      const selectInteraction = new ol.interaction.Select({style: null});
+      selectInteraction.on('select', (e) => {
+        // Nothing clicked
+        if (e.selected[0] === undefined)
+          return false;
+        // Track line is cliked
+        if (e.selected[0].getProperties().featType == "trackLine"){
+          this.setSelectedTrack(e.selected[0].getProperties().id);
+        }
+        // Port is clicked
+        // else if (e.selected[0].getProperties().featType == "port") {
+        //   portClicked(e);
+        // }
+      });
+
+      // Add interaction to map
+      this.map.addInteraction(selectInteraction);
+      
       // Register tile load progress
       this.registerLoadTilesEvents(this.layers.bathymetry.getSource());
     },
@@ -394,8 +412,9 @@ export default {
     },
 
     // Receive selected track and show it
-    // This event can come from HaulInfo.vue
+    // This event can come from HaulInfo.vue or TracksTimeLine
     setSelectedTrack: function(id){
+      
       // If id is undefined, it hides the selected mark
       if (this.$refs.tracksTimeLine){
         if (id == undefined)
@@ -403,9 +422,33 @@ export default {
         else{
           this.$refs.tracksTimeLine.showSelectedTrack(id);
         }
-        // Update styles
-          this.fishingTracks.updateStyle();
       }
+
+      // Center timeline
+      let feature = FishingTracks.getFeatureById(id);
+      if (this.$refs['timeRangeBar']){
+        let trackDate = new Date(feature.properties.info.Date);
+        this.$refs['timeRangeBar'].centerOnDate(trackDate);
+      }
+
+      // Center map to track
+      let view = this.map.getView();
+      let coord = feature.geometry.coordinates[0];
+      let currentZoom = view.getZoom();
+      let longCorrection = currentZoom > 11 ? 0.1 : 0.3;
+      view.animate({
+        center: ol.proj.fromLonLat([coord[0] + longCorrection, coord[1]]),
+        zoom: Math.max(9.5, currentZoom),
+        duration: 1000,
+      });
+
+      // Update map style
+      FishingTracks.setSelectedTrack(id);
+      this.fishingTracks.updateStyle();
+
+      // Emit to open side panel fishing tracks
+      this.$emit('onTrackClicked', id);
+      
     },
 
 
@@ -427,6 +470,9 @@ export default {
       if (this.$refs.tracksTimeLine){
         this.$refs.tracksTimeLine.setFeatures(gjson.features);
       }
+
+      // Emit geojson loaded
+      this.$emit('onFishingTracksLoad', gjson);
       
       // OPTIONS:
       // PAINT IN A CANVAS -> TRANSFORM TO IMAGE -> MAKE IMAGE AS BACKGROUND OF TIMERANGE
@@ -458,8 +504,22 @@ export default {
 
 
 <style scoped>
-.map {
-  background: #f8f4f0;
+
+#map {
+  background: #a0d7f2;
+  width: 100%;
+  height: calc(100% - 90px);
+  height: -webkit-calc(100% - 90px); 
+  height:    -moz-calc(100% - 90px); 
+  height:      -o-calc(100% - 90px);
+}
+
+
+#time-range-bar {
+  background:white;
+  bottom: 0; 
+  height: 90px; 
+  width: 100%;
 }
 
 </style>

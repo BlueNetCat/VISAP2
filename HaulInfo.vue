@@ -14,9 +14,8 @@
       </select>
     </div>
     <!-- Row -->
-    <!-- <div class="row p-2 g-0">
-      Selected track: {{selTrack.name}}
-    </div> -->
+    <div class="row p-2 g-0" ref="pieChart">
+    </div>
     <!-- Row -->
     <div class="row p-2 g-0">
       <ul>
@@ -36,7 +35,7 @@ export default {
     this.selTrack = this.options[0];
   },
   mounted(){
-    this.getFishingTracks();
+    //this.getFishingTracks();
     this.getSelectedFishingTrack();
   },
   unmounted(){
@@ -74,20 +73,38 @@ export default {
 
       // Set on FishingTracks 
       FishingTracks.setSelectedTrack(id);
+
       // Emit selected target
       this.$emit('selectedTrack', id);
     },
 
     // PRIVATE METHODS
     // Get Fishing Tracks from FishingTracks.js
-    getFishingTracks: function(){
-      // Get geojson from FishingTracks
-      let gjsonData= FishingTracks.getGeoJSON();
-      if (gjsonData === undefined)
-        if (gjsonData.features === undefined){
-          console.error("Cannot get fishing tracks.")
-          return;
-        }
+    // getFishingTracks: function(){
+    //   // Get geojson from FishingTracks
+    //   let gjsonData= FishingTracks.getGeoJSON();
+    //   // If data is not loaded yet --> DIRTY HACK. THIS SHOULD BE A SET FROM CALLBACK INSIDE FISHING TRACKS?
+    //   if (gjsonData.features.length === 0){
+    //     // Set timeout and try again
+    //     setTimeout(this.getFishingTracks, 1000);
+    //   } else {
+    //     console.log("Fishing tracks loaded.");
+    //   }
+    //   // Process features to fit into select HTML
+    //   let features = gjsonData.features;
+    //   features.forEach((ff, index) => {
+    //     let info = ff.properties.info;
+    //     info.name = info.Port + " - " + info.Data;
+    //     this.options[index] = info;
+    //   });
+    //   // Order by date
+    //   this.options.sort((a, b) => {
+    //       return a.Date - b.Date;
+    //   });
+    // },
+
+    // Set Fishing tracks once they are loaded
+    setFishingTracks: function(gjsonData){
       // Process features to fit into select HTML
       let features = gjsonData.features;
       features.forEach((ff, index) => {
@@ -102,12 +119,60 @@ export default {
     },
 
     getSelectedFishingTrack: function(){
-      let selId = FishingTracks.getSelectedTrack();
+      let selId = FishingTracks.getSelectedTrack(); // This is a general application state. Maybe it should not be stored there
       this.options.forEach(oo =>{
         if (selId == oo.Id)
           this.selTrack = oo;
       });
-    }
+    },
+
+
+    // Create and set pie chart
+    setPieChart: function(id){
+      // Load haul from server or from file
+      if (window.serverConnection)
+        this.getHaul("http://localhost:8080/haulSpecies?HaulId=" + id, 'data/hauls/' + id + '.json', this.selTrack);
+      else
+        this.getHaul('data/hauls/' + id + '.json', undefined, this.selTrack);
+      
+    },
+
+
+    // Fetch haul data from server of static file
+    getHaul: function(address, staticFile, info) {
+      fetch(address).then(r => r.json()).then(r => {
+        //console.log(r)
+        // Create PieChart
+        let pieChart = new PieChart();
+        let preparedData = pieChart.processSample(r);
+        this.$refs.pieChart.innerHTML = "";
+        pieChart.runApp(this.$refs.pieChart, preparedData, d3, info.Port + ", " + info.Data, "Biomassa", "kg / km2");
+
+      }).catch(e => {
+        if (staticFile !== undefined){ // Load static file
+          console.error("Could not fetch from " + address + ". Error: " + e + ".");
+          window.serverConnection = false;
+          getHaul(staticFile, undefined, info);
+        } else {
+          console.error("Could not fetch from " + address + ". Error: " + e + ".");
+        }
+      })
+    },
+
+
+    // PUBLIC METHODS
+    // Set the selected fishing track in the select html element
+    // Vue automatically updates the HTML element
+    setSelectedFishingTrack: function(id){
+      this.options.forEach(oo =>{
+        if (id == oo.Id)
+          this.selTrack = oo;
+      });
+      // Update pie chart
+      this.setPieChart(id);
+    },
+
+    
 
   },
   components: {
@@ -120,5 +185,7 @@ export default {
 </script>
 
 <style scoped>
-
+#haul-info {
+  font-size:12px;
+}
 </style>
