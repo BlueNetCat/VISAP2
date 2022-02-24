@@ -216,6 +216,6 @@ export default {
   flex-direction: column;
   align-items: center;
   background: #e3f4ff;; 
-  height: 100%;
+  /* height: 100%; */
 }
 </style>

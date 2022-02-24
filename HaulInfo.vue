@@ -14,9 +14,8 @@
       </select>
     </div>
     <!-- Row -->
-    <!-- <div class="row p-2 g-0">
-      Selected track: {{selTrack.name}}
-    </div> -->
+    <div class="row p-2 g-0" ref="pieChart">
+    </div>
     <!-- Row -->
     <div class="row p-2 g-0">
       <ul>
@@ -74,6 +73,7 @@ export default {
 
       // Set on FishingTracks 
       FishingTracks.setSelectedTrack(id);
+
       // Emit selected target
       this.$emit('selectedTrack', id);
     },
@@ -127,13 +127,49 @@ export default {
     },
 
 
+    // Create and set pie chart
+    setPieChart: function(id){
+      // Load haul from server or from file
+      if (window.serverConnection)
+        this.getHaul("http://localhost:8080/haulSpecies?HaulId=" + id, 'data/hauls/' + id + '.json', this.selTrack);
+      else
+        this.getHaul('data/hauls/' + id + '.json', undefined, this.selTrack);
+      
+    },
+
+
+    // Fetch haul data from server of static file
+    getHaul: function(address, staticFile, info) {
+      fetch(address).then(r => r.json()).then(r => {
+        //console.log(r)
+        // Create PieChart
+        let pieChart = new PieChart();
+        let preparedData = pieChart.processSample(r);
+        this.$refs.pieChart.innerHTML = "";
+        pieChart.runApp(this.$refs.pieChart, preparedData, d3, info.Port + ", " + info.Data, "Biomassa", "kg / km2");
+
+      }).catch(e => {
+        if (staticFile !== undefined){ // Load static file
+          console.error("Could not fetch from " + address + ". Error: " + e + ".");
+          window.serverConnection = false;
+          getHaul(staticFile, undefined, info);
+        } else {
+          console.error("Could not fetch from " + address + ". Error: " + e + ".");
+        }
+      })
+    },
+
+
     // PUBLIC METHODS
     // Set the selected fishing track in the select html element
+    // Vue automatically updates the HTML element
     setSelectedFishingTrack: function(id){
       this.options.forEach(oo =>{
         if (id == oo.Id)
           this.selTrack = oo;
       });
+      // Update pie chart
+      this.setPieChart(id);
     },
 
     

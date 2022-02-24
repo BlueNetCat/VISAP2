@@ -434,9 +434,11 @@ export default {
       // Center map to track
       let view = this.map.getView();
       let coord = feature.geometry.coordinates[0];
+      let currentZoom = view.getZoom();
+      let longCorrection = currentZoom > 11 ? 0.1 : 0.3;
       view.animate({
-        center: ol.proj.fromLonLat([coord[0] + 0.3, coord[1]]),
-        zoom: 9.5,
+        center: ol.proj.fromLonLat([coord[0] + longCorrection, coord[1]]),
+        zoom: Math.max(9.5, currentZoom),
         duration: 1000,
       });
 
