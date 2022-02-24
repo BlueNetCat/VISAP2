@@ -498,10 +498,23 @@ export default {
       // Center the date on a specific date
       centerOnDate: function(cDate){
         let timespan = this.selEndDate.getTime() - this.selStartDate.getTime();
+        let timeStart = cDate.getTime() - timespan/2;
+        let timeEnd = cDate.getTime() + timespan/2;
+        // If starting date is earlier than the limit, add this difference to the end time
         
-        // Use half of the timespan
-        this.setSelStartDate(cDate.setTime(cDate.getTime() - timespan/2));
-        this.setSelEndDate(cDate.setTime(cDate.getTime() + timespan));
+        if (timeStart < this.limStartDate.getTime()){
+          timeEnd += this.limStartDate.getTime() - timeStart;
+        }
+        // Same for ending date
+        if (timeEnd > this.limEndDate.getTime()){
+          timeStart -= timeEnd - this.limEndDate.getTime();
+        }
+        
+        // Set starting and ending dates
+        this.setSelStartDate(cDate.setTime(timeStart));
+        
+
+        this.setSelEndDate(cDate.setTime(timeEnd));
 
         
         console.log(this.selStartDate);
