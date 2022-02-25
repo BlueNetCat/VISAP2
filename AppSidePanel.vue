@@ -19,9 +19,10 @@
         <div v-show="selTab === 'effort'">
           <h4>Fishing Effort</h4>
         </div>
-        <div v-show="selTab === 'weather'">
+        <weather-info ref="weather-info" v-show="selTab === 'weather'"></weather-info>
+        <!-- <div v-show="selTab === 'weather'">
           <h4>Weather and sea conditions</h4>
-        </div>
+        </div> -->
       </div>
 
     </div>
@@ -40,6 +41,7 @@
 <script>
 // Import components
 import HaulInfo from "HaulInfo.vue"
+import Weather from "Weather.vue"
 //import Map from "Map.vue";
 //import AnimationCanvas from "AnimationCanvas.vue";
 
@@ -150,11 +152,13 @@ export default {
     // Set the fishing tracks once they are loaded. This event comes from Map.vue
     setFishingTracks: function(geojson){
       this.$refs["haul-info"].setFishingTracks(geojson);
+      this.$refs["weather-info"].setFishingTracks(geojson);
     }
 
   },
   components: {
     "haul-info": HaulInfo,
+    "weather-info": Weather,
     //"ol-map": Map,
     //"animation-canvas": AnimationCanvas,
   },
