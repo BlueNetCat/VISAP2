@@ -194,8 +194,6 @@ export default {
           this.selEndDate = new Date(Math.min(new Date(year, 11, 31), this.limEndDate)); // Limit selected start date
         }
 
-        console.log(this.selStartDate);
-
         // Set handles in range slider
         this.setRangeSlider();
         this.updateHTMLTimeline();
@@ -329,6 +327,12 @@ export default {
         this.calcWidthPercentage();
         // Change month name according to width in pixels
         this.setMonthNames();
+        // TODO ERROR: NONE OF THIS WORKS. THE SIDE PANEL CHANGES WIDTH AND SHRINKS monthTimeline, CHANING ITS WIDTH. IT SHOULD DISPATCH AN EVENT BUT IT DOES NOT
+        // It is fixed by doing a concatenation of events
+        this.$refs.monthTimeline.addEventListener('resize', this.setMonthNames);
+        //this.$refs.monthTimeline.addEventListener("webkitTransitionEnd", this.setMonthNames); // Code for Chrome, Safari and Opera
+        //this.$refs.monthTimeline.addEventListener("transitionend", this.setMonthNames); // Standard syntax
+
         // Update selected start-end dates
         this.updateStartEndInfo();
 
@@ -423,6 +427,7 @@ export default {
 
       // Change the month name according to the width in pixels
       setMonthNames: function(){
+        
         let totalWidth = this.$refs.monthTimeline.offsetWidth;
         this.months.forEach(mm => {
           let pixelWidth = mm.ww/100 * totalWidth;
@@ -498,13 +503,23 @@ export default {
       // Center the date on a specific date
       centerOnDate: function(cDate){
         let timespan = this.selEndDate.getTime() - this.selStartDate.getTime();
+        let timeStart = cDate.getTime() - timespan/2;
+        let timeEnd = cDate.getTime() + timespan/2;
+        // If starting date is earlier than the limit, add this difference to the end time
         
-        // Use half of the timespan
-        this.setSelStartDate(cDate.setTime(cDate.getTime() - timespan/2));
-        this.setSelEndDate(cDate.setTime(cDate.getTime() + timespan));
+        if (timeStart < this.limStartDate.getTime()){
+          timeEnd += this.limStartDate.getTime() - timeStart;
+        }
+        // Same for ending date
+        if (timeEnd > this.limEndDate.getTime()){
+          timeStart -= timeEnd - this.limEndDate.getTime();
+        }
+        
+        // Set starting and ending dates
+        this.setSelStartDate(cDate.setTime(timeStart));
+        
 
-        
-        console.log(this.selStartDate);
+        this.setSelEndDate(cDate.setTime(timeEnd));
 
         // Set handles in range slider
         this.setRangeSlider();
@@ -514,9 +529,9 @@ export default {
     
       },
 
-      // Centers on a date and change the time range
-      focusOnDate: function(fDate, rangeTime){
-        // TODO
+      // The side panel has been opened or closed. Update the month names. Called from Map.vue > AppManager.vue > AppSidePanel.vue
+      onTabOpenClose: function(){
+        this.setMonthNames();
       },
 
 
