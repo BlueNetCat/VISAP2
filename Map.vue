@@ -452,6 +452,14 @@ export default {
     },
 
 
+    // Panel was open or closed by clicking a tab
+    onTabClicked: function(){
+      if (this.$refs['timeRangeBar']){
+        this.$refs['timeRangeBar'].onTabOpenClose();
+      }
+    },
+
+
 
 
     // CALLBACKS

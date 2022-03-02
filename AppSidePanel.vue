@@ -10,7 +10,7 @@
 
 
     <!-- Panel -->
-    <div class="collapse width" :class="{show: isPanelOpen}" style="overflow: auto; transition: width 0.5s">
+    <div class="collapse width" ref="panel" :class="{show: isPanelOpen}" style="overflow: auto; transition: width 0.5s">
 
       <!-- Info container -->
       <div class="side-panel-content g-0">
@@ -58,8 +58,12 @@ export default {
     //tabButtonGroup.style['margin-left'] = - Math.max(this.$refs.buttonGroup.offsetWidth, 28) + 'px';
     tabButtonGroup.style['margin-left'] = - this.$refs.buttonGroup.offsetWidth + 'px';
 
+    // When side panel is fully opened or closed, repeats the event onTabClicked
+    this.$refs.panel.addEventListener("webkitTransitionEnd", () => this.$emit('onPanelTransitionEnd')); // Code for Chrome, Safari and Opera
+    this.$refs.panel.addEventListener("transitionend", () => this.$emit('onPanelTransitionEnd')); // Standard syntax
 
-    // HACK Fix Force openlayers canvas -> In the previous coude I am modifing the position of the tab buttons and the canvas does not
+
+    // HACK Fix Force openlayers canvas to fill window -> In the previous coude I am modifing the position of the tab buttons and the canvas does not
     // cover the whole window. Openlayers reacts to window resize events, therefore we can trigger the window event so that the
     // canvas fills the whole window.
     window.dispatchEvent(new Event('resize'));
@@ -108,6 +112,9 @@ export default {
         this.selTab = id;
         this.openPanel();
       }
+
+      // Emit that the panel open or closes, so that the month names in TimeRangeBar.vue can be updated
+      this.$emit('onTabClicked');
     },
 
     // INTERNAL EVENTS

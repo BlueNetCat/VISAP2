@@ -8,7 +8,7 @@
     
     <!-- Side panel -->
     <!-- <div style="height: 100%; width: auto"> -->
-    <app-side-panel ref="sidePanel" @selectedTrack='selectedTrack'></app-side-panel>
+    <app-side-panel ref="sidePanel" @selectedTrack='selectedTrack' @onTabClicked='sidePanelTabClicked' @onPanelTransitionEnd='sidePanelTabClicked'></app-side-panel>
 
   </div>
 </template>
@@ -19,6 +19,20 @@
 
 
 <script>
+/*
+APP STRUCTURE
+
+                APP MANAGER
+              /            \
+        OL-MAP              APP-SIDE-PANEL
+        /                      \           \
+    TIME-RANGE-BAR           HAUL-INFO    WEATHER-INFO
+      /
+  RANGE-SLIDER
+
+*/
+
+
 // Import components
 import Map from "Map.vue";
 import AnimationCanvas from "AnimationCanvas.vue";
@@ -54,6 +68,11 @@ export default {
     fishingTracksLoad: function(geojson){
       // Send data to HaulInfo.vue
       this.$refs.sidePanel.setFishingTracks(geojson);
+    },
+    // When the user clicks on a tab (AppSidePanel.vue), update the month names in TimeRangeBar
+    sidePanelTabClicked: function(){
+      // Send event to map
+      this.$refs.map.onTabClicked();
     }
   },
   components: {
