@@ -6,13 +6,46 @@
     </div>
     <!-- Row -->
     <div class="row p-3 g-0">
-      <div>Select a track</div>
       <!-- TODO: This should be a modal with a table where you could sort by date and port. -->
       <select v-model="selTrack" @change="onSelectTrack">
         <option :id="option.Id" :key="option.Id" :value="option" v-for="option in options" >
           {{ option.name }}
         </option>
       </select>
+    </div>
+
+    <!-- Row -->
+    <div class="row p-2 g-0">
+      <ul>
+        <!-- Sea surface temperature -->
+        <li style="list-style-position: inside;">
+          Sea surface temperature: {{seaTemp}} ºC
+          <div v-show='isLoading' class="spinner-border text-dark" style="width: 1rem; height: 1rem; position: relative; margin-left: 10px" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+        </li>
+        <!-- Sea bottom temperature -->
+        <li style="list-style-position: inside;">
+          Sea bottom temperature: {{seaBottomTemp}} ºC
+          <div v-show='isLoading' class="spinner-border text-dark" style="width: 1rem; height: 1rem; position: relative; margin-left: 10px" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+        </li>
+
+        <!-- <li style="list-style-position: inside;">
+          Sea surface temperature: {{seaTemp}} ºC
+          <div v-show='isLoading' class="spinner-border text-dark" style="width: 1rem; height: 1rem; position: relative; margin-left: 10px" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+        </li> -->
+
+        <!-- <li style="list-style-position: inside;">
+          Sea surface temperature: {{seaTemp}} ºC
+          <div v-show='isLoading' class="spinner-border text-dark" style="width: 1rem; height: 1rem; position: relative; margin-left: 10px" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+        </li> -->
+      </ul>
     </div>
 
   </div>
@@ -27,6 +60,8 @@ export default {
   name: "weather-info",
   created(){
     this.selTrack = this.options[0];
+    // Should be in a different .vue object?
+    this.dataRetriever = new WMSDataRetriever();
   },
   mounted(){
     //this.getFishingTracks();
@@ -55,7 +90,14 @@ export default {
         Port: "L'Ametlla de Mar",
         ZonaPort: "Sud",
         name: "L'Ametlla de Mar - 2020-11-12"},
-      ]
+      ],
+      isLoading: true,
+      seaTemp: '',
+      seaBottomTemp: '',
+      sal: '',
+      waveSignHeight: '',
+      wind: '',
+      chlor: '',
     }
   },
   methods: {
@@ -67,6 +109,9 @@ export default {
 
       // Set on FishingTracks 
       FishingTracks.setSelectedTrack(id);
+
+      // Update weather
+      this.getWeatherData();
 
       // Emit selected target
       this.$emit('selectedTrack', id);
@@ -97,6 +142,27 @@ export default {
     },
 
 
+    // Get weather data from WMSDataRetriever
+    getWeatherData: async function(){
+      // TODO
+      /*
+      Conceptualy, this panel should show the layers? Meaning it should be a selection of the weather layers you want to superpose?
+      */
+      let ff = FishingTracks.getFeatureById(this.selTrack.Id);
+      let coord = ff.geometry.coordinates[0];
+      let lat = coord[1];
+      let long = coord[0];
+      let date = ff.properties.info.Data + 'T00:00:00.000Z';
+      // Set loader
+      this.seaTemp = '...';
+      this.isLoading = true;
+      let tempValue = await this.dataRetriever.getDataAtPoint("Sea temperature", date, lat, long, 'd');
+      this.isLoading = false;
+      this.seaTemp = tempValue.toFixed(2);
+      console.log(tempValue);
+    },
+
+
 
 
     // PUBLIC METHODS
@@ -108,6 +174,7 @@ export default {
           this.selTrack = oo;
       });
       // Update weather
+      this.getWeatherData();
     },
 
     
