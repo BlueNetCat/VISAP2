@@ -49,6 +49,25 @@ dataTypes = {
       // CRS instead of SRS
     },
   },
+  "Sea bottom temperature": {
+    // Reanalysis comes from a different base URL. Only monthly and daily
+    // 'https://my.cmems-du.eu/thredds/wms/med-cmcc-tem-rean-m?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities'
+    // https://my.cmems-du.eu/thredds/wms/med-cmcc-tem-rean-d?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities
+    name: 'Sea bottom temperature',
+    url: 'med-cmcc-tem-rean', // Forecast: 'med-cmcc-tem-an-fc',
+    version: '1.1.1',
+    layerName: 'bottomT',
+    timeScales: ['d', 'd3', 'm'], // In reanalysis, not hourly available: 'h', 'h3', 'h6', 'h12', 
+    range: [1, 40],
+    units: 'ºC',
+    style: "boxfill%2Foccam",
+    forecast: {
+      url: 'med-cmcc-tem-an-fc',
+      domainURL: 'https://nrt.cmems-du.eu/thredds/wms/',
+      version: '1.1.1',
+      // CRS instead of SRS
+    },
+  },
   "Salinity": {
     // https://my.cmems-du.eu/thredds/wms/med-cmcc-sal-rean-m?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities
     // https://my.cmems-du.eu/thredds/wms/med-cmcc-sal-rean-d?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities
@@ -157,7 +176,7 @@ dataTypes = {
 
 
   // CONSTRUCTOR
-  constructor(){
+  constructor(onLoadCallback){
     // Loading control
     let loading = 0;
     let loaded = 0;
@@ -178,7 +197,16 @@ dataTypes = {
         if (dataType.timeScales.includes(currTimeScale)){
           let oPURL = dataType.url + "-" + currTimeScale;
           // Get Capabilities
-          this.loadWMSCapabilities(dataType, this.domainURL + oPURL, currTimeScale);
+          loading++;
+          this.loadWMSCapabilities(dataType, this.domainURL + oPURL, currTimeScale)
+            .then(() => {
+              // Callback when all capabilities have been loaded
+              loaded++;
+              if (loading - loaded == 0 & onLoadCallback !== undefined)
+                onLoadCallback();
+              console.log("Total left to load: " + (loading - loaded));
+              
+            });
         } else {
           console.log("Skipping " + dataType.url + " in " + timeScales[i]);
         }
@@ -393,7 +421,7 @@ dataTypes = {
     let vPrec = await this.getValueFromURL(url); // Normalized value from 0 to 1
     // Put in range (normValue * (max-min) + min)
     vPrec = vPrec * (quantStep * 2) + value - quantStep;
-    console.log("Generic value: " + value + ", Precise value: " + vPrec);
+    console.log("Quantized value (255 steps): " + value + ", Precise value: " + vPrec);
     // Return value
     return vPrec;
   }
