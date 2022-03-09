@@ -12,6 +12,7 @@ dataTypes = {
     // https://my.cmems-du.eu/thredds/wms/med-cmcc-cur-rean-m?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities
     name: 'Sea surface velocity',
     url: 'med-cmcc-cur-rean', // Forecast 'med-cmcc-cur-an-fc',
+    domainURL: 'https://my.cmems-du.eu/thredds/wms/',
     version: '1.1.1',
     layerName: 'sea_water_velocity', 
     timeScales: ['d', 'd3', 'm'], // In reanalysis, no hourly; 'h', 'h3', 'h6', 'h12', 
@@ -36,6 +37,7 @@ dataTypes = {
     // https://my.cmems-du.eu/thredds/wms/med-cmcc-tem-rean-d?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities
     name: 'Sea temperature',
     url: 'med-cmcc-tem-rean', // Forecast: 'med-cmcc-tem-an-fc',
+    domainURL: 'https://my.cmems-du.eu/thredds/wms/',
     version: '1.1.1',
     layerName: 'thetao',
     timeScales: ['d', 'd3', 'm'], // In reanalysis, not hourly available: 'h', 'h3', 'h6', 'h12', 
@@ -55,6 +57,7 @@ dataTypes = {
     // https://my.cmems-du.eu/thredds/wms/med-cmcc-tem-rean-d?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities
     name: 'Sea bottom temperature',
     url: 'med-cmcc-tem-rean', // Forecast: 'med-cmcc-tem-an-fc',
+    domainURL: 'https://my.cmems-du.eu/thredds/wms/',
     version: '1.1.1',
     layerName: 'bottomT',
     timeScales: ['d', 'd3', 'm'], // In reanalysis, not hourly available: 'h', 'h3', 'h6', 'h12', 
@@ -73,6 +76,7 @@ dataTypes = {
     // https://my.cmems-du.eu/thredds/wms/med-cmcc-sal-rean-d?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities
     name: 'Salinity',
     url: 'med-cmcc-sal-rean',// Forecast 'med-cmcc-sal-an-fc', 
+    domainURL: 'https://my.cmems-du.eu/thredds/wms/',
     version: '1.1.1',
     layerName: 'so',
     timeScales: ['d', 'd3', 'm'], // In reanalysis, only daily and monthly; 'h', 'h3', 'h6', 'h12', 
@@ -91,6 +95,7 @@ dataTypes = {
     // https://my.cmems-du.eu/thredds/wms/med-hcmr-wav-rean-h?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&FORMAT=image/png&TRANSPARENT=TRUE&LAYERS=VHM0&STYLES=boxfill/ncview&LOGSCALE=false&SRS=EPSG:4326&BBOX=-22.5,22.5,0,45&WIDTH=512&HEIGHT=512&COLORSCALERANGE=0,10&BELOWMINCOLOR=0x0000ff&ABOVEMAXCOLOR=0xff0001&TIME=2007-02-20T22:00:00.000Z
     name: 'Wave significant height',
     url: 'med-hcmr-wav-rean',// Forecast 'med-hcmr-wav-an-fc',
+    domainURL: 'https://my.cmems-du.eu/thredds/wms/',
     version: '1.1.1',
     layerName: 'VHM0', // 'VMDR' for direction in degrees
     timeScales: ['h', 'h3', 'h6', 'h12'],
@@ -112,6 +117,7 @@ dataTypes = {
   "Wind wave significant height": {
     name: 'Wind wave significant height',
     url: 'med-hcmr-wav-rean',// Forecast 'med-hcmr-wav-an-fc',
+    domainURL: 'https://my.cmems-du.eu/thredds/wms/',
     version: '1.1.1',
     layerName: 'VHM0_WW', // 'VMDR' for direction in degrees
     timeScales: ['h', 'h3', 'h6', 'h12'],
@@ -134,6 +140,7 @@ dataTypes = {
     name: 'Wave period',
     scientificName: 'Sea surface wave mean period from variance spectral density inverse frequency moment',
     url: 'med-hcmr-wav-rean',// Forecast 'med-hcmr-wav-an-fc',
+    domainURL: 'https://my.cmems-du.eu/thredds/wms/',
     version: '1.1.1',
     layerName: 'VTM10', // Check out other period measures
     timeScales: ['h', 'h3', 'h6', 'h12'],
@@ -152,6 +159,7 @@ dataTypes = {
     // https://my.cmems-du.eu/thredds/wms/med-ogs-pft-rean-m?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities
     name: 'Chlorophyll',
     url: 'med-ogs-pft-rean',// Forecast: 'med-ogs-pft-an-fc',
+    domainURL: 'https://my.cmems-du.eu/thredds/wms/',
     version: '1.1.1',
     layerName: 'chl',
     timeScales: ['d', 'd3', 'm'],
@@ -166,13 +174,38 @@ dataTypes = {
     },
     // https://nrt.cmems-du.eu/thredds/wms/med-ogs-pft-an-fc-d?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&FORMAT=image%2Fpng&TRANSPARENT=true&TILED=true&COLORSCALERANGE=0.028321734%2C2.3005204&ELEVATION=-1.0182366371154785&LAYERS=chl&STYLES=boxfill%2Frainbow&TIME=2021-10-06T12%3A00%3A00.000Z&WIDTH=256&HEIGHT=256&CRS=EPSG%3A4326&BBOX=28.125%2C16.875%2C33.75%2C22.5
   },
+  "Wind": {
+    name: 'Wind',
+    url: 'CERSAT-GLO-BLENDED_WIND_L4_REP-V6-OBS_FULL_TIME_SERIE',
+    domainURL: 'https://my.cmems-du.eu/thredds/wms/',
+    urlLocked: true,
+    version: '1.1.1',
+    layerName: 'wind_speed',
+    timeScales: ['h6'],
+    range: [0, 30],
+    units: 'm/s',
+    style: "boxfill%2Foccam",//"vector%2Foccam",
+    animation: {
+      layerNames: ['eastward_wind', 'northward_wind'], // East, North
+      format: 'east_north',
+      type: 'velocity'
+    },
+    forecast: {
+      url: 'CERSAT-GLO-BLENDED_WIND_L4-V6-OBS_FULL_TIME_SERIE',
+      domainURL: 'https://nrt.cmems-du.eu/thredds/wms/',
+      version: '1.1.1',
+      // CRS instead of SRS
+    },
+  },
 }
 
 
 
   // Create object with CMEMS product urls
   // https://resources.marine.copernicus.eu/products
-  timeScales = ["h", "d", "m"];
+  timeScales = ["h", "h6", "d", "m"]; // TODO: Note 1: the dataTypes have certain timeScales that are defined by me, not by the product. 
+  // For example, wind has only h6 (intervals of 6h), whereas others can have hourly intervals.
+  // They also have the timescale h6, not because the service provides it, but because I decide to show this interval in the front end.
 
 
   // CONSTRUCTOR
@@ -194,8 +227,11 @@ dataTypes = {
       for (let i = 0; i < timeScales.length; i++) {
         let currTimeScale = timeScales[i];
         // Skip if time scale is not present in datatype
+
         if (dataType.timeScales.includes(currTimeScale)){
-          let oPURL = dataType.url + "-" + currTimeScale;
+          let oPURL = dataType.url;
+          if (!dataType.urlLocked) // Wind product does not use the '-timeScale' url format
+            oPURL += "-" + currTimeScale[0]; // TODO: currTimeScale[0] instead of currTimeScale is a HACK for TODO Note 1
           // Get Capabilities
           loading++;
           this.loadWMSCapabilities(dataType, this.domainURL + oPURL, currTimeScale)
@@ -304,9 +340,9 @@ dataTypes = {
     });
   }
 
-
+  
   // Get data at a specific point
-  getDataAtPoint = async function(dataName, date, lat, long, timeScale){
+  getDataAtPoint = async function(dataName, date, lat, long, timeScale, direction){
     
     // Input variables
     // var dataName = "Sea temperature";
@@ -329,16 +365,25 @@ dataTypes = {
       tScale = dataType.timeScales[0];
       console.warn("Time scale petitioned does not exist in the ocean prodcut. Ocean product: " + dataType.name + ". Time scale petitioned: " + timeScale + ". Available time scales: " + dataType.timeScales);
     }
+    // If we want the direction
+    if (direction) {
+      // Check if direction exists (animation)
+      if (dataType.animation == undefined) {
+        console.error("Data type " + dataName + " does not have direction information.");
+        return;
+      }
+    }
     // Check if WMS capabilities were loaded
     if (dataType.timeScaleCorrection == undefined){
       console.warn("WMS Capabilities were not yet loaded. Loading now");
       // Get Capabilities
       await this.loadWMSCapabilities(dataType, this.domainURL + dataType.url + "-" + currTimeScale, currTimeScale);
     }
+    
 
     // Check if the date is smaller than the lastDate of the WMS reanlysis
     // TODO: check if the timeScalesCorrection is also equivalent for forecast service. If not, we need to GetCapabilities of each forecast
-    let domainURL = this.domainURL;
+    let domainURL = dataType.domainURL;
     let serviceURL = dataType.url;
     let version = dataType.version; // 1.1.1 or 1.3.0 (then CRS should be instead of SRS)
     if (date > dataType.lastDate){
@@ -383,6 +428,7 @@ dataTypes = {
       params['ELEVATION'] = String(dataType.elevation[0]);
     
     // Add time parameter
+    date = date.substring(0, 11) + '00:00:00.000Z'// Clean date
     if (tScale.includes('d')){
       let tCorr = dataType.timeScaleCorrection.d;
       let hString = String(tCorr.h).padStart(2, '0');
@@ -399,33 +445,83 @@ dataTypes = {
 
 
     // Construct WMS url
-    let url = domainURL + serviceURL + '-' + tScale[0] + '?SERVICE=WMS&VERSION='+ version +'&REQUEST=GetMap&FORMAT=image/png';
-
+    let url = domainURL + serviceURL;
+    if (dataType.urlLocked)
+      url += '?SERVICE=WMS&VERSION=' + version + '&REQUEST=GetMap&FORMAT=image/png';
+    else
+      url += '-' + tScale[0] + '?SERVICE=WMS&VERSION='+ version +'&REQUEST=GetMap&FORMAT=image/png';
     Object.keys(params).forEach(ppKey => {
       url += '&' + ppKey + '=' + params[ppKey];
     });
 
-    // Get value from URL
+
+
+    // If no direction is requested
+    if (direction == undefined){
+      // Get value from URL
+      return await this.getPreciseValueFromURL(url, dataType.range);
+    }
+
+
+
+    // If direction is requested
+    let animData = dataType.animation;
+    // Angle format
+    if (animData.format == 'value_angle'){
+      url = SourceWMS.setWMSParameter(url, 'LAYERS', animData.layerNames[1]);
+      url = SourceWMS.setWMSParameter(url, 'COLORSCALERANGE', String(dataType.range));
+
+      //params.LAYERS = animData.layerNames[1];
+      //params.COLORSCALERANGE = String([0, 359]);
+      // Object.keys(params).forEach(ppKey => {
+      //   url += '&' + ppKey + '=' + params[ppKey];
+      // });
+
+      // Get value from URL
+      return await this.getPreciseValueFromURL(url, [0, 359]);
+    } 
+    // East-North format
+    else if (animData.format == 'east_north'){
+
+
+      // url = SourceWMS.setWMSParameter(url, 'LAYERS', animData.layerNames[0]);
+      // let east = await this.getPreciseValueFromURL(url, dataType.range);
+      // url = SourceWMS.setWMSParameter(url, 'LAYERS', animData.layerNames[1]);
+      // let north = await this.getPreciseValueFromURL(url, dataType.range);
+      // Calculate angle
+      // TODO: could call an async function where east and north are requested at the same time
+      return await this.getEastNorthValues(url, animData.layerNames, dataType.range);
+
+    }
+
+  }
+
+
+
+  // Returns the precise value from a WMS URL
+  getPreciseValueFromURL = async function(url, range){
     let value = await this.getValueFromURL(url); // Normalized value from 0 to 1
-    if (value == undefined){
-      console.log("No data at lat " + lat + ", long "+ long);
+    if (value == undefined) {
+      console.log("No data at lat " + lat + ", long " + long);
       return;
     }
     // Put in range of the data type (normValue * (max-min) + min)
-    value = value * (dataType.range[1] - dataType.range[0]) + dataType.range[0];
+    value = value * (range[1] - range[0]) + range[0];
     // Improve precision
     // Quantization step is 0.4% (100*1/255). We can improve the precision by reducing the color scale range
-    let quantStep = (dataType.range[1] - dataType.range[0]) * 1/255;
-    url = SourceWMS.setWMSParameter(url, 'COLORSCALERANGE', [value-quantStep, value+quantStep]);
+    let quantStep = (range[1] - range[0]) * 1 / 255;
+    url = SourceWMS.setWMSParameter(url, 'COLORSCALERANGE', [value - quantStep, value + quantStep]);
     // Get precise value from URL
     let vPrec = await this.getValueFromURL(url); // Normalized value from 0 to 1
     // Put in range (normValue * (max-min) + min)
     vPrec = vPrec * (quantStep * 2) + value - quantStep;
-    console.log("Quantized value (255 steps): " + value + ", Precise value: " + vPrec);
+    // console.log("Quantized value (255 steps): " + value + ", Precise value: " + vPrec);
     // Return value
     return vPrec;
   }
 
+
+  // Returns the value from a WMS URL
   getValueFromURL = async function(url){
     let img = await this.getImageFromURL(url);
     return this.getNormValueFromImage(img);
@@ -456,5 +552,17 @@ dataTypes = {
     if (alpha == 0)
       return undefined;
     return pixel/255;
+  }
+
+
+  // TODO: PARALLEL ASYNC CALLS
+  // https://ankurpatel.in/blog/call-multiple-async-await-functions-parallel-or-sequential/
+  getEastNorthValues = async function(url, layerNames, range){
+    url = SourceWMS.setWMSParameter(url, 'LAYERS', layerNames[0]);
+    let east = await this.getPreciseValueFromURL(url, range);
+    url = SourceWMS.setWMSParameter(url, 'LAYERS', layerNames[1]);
+    let north = await this.getPreciseValueFromURL(url, range);
+    // Return values
+    return Math.atan2(north, east) * (180 / Math.PI);
   }
 }

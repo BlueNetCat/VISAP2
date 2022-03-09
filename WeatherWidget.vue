@@ -9,17 +9,19 @@
         <tr>
           <td></td>
           <!-- Col for each day -->
-          <th class="wcol" :key="dd" v-for="dd in days">{{dd}}, </th>
+          <th class="wcol" :key="dd" v-for="dd in daysString">
+            {{dd}}
+          </th>
         </tr>
       </thead>
       <!-- Table body - Variables -->
       <tbody>
         <!-- Row -->
-        <tr>
+        <tr :key="dR.name" v-for="(dR, index) in dataRows">
           <!-- Row name -->
-          <th scope="row">Sea Temperature</th>
+          <th scope="row">{{dR.name}} ({{dR.units}})</th>
           <!-- Values -->
-          <td class="wcol" :key="dd.value" v-for="dd in dataRows[0].data">
+          <td class="wcol" :key="dd.value" v-for="dd in dataRows[index].data">
             <div v-show='dd.loading' class="spinner-border text-dark" style="width: 1rem; height: 1rem; position: relative; margin-left: 10px" role="status">
               <span class="visually-hidden">Loading...</span>
             </div>
@@ -50,9 +52,17 @@ export default {
     this.dataRows.forEach(dr => {
       dr.data = [];
       for (let i = 0; i < 7; i++)
-        dr.data[i] = {value: '10', loading: true}
+        dr.data[i] = {value: '', loading: true};
     });
-    
+    // Create dates
+    let today = new Date();
+    today.setFullYear(today.getFullYear() - 1);
+    this.dates = [];
+    for (let i = 0; i < 7; i++){
+      this.daysString[this.daysString.length-1 - i] = today.toDateString().substring(0,3) + ' ' + today.getDate();
+      this.dates[this.daysString.length-1 - i] = new Date(today.getTime());
+      today.setDate(today.getDate() - 1);
+    }
   },
   mounted(){
   },
@@ -78,24 +88,19 @@ export default {
           range: [10, 25],
           colorScale: 'boxfill/sst_36'
         },
-        {
-          name: "Depth",
-          abbr: "Depth",
-          units: "m",
-          range: [0, 1000],
-          colorScale: 'boxfill/greyscale'
-        },
-        { // TODO
+        { 
           name: "Wind",
           abbr: "Wind",
           units: "m/s", 
           range: [0, 15],
           colorScale: 'boxfill/sst_36'
         },
-        { // TODO
+        { 
           name: "Wind direction",
           abbr: "Dir",
-          direction: true, // TODO
+          units: "º",
+          direction: true, 
+          layer: "Wind",
         },
         {
           name: "Wave significant height",
@@ -107,19 +112,27 @@ export default {
         {
           name: "Wave direction",
           abbr: "Dir",
-          units: "", 
-          direction: true // TODO
+          units: "º", 
+          direction: true, 
+          layer: "Wave significant height",
         },
         {
           name: "Wave period",
-          abbr: "period",
+          abbr: "T",
           units: "s", 
           range: [0,15],
           color: '#82b4f9' // TODO: color or colorScale. If color, go from transparent to the specified color.
         },
+        {
+          name: "Chlorophyll",
+          abbr: "Chl",
+          units: "mg/m3", 
+          range: [0,1.5],
+          color: '#82f988'
+        },
 
       ],
-      days: [1,2,3,4,5,6,7],
+      daysString: [1,2,3,4,5,6,7],
       isLoading: true,
       seaTemp: '',
       seaBottomTemp: '',
@@ -139,53 +152,30 @@ export default {
     // PRIVATE METHODS
     getData: function(){
       // Get data (now only sea temperature)
-      let date = new Date();
       let lat = 41.5; let long = 3;
-      console.log("here")
-      this.dataRetriever.getDataAtPoint("Sea temperature", date.toISOString(), lat, long, 'd')
-        .then(value => {
-          this.dataRows[0].data[0].value = value.toFixed(2);
-          this.dataRows[0].data[0].loading = false;
-        })
-        .catch(error => console.error(error));
+      this.dataRows.forEach((rr, rIndex) => {
+        this.dates.forEach((date, dIndex) => {
+          let layerName = rr.direction ? rr.layer : rr.name;
+          this.dataRetriever.getDataAtPoint(layerName, date.toISOString(), lat, long, 'd', rr.direction)
+          .then(value => {
+            rr.data[dIndex].value = value.toFixed(2);
+            rr.data[dIndex].loading = false;
+          })
+          .catch(error => {
+            console.error(error);
+            rr.data[dIndex].value = 'x';
+            rr.data[dIndex].loading = false;
+          });
+        });
+      })
+      
+      
     },
 
 
 
 
     // PUBLIC METHODS
-    getWeatherData: async function(){
-      let ff = FishingTracks.getFeatureById(this.selTrack.Id);
-      let coord = ff.geometry.coordinates[0];
-      let lat = coord[1];
-      let long = coord[0];
-      let date = ff.properties.info.Data + 'T00:00:00.000Z';
-      // Reset variables while loading
-      // TODO: automatize all this
-      this.seaTemp = '...';
-      this.seaBottomTemp = '...';
-      // Set loader
-      let toLoad = 2;
-      let loaded = 0;
-      this.isLoading = true;
-      this.dataRetriever.getDataAtPoint("Sea temperature", date, lat, long, 'd')
-        .then(value => {
-          loaded++;
-          this.seaTemp = value.toFixed(2);
-          if (loaded == toLoad)
-            this.isLoading = false;
-        })
-        .catch(error => console.error(error));
-
-      this.dataRetriever.getDataAtPoint("Sea bottom temperature", date, lat, long, 'd')
-        .then(value => {
-          loaded++;
-          this.seaBottomTemp = value.toFixed(2);
-          if (loaded == toLoad)
-            this.isLoading = false;
-        })
-        .catch(error => console.error(error));
-    }
 
     
 
@@ -202,16 +192,16 @@ export default {
 <style scoped>
 .wcontainer {
   font-size:12px;
-  display: flex; 
-  flex-direction: column;
+  /* display: flex; 
+  flex-direction: column; */
   width: 100%;
   /* border:black;
   border-style: solid; */
 }
 
 .wrow {
-  display: flex;
-  flex-direction: row;
+  /* display: flex;
+  flex-direction: row; */
   /* border:rgb(95, 95, 95);
   border-style: solid; */
 }
@@ -219,7 +209,7 @@ export default {
 .wcol {
   border:rgb(252, 252, 252);
   border-style: solid;
-  flex-grow: 1;
+  /* flex-grow: 1; */
   text-align: center;
   align-items: center;
 }
