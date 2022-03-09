@@ -214,6 +214,9 @@ dataTypes = {
     let loading = 0;
     let loaded = 0;
 
+    this.dataTypes = JSON.parse(preLoadedDataTypes);
+    if (onLoadCallback !== undefined) onLoadCallback();
+    return
     // Iterate over data types and connect with the WMS service
     // Adds the time intervals to the dataTypes.
     // Adds elevation parameter if available. This might be useful to make plots time-depth
@@ -238,8 +241,10 @@ dataTypes = {
             .then(() => {
               // Callback when all capabilities have been loaded
               loaded++;
-              if (loading - loaded == 0 & onLoadCallback !== undefined)
+              if (loading - loaded == 0 & onLoadCallback !== undefined){
                 onLoadCallback();
+                console.log(JSON.stringify(dataTypes));
+              }
               console.log("Total left to load: " + (loading - loaded));
               
             });
@@ -469,7 +474,7 @@ dataTypes = {
     // Angle format
     if (animData.format == 'value_angle'){
       url = SourceWMS.setWMSParameter(url, 'LAYERS', animData.layerNames[1]);
-      url = SourceWMS.setWMSParameter(url, 'COLORSCALERANGE', String(dataType.range));
+      url = SourceWMS.setWMSParameter(url, 'COLORSCALERANGE', String([-360,360]));
 
       //params.LAYERS = animData.layerNames[1];
       //params.COLORSCALERANGE = String([0, 359]);
@@ -478,7 +483,8 @@ dataTypes = {
       // });
 
       // Get value from URL
-      return await this.getPreciseValueFromURL(url, [0, 359]);
+      let value = await this.getPreciseValueFromURL(url, [-360, 360]);
+      return value;
     } 
     // East-North format
     else if (animData.format == 'east_north'){
