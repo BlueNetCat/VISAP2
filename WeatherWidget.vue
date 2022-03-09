@@ -1,52 +1,38 @@
 <template>
-  <div id="weather-widget" class="p-4 container-fluid">
-    <!-- Row -->
-    <div class="row p-3">
-      <h4>Weather and sea conditions</h4>
-    </div>
-    <!-- Row -->
-    <div class="row p-3 g-0">
-      <!-- TODO: This should be a modal with a table where you could sort by date and port. -->
-      <select v-model="selTrack" @change="onSelectTrack">
-        <option :id="option.Id" :key="option.Id" :value="option" v-for="option in options" >
-          {{ option.name }}
-        </option>
-      </select>
-    </div>
+  <!-- Container -->
+  <div id="weather-widget" class="wcontainer">
+    
+    <!-- Table -->
+    <table>
+      <!-- Table Head - Days -->
+      <thead>
+        <tr>
+          <td></td>
+          <!-- Col for each day -->
+          <th class="wcol" :key="dd" v-for="dd in days">{{dd}}, </th>
+        </tr>
+      </thead>
+      <!-- Table body - Variables -->
+      <tbody>
+        <!-- Row -->
+        <tr>
+          <!-- Row name -->
+          <th scope="row">Sea Temperature</th>
+          <!-- Values -->
+          <td class="wcol" :key="dd.value" v-for="dd in dataRows[0].data">
+            <div v-show='dd.loading' class="spinner-border text-dark" style="width: 1rem; height: 1rem; position: relative; margin-left: 10px" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+            <span v-show='!dd.loading'>{{dd.value}}</span>
+          </td>
+        </tr>
+      </tbody>
 
-    <!-- Row -->
-    <div class="row p-2 g-0">
-      <ul>
-        <!-- Sea surface temperature -->
-        <li style="list-style-position: inside;">
-          Sea surface temperature: {{seaTemp}} ºC
-          <div v-show='isLoading' class="spinner-border text-dark" style="width: 1rem; height: 1rem; position: relative; margin-left: 10px" role="status">
-            <span class="visually-hidden">Loading...</span>
-          </div>
-        </li>
-        <!-- Sea bottom temperature -->
-        <li style="list-style-position: inside;">
-          Sea bottom temperature: {{seaBottomTemp}} ºC
-          <div v-show='isLoading' class="spinner-border text-dark" style="width: 1rem; height: 1rem; position: relative; margin-left: 10px" role="status">
-            <span class="visually-hidden">Loading...</span>
-          </div>
-        </li>
 
-        <!-- <li style="list-style-position: inside;">
-          Sea surface temperature: {{seaTemp}} ºC
-          <div v-show='isLoading' class="spinner-border text-dark" style="width: 1rem; height: 1rem; position: relative; margin-left: 10px" role="status">
-            <span class="visually-hidden">Loading...</span>
-          </div>
-        </li> -->
+    </table>
 
-        <!-- <li style="list-style-position: inside;">
-          Sea surface temperature: {{seaTemp}} ºC
-          <div v-show='isLoading' class="spinner-border text-dark" style="width: 1rem; height: 1rem; position: relative; margin-left: 10px" role="status">
-            <span class="visually-hidden">Loading...</span>
-          </div>
-        </li> -->
-      </ul>
-    </div>
+
+
 
   </div>
 </template>
@@ -59,7 +45,14 @@ export default {
   // REQUIRES WMSDataRetriever.js
   name: "weather-info",
   created(){
-    this.dataRetriever = new WMSDataRetriever();
+    this.dataRetriever = new WMSDataRetriever(this.getData);
+    // Create data array inside dataRows
+    this.dataRows.forEach(dr => {
+      dr.data = [];
+      for (let i = 0; i < 7; i++)
+        dr.data[i] = {value: '10', loading: true}
+    });
+    
   },
   mounted(){
   },
@@ -74,9 +67,9 @@ export default {
           name: "Sea temperature",
           abbr: "Sea t",
           units: 'ºC',
-          elevation: true, // TODO: ALLOWS 2D PLOT IF CLICKED ON THE VARIABLE NAME ▼
+          elevation: true, // TODO: ALLOWS 2D PLOT IF CLICKED ON THE VARIABLE NAME ▼?
           range: [10, 25],
-          colorScale: 'boxfill/sst_36'
+          colorScale: 'boxfill/sst_36',
         },
         {
           name: "Sea bottom temperature",
@@ -126,6 +119,7 @@ export default {
         },
 
       ],
+      days: [1,2,3,4,5,6,7],
       isLoading: true,
       seaTemp: '',
       seaBottomTemp: '',
@@ -143,7 +137,18 @@ export default {
     },
 
     // PRIVATE METHODS
-    
+    getData: function(){
+      // Get data (now only sea temperature)
+      let date = new Date();
+      let lat = 41.5; let long = 3;
+      console.log("here")
+      this.dataRetriever.getDataAtPoint("Sea temperature", date.toISOString(), lat, long, 'd')
+        .then(value => {
+          this.dataRows[0].data[0].value = value.toFixed(2);
+          this.dataRows[0].data[0].loading = false;
+        })
+        .catch(error => console.error(error));
+    },
 
 
 
@@ -195,7 +200,27 @@ export default {
 </script>
 
 <style scoped>
-#weather-widget {
+.wcontainer {
   font-size:12px;
+  display: flex; 
+  flex-direction: column;
+  width: 100%;
+  /* border:black;
+  border-style: solid; */
+}
+
+.wrow {
+  display: flex;
+  flex-direction: row;
+  /* border:rgb(95, 95, 95);
+  border-style: solid; */
+}
+
+.wcol {
+  border:rgb(252, 252, 252);
+  border-style: solid;
+  flex-grow: 1;
+  text-align: center;
+  align-items: center;
 }
 </style>

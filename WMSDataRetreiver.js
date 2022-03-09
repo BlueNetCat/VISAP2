@@ -387,7 +387,7 @@ dataTypes = {
       let tCorr = dataType.timeScaleCorrection.d;
       let hString = String(tCorr.h).padStart(2, '0');
       let minString = String(tCorr.min).padStart(2, '0');
-      date = date.substring(0, 11) + hString + ':' + minString + date.substring(16);
+      date = date.substring(0, 11) + hString + ':' + minString + ':00.000Z';
     } else if (tScale.includes('m')){
       let tCorr = dataType.timeScaleCorrection.m;
       // Find corresponding month
