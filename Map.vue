@@ -317,11 +317,14 @@ export default {
           progress.isLoaded = true;
         }
       });
-      /*source.on('tileloaderror', () => {
-        progress.loaded += 1; 
-        if (progress.loading == progress.loaded)
-          this.onTilesLoaded();
-      });*/
+      source.on('tileloaderror', () => {
+        progress.loaded += 1;
+        progress.progressPercent = 100*progress.loaded/progress.loading;
+        if (progress.loading == progress.loaded){
+          this.onTilesLoaded(); // TODO: could reference the isLayerDataReady to source, so we control if a source is ready
+          progress.isLoaded = true;
+        }
+      });
     },
 
 
