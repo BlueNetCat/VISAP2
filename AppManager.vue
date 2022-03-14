@@ -7,9 +7,9 @@
     <!-- <animation-canvas ref="animcanvas"></animation-canvas> SHOULD BE ON MAP-->
     
     <!-- Side panel -->
-    <!-- <div style="height: 100%; width: auto"> -->
     <app-side-panel ref="sidePanel" @selectedTrack='selectedTrack' @onTabClicked='sidePanelTabClicked' @onPanelTransitionEnd='sidePanelTabClicked'></app-side-panel>
 
+    <!-- <weather-widget></weather-widget> -->
   </div>
 </template>
 
@@ -38,6 +38,7 @@ import Map from "Map.vue";
 import AnimationCanvas from "AnimationCanvas.vue";
 import AppSidePanel from "AppSidePanel.vue"
 
+import WeatherWidget from "WeatherWidget.vue"
 
 export default {
   name: "app-manager",
@@ -78,7 +79,10 @@ export default {
   components: {
     "ol-map": Map,
     "animation-canvas": AnimationCanvas,
-    "app-side-panel": AppSidePanel
+    "app-side-panel": AppSidePanel,
+
+    "weather-widget": WeatherWidget
+    
   },
   computed: {
   
