@@ -25,10 +25,10 @@ APP STRUCTURE
                 APP MANAGER
               /            \
         OL-MAP              APP-SIDE-PANEL
-        /                      \           \
-    TIME-RANGE-BAR           HAUL-INFO    WEATHER-INFO
-      /
-  RANGE-SLIDER
+        /                      \          
+    TIME-RANGE-BAR           HAUL-INFO    
+      /                          \
+  RANGE-SLIDER               WEATHER-WIDGET
 
 */
 

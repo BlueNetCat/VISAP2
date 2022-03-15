@@ -1,6 +1,11 @@
 <template>
   <!-- Container -->
   <div id="weather-widget" class="wcontainer p-1">
+    <div>
+      <h6>Weather and sea conditions</h6>
+      Date: {{currentDate}}, Latitude: {{lat}} º, Longitude: {{long}} º
+    </div>
+    
     
     <!-- Table -->
     <table>
@@ -22,7 +27,7 @@
           <th scope="row">{{dR.name}} ({{dR.units}})</th>
           <!-- Values -->
           <td class="wcol" :key="dd.value" v-for="dd in dataRows[index].data">
-            <div v-if='dd.loading' class="spinner-border text-dark" style="width: 1rem; height: 1rem; position: relative; margin-left: 10px" role="status">
+            <div v-if='dd.loading' class="spinner-border text-dark" style="width: 1rem; height: 1rem; position: relative;" role="status">
               <span class="visually-hidden">Loading...</span>
             </div>
             <div v-else-if='dR.direction' :style="{'transform': 'rotate('+ (-dd.value - 90) +'deg)'}" :title="dd.value + 'º'">&#10140;</div>
@@ -31,12 +36,23 @@
           </td>
         </tr>
       </tbody>
-
-
+      
     </table>
 
+    <div>
+      <i>Generated using E.U. Copernicus Marine Service Information; </i>
+      <i><a href="https://doi.org/10.25423/CMCC/MEDSEA_ANALYSISFORECAST_PHY_006_013_EAS6" target="_blank" rel="noreferrer noopener">Sea Physics Analysis and Forecast; </a></i>
+      <i><a href="https://doi.org/10.25423/CMCC/MEDSEA_MULTIYEAR_PHY_006_004_E3R1" target="_blank" rel="noreferrer noopener">Sea Physics Reanalysis; </a></i>
 
+      <i><a href="https://doi.org/10.25423/cmcc/medsea_analysisforecast_wav_006_017_medwam3" target="_blank" rel="noreferrer noopener">Sea Waves Analysis and Forecast; </a></i>
+      <i><a href="https://doi.org/10.25423/cmcc/medsea_multiyear_wav_006_012" target="_blank" rel="noreferrer noopener">Sea Waves Reanalysis; </a></i>
 
+      <i><a href="https://doi.org/10.25423/cmcc/medsea_analysisforecast_bgc_006_014_medbfm3" target="_blank" rel="noreferrer noopener">Sea Biogeochemistry Analysis and Forecast; </a></i>
+      <i><a href="https://doi.org/10.25423/cmcc/medsea_multiyear_bgc_006_008_medbfm3" target="_blank" rel="noreferrer noopener">Sea Biogechemistry Reanalysis; </a></i>
+
+      <i><a href="https://doi.org/10.48670/moi-00184" target="_blank" rel="noreferrer noopener">Wind L4 Near real Time; </a></i>
+      <i><a href="https://doi.org/10.48670/moi-00185" target="_blank" rel="noreferrer noopener">Wind L4 Reprocessed; </a></i>
+    </div>
 
   </div>
 </template>
@@ -49,6 +65,8 @@ export default {
   // REQUIRES WMSDataRetriever.js
   name: "weather-info",
   created(){
+    // Create data retreiver
+    this.dataRetriever = new WMSDataRetriever();
     
     // Create data array inside dataRows
     this.dataRows.forEach(dr => {
@@ -56,20 +74,12 @@ export default {
       for (let i = 0; i < this.numDays; i++)
         dr.data[i] = {value: '', loading: true};
     });
-    // Create dates
-    let today = new Date();
-    //today.setFullYear(today.getFullYear() - 1);
-    today.setDate(today.getDate() + 5);
-    this.dates = [];
-    for (let i = 0; i < this.numDays; i++){
-      this.daysString[this.numDays-1 - i] = today.toDateString().substring(0,3) + ' ' + today.getDate();
-      this.dates[this.numDays-1 - i] = new Date(today.getTime());
-      today.setDate(today.getDate() - 1);
-    }
-
-    // Create data retreiver
-    this.dataRetriever = new WMSDataRetriever();
-    this.getData();
+ 
+    
+    // Update table
+    this.updateTable(new Date(2020, 10, 12), 40.78, 0.98); // Preselected track
+    
+    
   },
   mounted(){
   },
@@ -168,15 +178,12 @@ export default {
           colorScale: 'boxfill/sst_36'
         },
       ],
-      numDays: 15,
+      numDays: 7,
       daysString: [],
-      isLoading: true,
-      seaTemp: '',
-      seaBottomTemp: '',
-      sal: '',
-      waveSignHeight: '',
-      wind: '',
-      chlor: '',
+      currentDate: '',
+      lat: '',
+      long: '',
+
     }
   },
   methods: {
@@ -187,9 +194,8 @@ export default {
     },
 
     // PRIVATE METHODS
-    getData: function(){
+    getData: function(lat, long){
       // Get data (now only sea temperature)
-      let lat = 41.5; let long = 3;
       this.dataRows.forEach((rr, rIndex) => {
         this.dates.forEach((date, dIndex) => {
           let layerName = rr.direction ? rr.layer : rr.name;
@@ -215,8 +221,9 @@ export default {
       let color = dR.color;
       let range = dR.signRange ? dR.signRange : dR.range; // Significant range
       let value = dd.value;
-
-      let alpha = 255*(value - range[0]) / (range[1] - range[0]);
+      
+      let alpha = value == 'x' ? 0 : 255*(value - range[0]) / (range[1] - range[0]);
+      alpha = Math.max(Math.min(alpha, 255), 0); // Clamp for HEX conversion
 
       let textWeight = 'normal';
       if (dR.signRange){
@@ -230,13 +237,42 @@ export default {
         'background-color': color + alpha.toString(16).split('.')[0],
         'font-weight': textWeight
       }
-    }
+    },
+
+    // Create dates
+    createDates: function(inputDate) {
+      // If dates does not exists (initialization)
+      this.dates = this.dates == undefined ? this.dates = [] : this.dates;
+
+      for (let i = 0; i < this.numDays; i++){
+        this.daysString[this.numDays-1 - i] = inputDate.toDateString().substring(0,3) + ' ' + inputDate.getDate();
+        this.dates[this.numDays-1 - i] = new Date(inputDate.getTime());
+        inputDate.setDate(inputDate.getDate() - 1);
+      }
+
+      
+    },
 
 
 
 
     // PUBLIC METHODS
-
+    updateTable: function(inputDate, lat, long){
+      this.lat = lat.toFixed(2);
+      this.long = long.toFixed(2);
+      this.currentDate = inputDate.toString().substring(0,15);
+      // Reset loading
+      this.dataRows.forEach(dr => {
+        for (let i = 0; i < this.numDays; i++){
+          dr.data[i].value = '';
+          dr.data[i].loading = true;
+        }
+      });
+      // Create dates
+      this.createDates(inputDate);
+      // Update data
+      this.getData(lat, long);
+    }
     
 
   },
@@ -275,4 +311,16 @@ export default {
   align-items: center;
   padding: 2px;
 }
+
+/* unvisited link */
+a:link { color: #808080; }
+
+/* visited link */
+a:visited { color: #808080; }
+
+/* mouse over link */
+a:hover { color: #424242; }
+
+/* selected link */
+a:active { color: #000000; }
 </style>

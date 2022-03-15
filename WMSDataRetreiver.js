@@ -541,6 +541,7 @@ dataTypes = {
       img.addEventListener('load', () => resolve(img));
       img.addEventListener('error', reject);
       img.src = url;
+      console.log(url);
     })
   }
 
