@@ -16,11 +16,11 @@
 
       <!-- OVERLAYS -->
       <!-- Progress bar load tiles -->
-      <!-- <div v-show="!progress.isLoaded" class="position-absolute m-0 btn-dark" style="width: 100%; height: 10px; opacity: 0.8; top:0" :style="{'max-width': progress.progressPercent + '%'}">
+      <div v-show="!progress.isLoaded" class="position-absolute m-0 btn-dark" style="width: 100%; height: 10px; opacity: 0.8; top:0" :style="{'max-width': progress.progressPercent + '%'}">
         <div class="spinner-border text-dark" style="position: relative; margin-top: 20px; margin-left: 20px" role="status">
           <span class="visually-hidden">Loading...</span>
         </div>
-      </div> -->
+      </div>
 
       <!-- Tracks on the timeline -->
       <tracks-timeline ref="tracksTimeLine" @clickTrackMark="setSelectedTrack" style="bottom: 120px; position: relative; z-index: 2"></tracks-timeline>
@@ -317,11 +317,14 @@ export default {
           progress.isLoaded = true;
         }
       });
-      /*source.on('tileloaderror', () => {
-        progress.loaded += 1; 
-        if (progress.loading == progress.loaded)
-          this.onTilesLoaded();
-      });*/
+      source.on('tileloaderror', () => {
+        progress.loaded += 1;
+        progress.progressPercent = 100*progress.loaded/progress.loading;
+        if (progress.loading == progress.loaded){
+          this.onTilesLoaded(); // TODO: could reference the isLayerDataReady to source, so we control if a source is ready
+          progress.isLoaded = true;
+        }
+      });
     },
 
 

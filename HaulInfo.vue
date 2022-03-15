@@ -16,6 +16,7 @@
     <!-- Row -->
     <div class="row p-2 g-0" ref="pieChart">
     </div>
+    
     <!-- Row -->
     <div class="row p-2 g-0">
       <ul>
@@ -24,10 +25,17 @@
         </li>
       </ul>
     </div>
+
+    <!-- Row -->
+    <div class="row p-2 g-0">
+      <weather-widget ref="weatherWidget"></weather-widget>
+    </div>
   </div>
+  
 </template>
 
 <script>
+import WeatherWidget from './WeatherWidget.vue';
 export default {
   // REQUIRES FishingTracks.js
   name: "haul-info",
@@ -170,12 +178,20 @@ export default {
       });
       // Update pie chart
       this.setPieChart(id);
+      // Update weather table
+      if (this.$refs.weatherWidget){
+        // Get date, lat, and long
+        let coords = FishingTracks.getFeatureById(id).geometry.coordinates;
+        let middleCoordinate = coords[Math.round(coords.length/2)];
+        this.$refs.weatherWidget.updateTable(new Date(this.selTrack.Date), middleCoordinate[1], middleCoordinate[0]);
+      }
     },
 
     
 
   },
   components: {
+    "weather-widget": WeatherWidget
 
   },
   computed: {
