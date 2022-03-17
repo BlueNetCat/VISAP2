@@ -265,7 +265,7 @@ dataTypes = {
   loadWMSCapabilities = async function (dataType, baseURL, currTimeScale){
     let capabilitiesURL = baseURL + "?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities";
     // fetch
-    console.log(capabilitiesURL);
+    //console.log(capabilitiesURL);
     let response = await fetch(capabilitiesURL);
     let data = await response.text();
 
@@ -541,7 +541,7 @@ dataTypes = {
       img.addEventListener('load', () => resolve(img));
       img.addEventListener('error', reject);
       img.src = url;
-      console.log(url);
+      //console.log(url);
     })
   }
 

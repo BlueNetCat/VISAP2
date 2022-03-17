@@ -14,7 +14,7 @@
         <tr>
           <td></td>
           <!-- Col for each day -->
-          <th class="wcol" :key="dd" v-for="(dd, index) in daysString" :title="dates[index].toISOString()">
+          <th class="wcol" style='min-width: 40px' :key="dd" v-for="(dd, index) in daysString" :title="dates[index].toISOString()">
             {{dd}}
           </th>
         </tr>
@@ -24,13 +24,15 @@
         <!-- Row -->
         <tr :key="dR.name" v-for="(dR, index) in dataRows">
           <!-- Row name -->
-          <th scope="row">{{dR.name}} ({{dR.units}})</th>
+          <th scope="row"><span v-show="dR.name!= undefined">{{dR.name}} ({{dR.units}})</span></th>
           <!-- Values -->
           <td class="wcol" :key="dd.value" v-for="dd in dataRows[index].data">
             <div v-if='dd.loading' class="spinner-border text-dark" style="width: 1rem; height: 1rem; position: relative;" role="status">
               <span class="visually-hidden">Loading...</span>
             </div>
             <div v-else-if='dR.direction' :style="{'transform': 'rotate('+ (-dd.value - 90) +'deg)'}" :title="dd.value + 'º'">&#10140;</div>
+            <div v-else-if='dR.imgURL'><img :src=dR.defURL :alt=dR.source :style="getImageStyle(dR, dd)"></div>
+
             <div v-else-if='!dd.loading' :style="getStyle(dR, dd)">{{dd.value}}</div>
             
           </td>
@@ -90,13 +92,22 @@ export default {
     return {
       // Check https://es.wisuki.com/spot/2617/barceloneta for inspiration
       dataRows: [
+        { // Wind icon
+          imgURL: 'icons.png',
+          position: 0,
+          defURL: 'https://es.wisuki.com/images/px.png',
+          source: 'Wind',
+          signRange: [5,15],
+          color: '#fb8100',
+        },
         { 
           name: "Wind",
           abbr: "Wind",
+          icon: true,
           units: "m/s", 
           range: [0, 30],
           signRange: [5,15],
-          color: '#ebb071',//'#71c3eb',
+          color: '#fb8100',//'#71c3eb',
           colorScale: 'boxfill/sst_36'
         },
         { 
@@ -106,13 +117,22 @@ export default {
           direction: true, 
           layer: "Wind",
         },
+        { // Wave icon
+          imgURL: 'icons.png',
+          position: 1,
+          defURL: 'https://es.wisuki.com/images/px.png',
+          source: 'Wave significant height',
+          signRange: [0.2, 4],
+          color: '#0003f2',
+        },
         {
           name: "Wave significant height",
           abbr: "Waves",
+          icon: true,
           units: "m", 
           range: [0, 8],
-          signRange: [0.5,4],
-          color: '#ebb071',//'#71c3eb',
+          signRange: [0.2,4],
+          color: '#0003f2',//'#71c3eb',
           colorScale: 'boxfill/alg',
         },
         {
@@ -130,9 +150,18 @@ export default {
           signRange: [8,15],
           color: '#82b4f9' // TODO: color or colorScale. If color, go from transparent to the specified color.
         },
+        { // Current icon
+          imgURL: 'icons.png',
+          position: 2,
+          defURL: 'https://es.wisuki.com/images/px.png',
+          source: 'Sea surface velocity',
+          signRange: [0.25, 1],
+          color: '#ebb071',
+        },
         {
           name: "Sea surface velocity",
           abbr: "Current",
+          icon: true,
           units: "m/s",
           range: [0, 3],
           signRange: [0.25, 1],
@@ -195,20 +224,33 @@ export default {
 
     // PRIVATE METHODS
     getData: function(lat, long){
-      // Get data (now only sea temperature)
+      // Get data
       this.dataRows.forEach((rr, rIndex) => {
         this.dates.forEach((date, dIndex) => {
           let layerName = rr.direction ? rr.layer : rr.name;
-          this.dataRetriever.getDataAtPoint(layerName, date.toISOString(), lat, long, 'd', rr.direction)
-          .then(value => {
-            rr.data[dIndex].value = value.toFixed(2);
-            rr.data[dIndex].loading = false;
-          })
-          .catch(error => {
-            console.error(error);
-            rr.data[dIndex].value = 'x';
-            rr.data[dIndex].loading = false;
-          });
+          // Icon row does not load data
+          if (layerName !== undefined){
+            this.dataRetriever.getDataAtPoint(layerName, date.toISOString(), lat, long, 'd', rr.direction)
+              .then(value => {
+                rr.data[dIndex].value = value.toFixed(2);
+                rr.data[dIndex].loading = false;
+                // Icon
+                if (rr.icon){
+                  // Find dataRow with source
+                  let iconRow = this.dataRows.filter(e => e.source == rr.name)[0];
+                  if (iconRow == undefined) {console.error('Icon is not found for ' + rr.name); return};
+                  iconRow.data[dIndex].value = rr.data[dIndex].value;
+                  iconRow.data[dIndex].loading = false;
+                }
+              })
+              .catch(error => {
+                console.error(error);
+                rr.data[dIndex].value = 'x';
+                rr.data[dIndex].loading = false;
+              });
+          } // end of if
+        
+
         });
       })
       
@@ -235,7 +277,38 @@ export default {
 
       return {
         'background-color': color + alpha.toString(16).split('.')[0],
-        'font-weight': textWeight
+        'font-weight': textWeight,
+        'border-radius': '4px',
+      }
+    },
+
+
+    // Create image style
+    getImageStyle: function(dR, dd){
+      let color = dR.color;
+      let range = dR.signRange ? dR.signRange : dR.range; // Significant range
+      let value = dd.value;
+      
+      let alpha = value == 'x' ? 0 : 255*(value - range[0]) / (range[1] - range[0]);
+      alpha = Math.max(Math.min(alpha, 255), 25); // Clamp for HEX conversion
+
+      // if (alpha/255 == 0){
+      //   color = '#9cc6c8';
+      // } else if (alpha/255 < 0.33){
+      //   color = '#1fcf02';
+      // } else if (alpha/255 < 0.66){
+      //   color = '#da9000';
+      // } else {
+      //   color = '#e03636';
+      // }
+
+      // // Create linear gradient
+      // let linGrad = 'linear-gradient(0deg, ' + color + '66 0%, ' + color + 'ff 100%)'
+
+      return {
+        'background': color + alpha.toString(16).split('.')[0],
+        'background-image': 'url('+ dR.imgURL +')',
+        'background-position': -dR.position * 32 + 'px 0',
       }
     },
 
@@ -304,12 +377,21 @@ export default {
 }
 
 .wcol {
-  border:rgb(252, 252, 252);
-  border-style: solid;
+  /* border:rgb(252, 252, 252);
+  border-style: solid; */
+  border-style:none;
   /* flex-grow: 1; */
   text-align: center;
   align-items: center;
   padding: 2px;
+}
+
+
+img {
+  border-radius: 9px;
+  width: 32px;
+  height: 32px;
+  background-repeat: no-repeat;
 }
 
 /* unvisited link */
