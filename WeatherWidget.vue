@@ -122,7 +122,7 @@ export default {
           position: 1,
           defURL: 'https://es.wisuki.com/images/px.png',
           source: 'Wave significant height',
-          signRange: [0.2, 4],
+          signRange: [1, 4],
           color: '#0003f2',
         },
         {
@@ -147,7 +147,7 @@ export default {
           abbr: "T",
           units: "s", 
           range: [0,25],
-          signRange: [8,15],
+          signRange: [6,15],
           color: '#82b4f9' // TODO: color or colorScale. If color, go from transparent to the specified color.
         },
         { // Current icon
@@ -289,8 +289,21 @@ export default {
       let range = dR.signRange ? dR.signRange : dR.range; // Significant range
       let value = dd.value;
       
-      let alpha = value == 'x' ? 0 : 255*(value - range[0]) / (range[1] - range[0]);
-      alpha = Math.max(Math.min(alpha, 255), 25); // Clamp for HEX conversion
+      let alpha = value == 'x' ? 0 : (value - range[0]) / (range[1] - range[0]);
+      alpha = Math.max(Math.min(alpha, 1), 0); // Clamp for HEX conversion
+      //alpha *= 255;
+
+      let colorFactor = 0;
+      if (alpha == 0)
+        colorFactor = 0;
+      else if (alpha < 0.33)
+        colorFactor = 1;
+      else if (alpha < 0.66)
+        colorFactor = 2;
+      else
+        colorFactor = 3;
+
+      let cssPosition = -dR.position*32 - colorFactor * 32*3;
 
       // if (alpha/255 == 0){
       //   color = '#9cc6c8';
@@ -306,9 +319,9 @@ export default {
       // let linGrad = 'linear-gradient(0deg, ' + color + '66 0%, ' + color + 'ff 100%)'
 
       return {
-        'background': color + alpha.toString(16).split('.')[0],
+        //'background': color + alpha.toString(16).split('.')[0],
         'background-image': 'url('+ dR.imgURL +')',
-        'background-position': -dR.position * 32 + 'px 0',
+        'background-position': cssPosition + 'px 0',
       }
     },
 
