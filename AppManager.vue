@@ -12,6 +12,7 @@
       @onTabClicked='sidePanelTabClicked' 
       @onPanelTransitionEnd='sidePanelTabClicked'
       @setEffortLayerOpacity='setEffortLayerOpacity'
+      @setEffortMap='setEffortMap'
     ></app-side-panel>
 
     <!-- <weather-widget></weather-widget> -->
@@ -83,6 +84,10 @@ export default {
     // When the opacity of the fishing effort layer is changed. Event coming from FishingEffortPanel.vue
     setEffortLayerOpacity: function(opacity){
       this.$refs.map.setEffortLayerOpacity(opacity);
+    },
+    // When the parameters in the fishing effort panel change. Event coming from FishingEffortPanel.vue
+    setEffortMap: function(inUrl){
+      this.$refs.map.setEffortMap(inUrl);
     },
   },
   components: {

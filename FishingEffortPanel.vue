@@ -8,37 +8,41 @@
     <!-- Button group -->
     <div class="row p-3">
       <div class="btn-group" role="group">
-        <button type="button" class="btn" :class="[selEffortType == eType ? 'btn-dark' : 'btn-light']" @click='effortClicked' :key="eType" v-for="eType in effortTypes">{{eType}}</button>
+        <button type="button" class="btn" :class="[selEffortType == eType ? 'btn-active' : '']" @click='effortClicked' :key="eType" v-for="eType in effortTypes">{{eType}}</button>
       </div>
     </div>
 
     <!-- Button group -->
     <div class="row p-3">
       <div class="btn-group" role="group">
-        <button type="button" class="btn" :class="[selYear == yy ? 'btn-dark' : 'btn-light']" @click='yearClicked' :key="yy" v-for="yy in years">{{yy}}</button>
+        <button type="button" class="btn" :class="[selYear == yy ? 'btn-active' : '']" @click='yearClicked' :key="yy" v-for="yy in years">{{yy}}</button>
       </div>
     </div>
 
     <!-- Button group -->
     <div class="row p-3">
       <div class="btn-group" role="group">
-        <button type="button" class="btn" :class="[selGear == fg ? 'btn-dark' : 'btn-light']" @click='gearClicked' :key="fg" v-for="fg in fishingGears">{{fg}}</button>
+        <button type="button" class="btn" :class="[selGear == fg ? 'btn-active' : '']" @click='gearClicked' :key="fg" v-for="fg in fishingGears">{{fg}}</button>
       </div>
     </div>
 
     <!-- Layer visibility -->
     <div class="row p-3">
       <div class="d-flex flex-row justify-content-center align-self-center">
-        <button class="btn " :class="[layerOpacity > 0 ? 'btn-dark' : 'btn-light']" @click='layerVisClicked'>Layer visibility</button>
-        <input class='slider' type="range" min="0" max="1" step="0.01" v-model="layerOpacity" id="layerOpacity">
-        <div class=''>{{layerOpacity}}</div>
+        <button class="btn m-2" :class="[layerOpacity > 0 ? '' : 'btn-active']" @click='layerVisClicked'>Layer visibility</button>
+        <input class='slider m-2' type="range" min="0" max="1" step="0.01" v-model="layerOpacity" id="layerOpacity">
+        <!-- <div class=''>{{layerOpacity}}</div> -->
       </div>
     </div>
 
     <!-- Effort example -->
-    <div class="row p-3">
-      <img ref='effortImg' :src='exampleImgURL'>
+    <div class="row p-3" style='justify-content: center;'>
+      <img class='effortMap' ref='effortImg' :src='exampleImgURL' @error="onImageNotFound($event)">
     </div>
+
+    <div class="row p-3">
+      <i>Data from <a href="https://www.emodnet-humanactivities.eu/search-results.php?dataname=Vessel+Density+" target="_blank" rel="noreferrer noopener">EMODnet Human Activities, Vessel Density Map (Collecte Localisation Satellites (CLS)) </a></i>
+    <div>
 
 
   </div>
@@ -62,13 +66,13 @@ export default {
   data(){
     return {
       effortTypes: ['hours', 'kg', 'euros'],
-      years: [2019, 2020, 2021],
-      fishingGears: ['Bottom trawling', 'Purse seine'],
+      years: [2018, 2019, 2020, 2021],
+      fishingGears: ['All', 'Bottom trawling', 'Purse seine'],
       layerOpacity: 0.8,
 
       selEffortType: 'hours',
-      selYear: 2019,
-      selGear: 'Bottom trawling',
+      selYear: 2020,
+      selGear: 'All',
 
       // https://www.emodnet-humanactivities.eu/view-data.php
       // https://ows.emodnet-humanactivities.eu/wms?LAYERS=2020_st_01_avg&FORMAT=image%2Fpng&TRANSPARENT=TRUE&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&STYLES=&SRS=EPSG%3A4326&BBOX=-1,39,6,44&WIDTH=1024&HEIGHT=1024
@@ -81,7 +85,16 @@ export default {
       // TODO: callback to change layer opacity. vv is the opacity (from 0 to 1)
       this.$refs['effortImg'].style.opacity = vv*100 + '%';
       this.$emit('effortLayerOpacityChange', vv);
-    }
+    },
+    selEffortType(et){
+      this.effortParamsChange();
+    },
+    selYear(et){
+      this.effortParamsChange();
+    },
+    selGear(et){
+      this.effortParamsChange();
+    },
   },
   methods: {
     // USER HTML ACTIONS
@@ -104,8 +117,18 @@ export default {
     
 
     // PRIVATE METHODS
-    // foo: function(){
-    // },
+    effortParamsChange: function(){
+      let selGear = this.selGear.toLowerCase();
+      selGear = selGear.replace(' ', '');
+      let outUrl = 'data/fishingEffort_' + this.selEffortType + '_' +  this.selYear + '_' + selGear + '.png';
+        this.$refs['effortImg'].src = outUrl;
+      this.$emit('effortParamsChange', outUrl);
+    },
+
+    onImageNotFound: function(e){
+      let imgEl = e.currentTarget;
+      imgEl.src = 'https://bluenetcat.github.io/img/noData.png';
+    },
 
 
 
@@ -128,6 +151,36 @@ export default {
 
 <style scoped>
 .btn, #fishing-effort {
-   font-size: 12px
+   font-size: 12px;
+   
+   border: 2px solid #02488e33;
 }
+
+.btn {
+  background: rgba(198, 239, 255, 0.8);
+  border: 2px solid #02488e33;
+}
+
+.btn-active {
+  background: rgb(125 200 232);
+}
+
+.effortMap{
+  border: 2px solid #02488e33;
+  max-width: 200px;
+  padding: 0px;
+  border-radius: 9px;
+}
+
+/* unvisited link */
+a:link { color: #808080; }
+
+/* visited link */
+a:visited { color: #808080; }
+
+/* mouse over link */
+a:hover { color: #424242; }
+
+/* selected link */
+a:active { color: #000000; }
 </style>
