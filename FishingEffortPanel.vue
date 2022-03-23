@@ -37,8 +37,12 @@
 
     <!-- Effort example -->
     <div class="row p-3" style='justify-content: center;'>
-      <img class='effortMap' ref='effortImg' :src='exampleImgURL'>
+      <img class='effortMap' ref='effortImg' :src='exampleImgURL' @error="onImageNotFound($event)">
     </div>
+
+    <div class="row p-3">
+      <i>Data from <a href="https://www.emodnet-humanactivities.eu/search-results.php?dataname=Vessel+Density+" target="_blank" rel="noreferrer noopener">EMODnet Human Activities, Vessel Density Map (Collecte Localisation Satellites (CLS)) </a></i>
+    <div>
 
 
   </div>
@@ -62,13 +66,13 @@ export default {
   data(){
     return {
       effortTypes: ['hours', 'kg', 'euros'],
-      years: [2019, 2020, 2021],
-      fishingGears: ['Bottom trawling', 'Purse seine'],
+      years: [2018, 2019, 2020, 2021],
+      fishingGears: ['All', 'Bottom trawling', 'Purse seine'],
       layerOpacity: 0.8,
 
       selEffortType: 'hours',
-      selYear: 2019,
-      selGear: 'Bottom trawling',
+      selYear: 2020,
+      selGear: 'All',
 
       // https://www.emodnet-humanactivities.eu/view-data.php
       // https://ows.emodnet-humanactivities.eu/wms?LAYERS=2020_st_01_avg&FORMAT=image%2Fpng&TRANSPARENT=TRUE&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&STYLES=&SRS=EPSG%3A4326&BBOX=-1,39,6,44&WIDTH=1024&HEIGHT=1024
@@ -114,7 +118,16 @@ export default {
 
     // PRIVATE METHODS
     effortParamsChange: function(){
-      this.$emit('effortParamsChange', [this.selEffortType, this.selYear, this.selGear]);
+      let selGear = this.selGear.toLowerCase();
+      selGear = selGear.replace(' ', '');
+      let outUrl = 'data/fishingEffort_' + this.selEffortType + '_' +  this.selYear + '_' + selGear + '.png';
+        this.$refs['effortImg'].src = outUrl;
+      this.$emit('effortParamsChange', outUrl);
+    },
+
+    onImageNotFound: function(e){
+      let imgEl = e.currentTarget;
+      imgEl.src = 'https://bluenetcat.github.io/img/noData.png';
     },
 
 
@@ -158,4 +171,16 @@ export default {
   padding: 0px;
   border-radius: 9px;
 }
+
+/* unvisited link */
+a:link { color: #808080; }
+
+/* visited link */
+a:visited { color: #808080; }
+
+/* mouse over link */
+a:hover { color: #424242; }
+
+/* selected link */
+a:active { color: #000000; }
 </style>

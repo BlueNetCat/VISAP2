@@ -86,8 +86,8 @@ export default {
       this.$refs.map.setEffortLayerOpacity(opacity);
     },
     // When the parameters in the fishing effort panel change. Event coming from FishingEffortPanel.vue
-    setEffortMap: function(params){
-      this.$refs.map.setEffortMap(params);
+    setEffortMap: function(inUrl){
+      this.$refs.map.setEffortMap(inUrl);
     },
   },
   components: {

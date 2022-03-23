@@ -128,8 +128,8 @@ export default {
     setEffortLayerOpacity: function(opacity){
       this.$emit('setEffortLayerOpacity', opacity);
     },
-    setEffortMap: function(params){
-      this.$emit('setEffortMap', params);
+    setEffortMap: function(inUrl){
+      this.$emit('setEffortMap', inUrl);
     },
 
     // PUBLIC METHODS
