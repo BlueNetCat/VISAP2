@@ -135,13 +135,26 @@ export default {
             })
           }),
         }),
+        // Tracks
         data: new ol.layer.Tile({
           name: 'data',
           zIndex: -1,
           //opacity: 0.9
         }),
-        // tracks geojson
-      };
+        // Fishing effort
+        fishingEffort: new ol.layer.Image({
+          name: 'fishingEffort',
+          source: new ol.source.ImageStatic({
+            url: 'data/fishingEffortExample_m1_39_6_44.png',
+            imageExtent: [-1, 39, 6, 44],
+            projection: 'EPSG:4326'
+          }),
+          zIndex: -1,
+          opacity: 0.8,
+        }),
+    };
+
+
     this.layerData = undefined;
     this.pixelColor = [0, 0, 0, 0];
 
@@ -188,6 +201,8 @@ export default {
           // Shoreline
           this.layers.shoreline,
           
+          // Fishing effort
+          this.layers.fishingEffort,
           
         ],
         target: 'map',
@@ -452,6 +467,12 @@ export default {
       // Emit to open side panel fishing tracks
       this.$emit('onTrackClicked', id);
       
+    },
+
+    setEffortLayerOpacity: function(opacity){
+      // TODO
+      let effortLayer = this.getMapLayer('fishingEffort');
+      effortLayer.setOpacity(parseFloat(opacity));
     },
 
 

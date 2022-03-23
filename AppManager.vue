@@ -7,7 +7,12 @@
     <!-- <animation-canvas ref="animcanvas"></animation-canvas> SHOULD BE ON MAP-->
     
     <!-- Side panel -->
-    <app-side-panel ref="sidePanel" @selectedTrack='selectedTrack' @onTabClicked='sidePanelTabClicked' @onPanelTransitionEnd='sidePanelTabClicked'></app-side-panel>
+    <app-side-panel ref="sidePanel" 
+      @selectedTrack='selectedTrack' 
+      @onTabClicked='sidePanelTabClicked' 
+      @onPanelTransitionEnd='sidePanelTabClicked'
+      @setEffortLayerOpacity='setEffortLayerOpacity'
+    ></app-side-panel>
 
     <!-- <weather-widget></weather-widget> -->
   </div>
@@ -24,11 +29,11 @@ APP STRUCTURE
 
                 APP MANAGER
               /            \
-        OL-MAP              APP-SIDE-PANEL
-        /                      \          
-    TIME-RANGE-BAR           HAUL-INFO    
-      /                          \
-  RANGE-SLIDER               WEATHER-WIDGET
+        OL-MAP                 APP-SIDE-PANEL
+        /                     /        |        \    
+    TIME-RANGE-BAR    HAUL-INFO  FISHING-EFFORT  LAYER-PANEL
+      /                    |          
+  RANGE-SLIDER      WEATHER-WIDGET
 
 */
 
@@ -74,7 +79,11 @@ export default {
     sidePanelTabClicked: function(){
       // Send event to map
       this.$refs.map.onTabClicked();
-    }
+    },
+    // When the opacity of the fishing effort layer is changed. Event coming from FishingEffortPanel.vue
+    setEffortLayerOpacity: function(opacity){
+      this.$refs.map.setEffortLayerOpacity(opacity);
+    },
   },
   components: {
     "ol-map": Map,
