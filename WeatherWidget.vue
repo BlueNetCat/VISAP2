@@ -24,9 +24,9 @@
         <!-- Row -->
         <tr :key="dR.name" v-for="(dR, index) in dataRows">
           <!-- Row name -->
-          <th scope="row"><span v-show="dR.name!= undefined">{{dR.name}} ({{dR.units}})</span></th>
+          <th scope="row"><span v-show="dR.imgURL== undefined">{{dR.name}} ({{dR.units}})</span></th>
           <!-- Values -->
-          <td class="wcol" :key="dd.value" v-for="dd in dataRows[index].data">
+          <td class="wcol" :key="dd.key" v-for="dd in dataRows[index].data">
             <div v-if='dd.loading' class="spinner-border text-dark" style="width: 1rem; height: 1rem; position: relative;" role="status">
               <span class="visually-hidden">Loading...</span>
             </div>
@@ -74,7 +74,7 @@ export default {
     this.dataRows.forEach(dr => {
       dr.data = [];
       for (let i = 0; i < this.numDays; i++)
-        dr.data[i] = {value: '', loading: true};
+        dr.data[i] = {value: '', loading: true, key: dr.name ? dr.name + i : dr.key + i};
     });
  
     
@@ -93,22 +93,14 @@ export default {
       // Check https://es.wisuki.com/spot/2617/barceloneta for inspiration
       dataRows: [
         { // Wind icon
+          key: 'windicon',
           imgURL: 'icons.png',
           position: 0,
           defURL: 'https://es.wisuki.com/images/px.png',
           source: 'Wind',
           signRange: [5,15],
-          color: '#fb8100',
-        },
-        { 
-          name: "Wind",
-          abbr: "Wind",
-          icon: true,
-          units: "m/s", 
-          range: [0, 30],
-          signRange: [5,15],
-          color: '#fb8100',//'#71c3eb',
-          colorScale: 'boxfill/sst_36'
+          color: '#6164ff',
+          
         },
         { 
           name: "Wind direction",
@@ -117,23 +109,25 @@ export default {
           direction: true, 
           layer: "Wind",
         },
+        { 
+          name: "Wind",
+          abbr: "Wind",
+          icon: true,
+          units: "m/s", 
+          range: [0, 30],
+          signRange: [5,15],
+          color: '#6164ff',//'#71c3eb',
+          colorScale: 'boxfill/sst_36'
+        },
+        
         { // Wave icon
+          key: 'waveicon',
           imgURL: 'icons.png',
           position: 1,
           defURL: 'https://es.wisuki.com/images/px.png',
           source: 'Wave significant height',
           signRange: [1, 4],
-          color: '#0003f2',
-        },
-        {
-          name: "Wave significant height",
-          abbr: "Waves",
-          icon: true,
-          units: "m", 
-          range: [0, 8],
-          signRange: [0.2,4],
-          color: '#0003f2',//'#71c3eb',
-          colorScale: 'boxfill/alg',
+          color: '#6164ff',
         },
         {
           name: "Wave direction",
@@ -143,29 +137,31 @@ export default {
           layer: "Wave significant height",
         },
         {
+          name: "Wave significant height",
+          abbr: "Waves",
+          icon: true,
+          units: "m", 
+          range: [0, 8],
+          signRange: [0.2,4],
+          color: '#6164ff',//'#71c3eb',
+          colorScale: 'boxfill/alg',
+        },
+        {
           name: "Wave period",
           abbr: "T",
           units: "s", 
           range: [0,25],
           signRange: [6,15],
-          color: '#82b4f9' // TODO: color or colorScale. If color, go from transparent to the specified color.
+          color: '#6164ff' // TODO: color or colorScale. If color, go from transparent to the specified color.
         },
         { // Current icon
+          key: 'currenticon',
           imgURL: 'icons.png',
           position: 2,
           defURL: 'https://es.wisuki.com/images/px.png',
           source: 'Sea surface velocity',
           signRange: [0.25, 1],
-          color: '#ebb071',
-        },
-        {
-          name: "Sea surface velocity",
-          abbr: "Current",
-          icon: true,
-          units: "m/s",
-          range: [0, 3],
-          signRange: [0.25, 1],
-          color: '#ebb071',//'#71c3eb',
+          color: '#6164ff',
         },
         {
           name: "Sea current direction",
@@ -173,7 +169,15 @@ export default {
           units: "m/s",
           direction: true,
           layer: "Sea surface velocity",
-          color: '#ebb071',//'#71c3eb',
+          color: '#6164ff',//'#71c3eb',
+        },        {
+          name: "Sea surface velocity",
+          abbr: "Current",
+          icon: true,
+          units: "m/s",
+          range: [0, 3],
+          signRange: [0.25, 1],
+          color: '#6164ff',//'#71c3eb',
         },
         {
           name: "Chlorophyll",
@@ -181,7 +185,7 @@ export default {
           units: "mg/m3", 
           range: [0, 2.5],
           signRange: [0.5,1],
-          color: '#82f988'
+          color: '#6164ff'
         },
         {
           name: "Salinity",
@@ -189,7 +193,7 @@ export default {
           units: "‰", 
           range: [30, 45],
           signRange: [38, 40],
-          color: '#ebb071'
+          color: '#6164ff'
         },
         {
           name: "Sea temperature",
@@ -322,6 +326,7 @@ export default {
         //'background': color + alpha.toString(16).split('.')[0],
         'background-image': 'url('+ dR.imgURL +')',
         'background-position': cssPosition + 'px 0',
+        transform: 'scale(1)',
       }
     },
 
@@ -331,7 +336,7 @@ export default {
       this.dates = this.dates == undefined ? this.dates = [] : this.dates;
 
       for (let i = 0; i < this.numDays; i++){
-        this.daysString[this.numDays-1 - i] = inputDate.toDateString().substring(0,3) + ' ' + inputDate.getDate();
+        this.daysString[this.numDays-1 - i] = inputDate.toDateString().substring(0,2) + ' ' + inputDate.getDate();
         this.dates[this.numDays-1 - i] = new Date(inputDate.getTime());
         inputDate.setDate(inputDate.getDate() - 1);
       }
