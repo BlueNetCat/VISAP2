@@ -35,6 +35,11 @@
       </div>
     </div>
 
+    <!-- Effort example -->
+    <div class="row p-3">
+      <img ref='effortImg' :src='exampleImgURL'>
+    </div>
+
 
   </div>
 </template>
@@ -44,7 +49,6 @@
 
 <script>
 export default {
-  // REQUIRES FishingTracks.js
   name: "fishing-effort",
   created(){
 
@@ -60,18 +64,23 @@ export default {
       effortTypes: ['hours', 'kg', 'euros'],
       years: [2019, 2020, 2021],
       fishingGears: ['Bottom trawling', 'Purse seine'],
-      layerOpacity: 1,
+      layerOpacity: 0.8,
 
       selEffortType: 'hours',
       selYear: 2019,
       selGear: 'Bottom trawling',
 
+      // https://www.emodnet-humanactivities.eu/view-data.php
+      // https://ows.emodnet-humanactivities.eu/wms?LAYERS=2020_st_01_avg&FORMAT=image%2Fpng&TRANSPARENT=TRUE&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&STYLES=&SRS=EPSG%3A4326&BBOX=-1,39,6,44&WIDTH=1024&HEIGHT=1024
+      exampleImgURL: 'data/fishingEffortExample_m1_39_6_44.png'
       
     }
   },
   watch: {
     layerOpacity(vv){
-      // TODO: callback to change layer opacity
+      // TODO: callback to change layer opacity. vv is the opacity (from 0 to 1)
+      this.$refs['effortImg'].style.opacity = vv*100 + '%';
+      this.$emit('effortLayerOpacityChange', vv);
     }
   },
   methods: {
@@ -95,16 +104,15 @@ export default {
     
 
     // PRIVATE METHODS
-    foo: function(){
-      
-    },
+    // foo: function(){
+    // },
 
 
 
 
     // PUBLIC METHODS
-    foo: function(){
-    },
+    // foo: function(){
+    // },
 
     
 

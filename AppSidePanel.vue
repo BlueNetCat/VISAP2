@@ -16,13 +16,10 @@
       <div class="side-panel-content g-0">
         <haul-info @selectedTrack="selectedTrack" ref="haul-info" v-show="selTab == 'tracks'">
         </haul-info>
-        <!-- <div v-show="selTab === 'effort'">
-          <h4>Fishing Effort</h4>
-        </div> -->
-        <fishing-effort ref="fishing-effort" v-show="selTab === 'effort'"></fishing-effort>
-        <!-- <div v-show="selTab === 'weather'">
-          <h4>Weather and sea conditions</h4>
-        </div> -->
+        <fishing-effort ref="fishing-effort" @effortLayerOpacityChange='setEffortLayerOpacity' v-show="selTab === 'effort'"></fishing-effort>
+        <div v-show="selTab === 'layers'">
+          <h4>Layer panels</h4>
+        </div>
       </div>
 
     </div>
@@ -42,7 +39,7 @@
 // Import components
 import HaulInfo from "HaulInfo.vue"
 import FishingEffortPanel from "FishingEffortPanel.vue"
-import Weather from "Weather.vue"
+import LayerPanel from "LayerPanel.vue"
 //import Map from "Map.vue";
 //import AnimationCanvas from "AnimationCanvas.vue";
 
@@ -82,9 +79,9 @@ export default {
           name: "Fishing effort",
           isSelected: false
         },
-        "weather": {
-          id: "weather",
-          name: "Weather and sea",
+        "layers": {
+          id: "layers",
+          name: "Layers",
           isSelected: false
         }
       },
@@ -128,6 +125,9 @@ export default {
     selectedTrack: function(id){
       this.$emit('selectedTrack', id);
     },
+    setEffortLayerOpacity: function(opacity){
+      this.$emit('setEffortLayerOpacity', opacity);
+    },
 
     // PUBLIC METHODS
     // Set fishing tracks once loaded
@@ -166,7 +166,7 @@ export default {
   components: {
     "haul-info": HaulInfo,
     "fishing-effort": FishingEffortPanel,
-    "weather-info": Weather,
+    "layer-panel": LayerPanel,
     //"ol-map": Map,
     //"animation-canvas": AnimationCanvas,
   },
