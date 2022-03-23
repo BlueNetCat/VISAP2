@@ -470,9 +470,20 @@ export default {
     },
 
     setEffortLayerOpacity: function(opacity){
-      // TODO
       let effortLayer = this.getMapLayer('fishingEffort');
       effortLayer.setOpacity(parseFloat(opacity));
+    },
+    setEffortMap: function(params){
+      //params = [effortType, year, gear] = [kg, 2019, Bottom trawling]
+      let effortLayer = this.getMapLayer('fishingEffort');
+      // let olSource = effortLayer.getSource(); // setUrl does not exists for ol.Layer.Image
+      let source = new ol.source.ImageStatic({
+        url: 'data/fishingEffortExample_m1_39_6_44.png', // 'data/fishingEffort_<effortType>_<year>_<gear>'
+        imageExtent: [-1, 39, 6, 44],
+        projection: 'EPSG:4326'
+      });
+      // Assign new source to layer
+      effortLayer.setSource(source);
     },
 
 

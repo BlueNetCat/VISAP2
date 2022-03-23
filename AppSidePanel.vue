@@ -16,7 +16,7 @@
       <div class="side-panel-content g-0">
         <haul-info @selectedTrack="selectedTrack" ref="haul-info" v-show="selTab == 'tracks'">
         </haul-info>
-        <fishing-effort ref="fishing-effort" @effortLayerOpacityChange='setEffortLayerOpacity' v-show="selTab === 'effort'"></fishing-effort>
+        <fishing-effort ref="fishing-effort" @effortParamsChange='setEffortMap' @effortLayerOpacityChange='setEffortLayerOpacity' v-show="selTab === 'effort'"></fishing-effort>
         <div v-show="selTab === 'layers'">
           <h4>Layer panels</h4>
         </div>
@@ -127,6 +127,9 @@ export default {
     },
     setEffortLayerOpacity: function(opacity){
       this.$emit('setEffortLayerOpacity', opacity);
+    },
+    setEffortMap: function(params){
+      this.$emit('setEffortMap', params);
     },
 
     // PUBLIC METHODS
