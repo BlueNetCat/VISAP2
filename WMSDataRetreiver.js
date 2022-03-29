@@ -209,10 +209,19 @@ dataTypes = {
 
 
   // CONSTRUCTOR
-  constructor(onLoadCallback){
+  constructor(onLoadCallback, verbose){
     // Loading control
     let loading = 0;
     let loaded = 0;
+
+    // Verbose
+    if (verbose){
+      this.printLog = this.printLogConsole;
+      this.printWarn = this.printWarnConsole;
+    } else { // Empty callable function
+      this.printLog = ()=> {};
+      this.printWarn = ()=> {};
+    }
 
     this.dataTypes = JSON.parse(preLoadedDataTypes);
     if (onLoadCallback !== undefined) onLoadCallback();
@@ -265,7 +274,7 @@ dataTypes = {
   loadWMSCapabilities = async function (dataType, baseURL, currTimeScale){
     let capabilitiesURL = baseURL + "?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities";
     // fetch
-    //console.log(capabilitiesURL);
+    //this.printLog(capabilitiesURL);
     let response = await fetch(capabilitiesURL);
     let data = await response.text();
 
@@ -276,10 +285,10 @@ dataTypes = {
     layers.forEach(ll => {
       // Get layer by its name
       if (ll.querySelector("Name").innerHTML == dataType.layerName && ll.attributes.queryable) {
-        console.log("Layer name: " + ll.querySelector("Name").innerHTML + ", Variable name: " + dataType.name);
+        this.printLog("Layer name: " + ll.querySelector("Name").innerHTML + ", Variable name: " + dataType.name);
         // Iterate through Dimensions (elevation, time)
         ll.querySelectorAll("Dimension").forEach(dd => {
-          console.log("Dimension name: " + dd.attributes.name.nodeValue);
+          this.printLog("Dimension name: " + dd.attributes.name.nodeValue);
           // Elevation
           if (dd.attributes.name.nodeValue == "elevation") {
             // Get elevation values
@@ -339,7 +348,7 @@ dataTypes = {
 
 
           } else
-            console.log("Unknown dimension" + dd.attributes.name.nodeValue);
+            this.printLog("Unknown dimension" + dd.attributes.name.nodeValue);
         });
       }
     });
@@ -368,7 +377,7 @@ dataTypes = {
     dataType.timeScales.forEach(tS => { if (tS == timeScale) tScale = timeScale });
     if (tScale == undefined) {
       tScale = dataType.timeScales[0];
-      console.warn("Time scale petitioned does not exist in the ocean prodcut. Ocean product: " + dataType.name + ". Time scale petitioned: " + timeScale + ". Available time scales: " + dataType.timeScales);
+      this.printWarn("Time scale petitioned does not exist in the ocean prodcut. Ocean product: " + dataType.name + ". Time scale petitioned: " + timeScale + ". Available time scales: " + dataType.timeScales);
     }
     // If we want the direction
     if (direction) {
@@ -380,7 +389,7 @@ dataTypes = {
     }
     // Check if WMS capabilities were loaded
     if (dataType.timeScaleCorrection == undefined){
-      console.warn("WMS Capabilities were not yet loaded. Loading now");
+      this.printWarn("WMS Capabilities were not yet loaded. Loading now");
       // Get Capabilities
       await this.loadWMSCapabilities(dataType, this.domainURL + dataType.url + "-" + currTimeScale, currTimeScale);
     }
@@ -392,7 +401,7 @@ dataTypes = {
     let serviceURL = dataType.url;
     let version = dataType.version; // 1.1.1 or 1.3.0 (then CRS should be instead of SRS)
     if (date > dataType.lastDate){
-      console.warn("Using forecast instead of reanalysis CMEMS data.");
+      this.printWarn("Using forecast instead of reanalysis CMEMS data.");
       domainURL = dataType.forecast.domainURL;
       serviceURL = dataType.forecast.url;
       version = dataType.forecast.version;
@@ -508,7 +517,7 @@ dataTypes = {
   getPreciseValueFromURL = async function(url, range){
     let value = await this.getValueFromURL(url); // Normalized value from 0 to 1
     if (value == undefined) {
-      console.log("No data at lat " + lat + ", long " + long);
+      this.printWarn("No data at lat " + lat + ", long " + long);
       return;
     }
     // Put in range of the data type (normValue * (max-min) + min)
@@ -541,7 +550,7 @@ dataTypes = {
       img.addEventListener('load', () => resolve(img));
       img.addEventListener('error', reject);
       img.src = url;
-      //console.log(url);
+      //this.printLog(url);
     })
   }
 
@@ -571,5 +580,14 @@ dataTypes = {
     let north = await this.getPreciseValueFromURL(url, range);
     // Return values
     return Math.atan2(north, east) * (180 / Math.PI);
+  }
+
+
+  // Verbose
+  printWarnConsole = function(message){
+    console.warn(message);
+  }
+  printLogConsole = function(message){
+    console.log(message);
   }
 }
