@@ -482,8 +482,8 @@ dataTypes = {
     let animData = dataType.animation;
     // Angle format
     if (animData.format == 'value_angle'){
-      url = SourceWMS.setWMSParameter(url, 'LAYERS', animData.layerNames[1]);
-      url = SourceWMS.setWMSParameter(url, 'COLORSCALERANGE', String([-360,360]));
+      url = WMSDataRetriever.setWMSParameter(url, 'LAYERS', animData.layerNames[1]);
+      url = WMSDataRetriever.setWMSParameter(url, 'COLORSCALERANGE', String([-360,360]));
 
       //params.LAYERS = animData.layerNames[1];
       //params.COLORSCALERANGE = String([0, 359]);
@@ -499,7 +499,7 @@ dataTypes = {
     else if (animData.format == 'east_north'){
 
 
-      // url = SourceWMS.setWMSParameter(url, 'LAYERS', animData.layerNames[0]);
+      // url = WMSDataRetriever.setWMSParameter(url, 'LAYERS', animData.layerNames[0]);
       // let east = await this.getPreciseValueFromURL(url, dataType.range);
       // url = SourceWMS.setWMSParameter(url, 'LAYERS', animData.layerNames[1]);
       // let north = await this.getPreciseValueFromURL(url, dataType.range);
@@ -525,7 +525,7 @@ dataTypes = {
     // Improve precision
     // Quantization step is 0.4% (100*1/255). We can improve the precision by reducing the color scale range
     let quantStep = (range[1] - range[0]) * 1 / 255;
-    url = SourceWMS.setWMSParameter(url, 'COLORSCALERANGE', [value - quantStep, value + quantStep]);
+    url = WMSDataRetriever.setWMSParameter(url, 'COLORSCALERANGE', [value - quantStep, value + quantStep]);
     // Get precise value from URL
     let vPrec = await this.getValueFromURL(url); // Normalized value from 0 to 1
     // Put in range (normValue * (max-min) + min)
@@ -574,12 +574,26 @@ dataTypes = {
   // TODO: PARALLEL ASYNC CALLS
   // https://ankurpatel.in/blog/call-multiple-async-await-functions-parallel-or-sequential/
   getEastNorthValues = async function(url, layerNames, range){
-    url = SourceWMS.setWMSParameter(url, 'LAYERS', layerNames[0]);
+    url = WMSDataRetriever.setWMSParameter(url, 'LAYERS', layerNames[0]);
     let east = await this.getPreciseValueFromURL(url, range);
-    url = SourceWMS.setWMSParameter(url, 'LAYERS', layerNames[1]);
+    url = WMSDataRetriever.setWMSParameter(url, 'LAYERS', layerNames[1]);
     let north = await this.getPreciseValueFromURL(url, range);
     // Return values
     return Math.atan2(north, east) * (180 / Math.PI);
+  }
+
+
+
+
+  // Set WMS parameter
+  static setWMSParameter(wmsURL, paramName, paramContent) {
+    // If parameter does not exist
+    if (wmsURL.indexOf(paramName + "=") == -1) {
+      console.log("Parameter ", paramName, " does not exist in WMS URL");
+      return wmsURL + '&' + paramName + '=' + paramContent;
+    }
+    let currentContent = SourceWMS.getWMSParameter(wmsURL, paramName);
+    return wmsURL.replace(currentContent, paramContent);
   }
 
 
