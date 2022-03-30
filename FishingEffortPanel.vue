@@ -134,8 +134,9 @@ export default {
 
 
     // PUBLIC METHODS
-    // foo: function(){
-    // },
+    setLayerOpacity: function(opacity){ // Event coming from LayerPanel.vue
+      this.layerOpacity = opacity;
+    }
 
     
 

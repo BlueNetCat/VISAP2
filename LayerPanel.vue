@@ -19,12 +19,19 @@
       </div>
     </div>
 
-    <!-- Row -->
-    <div class="row p-3">
+    <!-- Row - Fishing Tracks-->
+    <div class="row p-1">
       <div class="d-flex flex-row justify-content-center align-self-center">
-        <button class="btn m-2" :class="[layerOpacity > 0 ? '' : 'btn-active']" @click='layerVisClicked'>Fishing Tracks</button>
-        <input class='slider m-2' type="range" min="0" max="1" step="0.01" v-model="layerOpacity" id="layerOpacity">
-        <!-- <div class=''>{{layerOpacity}}</div> -->
+        <button class="btn m-2" :class="[fTracksOpacity > 0 ? '' : 'btn-active']" @click='fTracksClicked'>Fishing Tracks</button>
+        <input class='slider m-2' type="range" min="0" max="1" step="0.01" v-model="fTracksOpacity" id="fTracksOpacity">
+      </div>
+    </div>
+
+    <!-- Row - Fishing Effort -->
+    <div class="row p-1">
+      <div class="d-flex flex-row justify-content-center align-self-center">
+        <button class="btn m-2" :class="[fEffortOpacity > 0 ? '' : 'btn-active']" @click='fEffortClicked'>Fishing Effort</button>
+        <input class='slider m-2' type="range" min="0" max="1" step="0.01" v-model="fEffortOpacity" id="fEffortOpacity">
       </div>
     </div>
 
@@ -48,15 +55,19 @@ export default {
   },
   data(){
     return {
-      layerOpacity: 1,
+      fTracksOpacity: 1,
+      fEffortOpacity: 1,
       baseLayers: ['Bathymetry', 'OSM', 'Imagery', 'Ocean'], // TODO: get layers from map when created
       selBaseLayer: 'Bathymetry',
     }
   },
   watch: {
-    layerOpacity(vv){
+    fTracksOpacity(vv){
       // Callback to change layer opacity
       this.$emit('layerOpacityChange', ['fishingTracks', vv]);
+    },
+    fEffortOpacity(vv){
+      this.$emit('layerOpacityChange', ['fishingEffort', vv]);
     }
   },
   methods: {
@@ -66,9 +77,11 @@ export default {
       this.$emit('baseLayerChange', this.selBaseLayer);
     },
     // Fishing tracks layer opacity
-    layerVisClicked: function(e){
-      // 
-      
+    fTracksClicked: function(e){
+      this.fTracksOpacity = this.fTracksOpacity == 0 ? 0.8 : 0;
+    },
+    fEffortClicked: function(e){
+      this.fEffortOpacity = this.fEffortOpacity == 0 ? 0.8 : 0;
     },
     
 
@@ -79,7 +92,8 @@ export default {
 
 
     // PUBLIC METHODS
-    foo: function(){
+    setFEffortOpacity: function(opacity){
+      this.fEffortOpacity = opacity;
     },
 
     

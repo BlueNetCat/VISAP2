@@ -137,7 +137,11 @@ export default {
     },
     // Effort panel
     setEffortLayerOpacity: function(opacity){
-      this.$emit('setEffortLayerOpacity', opacity);
+      if (this.selTab == 'effort'){ // Only when the tab is open can send events
+        this.$emit('setEffortLayerOpacity', opacity);
+        // Connect with layers panel
+        this.$refs['layers'].setFEffortOpacity(opacity);
+      }
     },
     setEffortMap: function(inUrl){
       this.$emit('setEffortMap', inUrl);
@@ -147,7 +151,13 @@ export default {
       this.$emit('setBaseLayer', baseLayerName);
     },
     setLayerOpacity: function(params){
-      this.$emit('setLayerOpacity', params)
+      if (this.selTab == 'layers'){ // Only when the tab is open can send events
+        this.$emit('setLayerOpacity', params);
+        // If the layer is fishing effort
+        if (params[0] == 'fishingEffort'){
+          this.$refs['fishing-effort'].setLayerOpacity(params[1]);
+        }
+      }
     },
 
     // PUBLIC METHODS
