@@ -271,6 +271,7 @@ export default {
   background-color: #a0d7f2;
   border-color: #72b0cf;
   min-width: 18px;
+  max-width: 30px;
   box-shadow: 1px 0px 2px #0a3142;
 }
 .tab.active {
