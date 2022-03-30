@@ -6,12 +6,12 @@
     </div>
     
     <!-- Row - Base layers-->
-    <div class="row p-3">
+    <div class="row p-3" style='justify-content: center;'>
       <!-- Column - Title -->
-      <div class="col centered">
+      <div class="col-md-auto centered">
         Base layer
       </div>
-      <div class="col centered">
+      <div class="col-md-auto centered">
       <!-- Button group - Base layers-->
         <div class="btn-group" role="group">
           <button type="button" class="btn" :class="[selBaseLayer == bLayer ? 'btn-active' : '']" @click='baseLayerClicked' :key="bLayer" v-for="bLayer in baseLayers">{{bLayer}}</button>
@@ -78,7 +78,7 @@ export default {
     },
     // Fishing tracks layer opacity
     fTracksClicked: function(e){
-      this.fTracksOpacity = this.fTracksOpacity == 0 ? 0.8 : 0;
+      this.fTracksOpacity = this.fTracksOpacity == 0 ? 1 : 0;
     },
     fEffortClicked: function(e){
       this.fEffortOpacity = this.fEffortOpacity == 0 ? 0.8 : 0;
@@ -86,12 +86,12 @@ export default {
     
 
     // PRIVATE METHODS
-    foo: function(){
-      
-    },
+    // foo: function(){
+    // },
 
 
     // PUBLIC METHODS
+    // Connected to Fishing Effort panel
     setFEffortOpacity: function(opacity){
       this.fEffortOpacity = opacity;
     },

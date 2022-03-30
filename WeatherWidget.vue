@@ -96,7 +96,7 @@ export default {
           key: 'windicon',
           imgURL: 'icons.png',
           position: 0,
-          defURL: 'https://es.wisuki.com/images/px.png',
+          defURL: 'data/emptyPixel.png',
           source: 'Wind',
           signRange: [5,15],
           color: '#6164ff',

@@ -36,12 +36,25 @@
     </div>
 
     <!-- Effort example -->
-    <div class="row p-3" style='justify-content: center;'>
-      <img class='effortMap' ref='effortImg' :src='exampleImgURL' @error="onImageNotFound($event)">
+    <div class="row p-3 justify-content-md-center" style='flex-flow: nowrap;'>
+      
+      <div v-show='loading' class='col' style='justify-content: center; display: flex;'>
+        <div class="spinner-border text-dark" style="width: 3rem; height: 3rem; position: relative;" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+
+      <div v-show='!loading' class="col-md-auto" style='display:flex; justify-content: right'>
+        <img class='effortMap' ref='effortImg' :src='exampleImgURL' @load="onImageLoad()" @error="onImageNotFound($event)">
+      </div>
+      <div v-show='!loading' class="col-md-auto" style='display:flex; justify-content: left'>
+        <img class='effortMapLegend' ref='effortLegend' :src='exampleLegendURL' @error="onLegendNotFound($event)">
+      </div>
     </div>
 
     <div class="row p-3">
-      <i>Data from <a href="https://www.emodnet-humanactivities.eu/search-results.php?dataname=Vessel+Density+" target="_blank" rel="noreferrer noopener">EMODnet Human Activities, Vessel Density Map (Collecte Localisation Satellites (CLS)) </a></i>
+      <i v-if='selGear == "All"' style='text-align: center;'>Data from <a href="https://www.emodnet-humanactivities.eu/search-results.php?dataname=Vessel+Density+" target="_blank" rel="noreferrer noopener">EMODnet Human Activities, Vessel Density Map (Collecte Localisation Satellites (CLS)) </a></i>
+      <i v-else style='text-align: center;'>Data from <a href="http://agricultura.gencat.cat/ca/departament/dar_plans_programes_sectorials/politica-maritima/icatmar/" target="_blank" rel="noreferrer noopener">ICATMAR (Institut Català de Recerca per la Governança del Mar) </a></i>
     <div>
 
 
@@ -70,14 +83,16 @@ export default {
       fishingGears: ['All', 'Bottom trawling', 'Purse seine'],
       layerOpacity: 0.8,
 
+      loading: true,
+
       selEffortType: 'hours',
       selYear: 2020,
       selGear: 'All',
 
       // https://www.emodnet-humanactivities.eu/view-data.php
       // https://ows.emodnet-humanactivities.eu/wms?LAYERS=2020_st_01_avg&FORMAT=image%2Fpng&TRANSPARENT=TRUE&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&STYLES=&SRS=EPSG%3A4326&BBOX=-1,39,6,44&WIDTH=1024&HEIGHT=1024
-      exampleImgURL: 'data/fishingEffortExample_m1_39_6_44.png'
-      
+      exampleImgURL: 'data/fishingEffortExample_m1_39_6_44.png',
+      exampleLegendURL: 'data/fishingEffort_hours_2020_all_legend.png',
     }
   },
   watch: {
@@ -121,13 +136,27 @@ export default {
       let selGear = this.selGear.toLowerCase();
       selGear = selGear.replace(' ', '');
       let outUrl = 'data/fishingEffort_' + this.selEffortType + '_' +  this.selYear + '_' + selGear + '.png';
-        this.$refs['effortImg'].src = outUrl;
+      this.$refs['effortImg'].src = outUrl;
       this.$emit('effortParamsChange', outUrl);
+      // Legend
+      let legUrl = 'data/fishingEffort_' + this.selEffortType + '_' +  this.selYear + '_' + selGear + '_legend.png';
+      this.$refs['effortLegend'].src = legUrl;
+      this.loading = true;
+    },
+
+    onImageLoad: function(){
+      this.loading = false;
     },
 
     onImageNotFound: function(e){
       let imgEl = e.currentTarget;
       imgEl.src = 'https://bluenetcat.github.io/img/noData.png';
+      this.loading = false;
+    },
+
+    onLegendNotFound: function(e){
+      let imgEl = e.currentTarget;
+      imgEl.src = 'data/emptyPixel.png';
     },
 
 
@@ -168,9 +197,16 @@ export default {
 
 .effortMap{
   border: 2px solid #02488e33;
-  max-width: 200px;
+  width: 200px;
+  height: 200px;
   padding: 0px;
   border-radius: 9px;
+}
+
+.effortMapLegend {
+  max-width: 200px;
+  max-height: 200px;
+  padding: 0px;
 }
 
 /* unvisited link */

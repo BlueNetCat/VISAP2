@@ -10,7 +10,7 @@
 
 
     <!-- Panel -->
-    <div class="collapse width" ref="panel" :class="{show: isPanelOpen}" style="overflow: auto; transition: width 0.5s">
+    <div class="collapse width" ref="panel" :class="{show: isPanelOpen}">
 
       <!-- Info container -->
       <div class="side-panel-content g-0">
@@ -128,9 +128,19 @@ export default {
     // INTERNAL EVENTS
     openPanel: function(){
       this.isPanelOpen = true;
+      // HACK Fix Force openlayers canvas to fill window after 0.5 s
+      //setTimeout(() => window.dispatchEvent(new Event('resize')), 500);
+      for (let i = 10; i<500; i+=10){
+        setTimeout(() => window.dispatchEvent(new Event('resize')), i);
+      }
     },
     closePanel: function(){
       this.isPanelOpen = false;
+      // HACK Fix Force openlayers canvas to fill window after 0.5 s
+      for (let i = 10; i<500; i+=10){
+        setTimeout(() => window.dispatchEvent(new Event('resize')), i);
+      }
+      //setTimeout(() => window.dispatchEvent(new Event('resize')), 500);
     },
     selectedTrack: function(id){
       this.$emit('selectedTrack', id);
@@ -231,11 +241,18 @@ export default {
 }
 
 
+.collapse {
+  overflow: auto; 
+  transition: width 0.5s, min-width 0.5s;
+}
+
 .collapse.show {
-  width: 40vw;  
+  width: 40vw; 
+  min-width: 500px;
 }
 .collapse:not(.show){
   width: 0;
+  min-width: 0;
   height: initial;
   display: block;
 }

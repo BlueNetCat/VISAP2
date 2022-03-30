@@ -263,6 +263,7 @@ export default {
           
         ],
         target: 'map',
+        controls: ol.control.defaults({ attributionOptions: { collapsible: true } }),
         view: new ol.View({
           center: ol.proj.fromLonLat([3,41.5]),
           zoom: 6,

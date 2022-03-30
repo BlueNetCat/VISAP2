@@ -137,6 +137,7 @@ class FishingTracks {
                 //features: new ol.format.GeoJSON().readFeatures(geoJSONData), // This is not working??? https://openlayers.org/en/latest/examples/geojson.html
                 url: dataUri,//'data/trackLines.geojson',
                 format: new ol.format.GeoJSON(),
+                attributions: '© ICATMAR (Institut Català de Recerca per la Governança del Mar)',
             }),
             style: this.trackStyle.bind(this),
             // style: new ol.style.Style({
