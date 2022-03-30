@@ -55,8 +55,36 @@ export default {
   created (){
     // Declare non-reactive variables
     this.map= undefined;
+    this.baseLayerSources = {
+      'Bathymetry' : new ol.source.XYZ ({ // https://openlayers.org/en/latest/examples/xyz.html
+        url: 'https://tiles.emodnet-bathymetry.eu/2020/baselayer/web_mercator/{z}/{x}/{y}.png', // https://tiles.emodnet-bathymetry.eu/
+        attributions: "© EMODnet Bathymetry Consortium",
+        cacheSize: 500,
+        crossOrigin: 'anonymous',
+      }),
+      'OSM': new ol.source.OSM ({ // https://openlayers.org/en/latest/examples/canvas-tiles.html
+        cacheSize: 500,
+        crossOrigin: 'anonymous',
+      }),
+      'Imagery': new ol.source.XYZ ({ // https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer/0
+        url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}.png',
+        cacheSize: 500,
+        crossOrigin: 'anonymous',
+      }),
+      'Ocean': new ol.source.XYZ ({ // https://openlayers.org/en/latest/examples/canvas-tiles.html
+        url: 'https://services.arcgisonline.com/ArcGIS/rest/services/Ocean/World_Ocean_Base/MapServer/tile/{z}/{y}/{x}.png',
+        cacheSize: 500,
+        crossOrigin: 'anonymous',
+      }),
+    },
     this.layers = {
-        bathymetry: new ol.layer.Tile({
+        // Base layers
+        baseLayer: new ol.layer.Tile({
+          name: 'baseLayer',
+          source: this.baseLayerSources['Bathymetry'],
+          zIndex: -2,
+        }),
+        /*bathymetry: new ol.layer.Tile({
             name: 'bathymetry',
             source: new ol.source.XYZ ({ // https://openlayers.org/en/latest/examples/xyz.html
               url: 'https://tiles.emodnet-bathymetry.eu/2020/baselayer/web_mercator/{z}/{x}/{y}.png', // https://tiles.emodnet-bathymetry.eu/
@@ -66,6 +94,34 @@ export default {
             }),
             zIndex: -2,
           }),
+        osm: new ol.layer.Tile({
+            name: 'osm',
+            source: new ol.source.OSM ({ // https://openlayers.org/en/latest/examples/canvas-tiles.html
+              cacheSize: 500,
+              crossOrigin: 'anonymous',
+            }),
+            zIndex: -2,
+          }),
+        esriOcean: new ol.layer.Tile({
+            name: 'esriOcean',
+            source: new ol.source.XYZ ({ // https://openlayers.org/en/latest/examples/canvas-tiles.html
+              url: 'https://services.arcgisonline.com/ArcGIS/rest/services/Ocean/World_Ocean_Base/MapServer/tile/{z}/{y}/{x}.png',
+              cacheSize: 500,
+              crossOrigin: 'anonymous',
+            }),
+            zIndex: -2,
+          }),
+        esriImagery: new ol.layer.Tile({
+          name: 'esriImagery',
+          source: new ol.source.XYZ ({ // https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer/0
+            url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}.png',
+            cacheSize: 500,
+            crossOrigin: 'anonymous',
+          }),
+          zIndex: -2,
+        }),*/
+
+
         graticule: new ol.layer.Graticule({
           name: 'graticule',
           showLabels: true,
@@ -192,8 +248,9 @@ export default {
         layers : [
           // Data layer
           //this.layers.data,
-          // Bathymetry
-          this.layers.bathymetry,
+          // Base layer
+          this.layers.baseLayer,
+          //this.layers.bathymetry,
           // Graticule layer
           this.layers.graticule,
           // 12 nm
@@ -242,13 +299,20 @@ export default {
       this.map.addInteraction(selectInteraction);
       
       // Register tile load progress
-      this.registerLoadTilesEvents(this.layers.bathymetry.getSource());
+      Object.keys(this.baseLayerSources).forEach(key => {
+        let blSource = this.baseLayerSources[key];
+        this.registerLoadTilesEvents(blSource);
+      });
+      // this.registerLoadTilesEvents(this.layers.bathymetry.getSource());
+      // this.registerLoadTilesEvents(this.layers.osm.getSource());
+      // this.registerLoadTilesEvents(this.layers.esriOcean.getSource());
+      // this.registerLoadTilesEvents(this.layers.esriImagery.getSource());
     },
 
 
     // Get layer function
     getMapLayer: function(layerName){
-      let selLayer;
+      let selLayer = undefined;
       this.map.getLayers().forEach(layerItem => {
         //console.log(layerItem.get('name'));
         if (layerItem.get('name') == layerName)
@@ -483,6 +547,29 @@ export default {
       });
       // Assign new source to layer
       effortLayer.setSource(source);
+    },
+
+    setBaseLayer: function(baseLayerName){
+      let source = this.baseLayerSources[baseLayerName];
+      if (source == undefined){
+        console.error('Base layer name does not exist in array of base layers: ' + baseLayerName);
+        return;
+      }
+
+      let baseLayer = this.getMapLayer('baseLayer');
+      baseLayer.setSource(source);
+    },
+    setLayerOpacity: function(params){
+      let layerName = params[0];
+      let opacity = params[1];
+      // Get layer
+      let layer = this.getMapLayer(layerName);
+      if (layer == undefined){
+        console.log(layerName + ' does not exist. Wrong layer name. Cannot set opacity.');
+        return;
+      }
+      // Set opacity
+      layer.setOpacity(parseFloat(opacity));
     },
 
 

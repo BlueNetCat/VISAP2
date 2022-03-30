@@ -13,6 +13,8 @@
       @onPanelTransitionEnd='sidePanelTabClicked'
       @setEffortLayerOpacity='setEffortLayerOpacity'
       @setEffortMap='setEffortMap'
+      @setBaseLayer='setBaseLayer'
+      @setLayerOpacity='setLayerOpacity'
     ></app-side-panel>
 
     <!-- <weather-widget></weather-widget> -->
@@ -89,6 +91,14 @@ export default {
     setEffortMap: function(inUrl){
       this.$refs.map.setEffortMap(inUrl);
     },
+    // Base layer changed in LayerPanel.vue
+    setBaseLayer: function(baseLayerName){
+      this.$refs.map.setBaseLayer(baseLayerName);
+    },
+    // Change the opacity of a layer. Event coming from LayerPanel.vue. params = [layerName, opacity]
+    setLayerOpacity: function(params){
+      this.$refs.map.setLayerOpacity(params);
+    }
   },
   components: {
     "ol-map": Map,

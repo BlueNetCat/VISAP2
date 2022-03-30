@@ -132,6 +132,7 @@ class FishingTracks {
         // Create layer
         //let vectorTrackLines = new ol.layer.Vector({
         this.trackLinesLayer = new ol.layer.Vector({
+            name: 'fishingTracks',
             source: new ol.source.Vector({
                 //features: new ol.format.GeoJSON().readFeatures(geoJSONData), // This is not working??? https://openlayers.org/en/latest/examples/geojson.html
                 url: dataUri,//'data/trackLines.geojson',
