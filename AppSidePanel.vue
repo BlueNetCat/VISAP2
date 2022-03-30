@@ -14,12 +14,22 @@
 
       <!-- Info container -->
       <div class="side-panel-content g-0">
+        <!-- Haul info -->
         <haul-info @selectedTrack="selectedTrack" ref="haul-info" v-show="selTab == 'tracks'">
         </haul-info>
-        <fishing-effort ref="fishing-effort" @effortParamsChange='setEffortMap' @effortLayerOpacityChange='setEffortLayerOpacity' v-show="selTab === 'effort'"></fishing-effort>
-        <div v-show="selTab === 'layers'">
+        <!-- Fishing effort -->
+        <fishing-effort ref="fishing-effort" 
+          @effortParamsChange='setEffortMap' 
+          @effortLayerOpacityChange='setEffortLayerOpacity' 
+          v-show="selTab === 'effort'"></fishing-effort>
+        <!-- Layers -->
+        <layer-panel ref="layers" 
+          @baseLayerChange='setBaseLayer' 
+          @layerOpacityChange='setLayerOpacity'
+          v-show="selTab === 'layers'"></layer-panel>
+        <!-- <div v-show="selTab === 'layers'">
           <h4>Layer panels</h4>
-        </div>
+        </div> -->
       </div>
 
     </div>
@@ -125,11 +135,29 @@ export default {
     selectedTrack: function(id){
       this.$emit('selectedTrack', id);
     },
+    // Effort panel
     setEffortLayerOpacity: function(opacity){
-      this.$emit('setEffortLayerOpacity', opacity);
+      if (this.selTab == 'effort'){ // Only when the tab is open can send events
+        this.$emit('setEffortLayerOpacity', opacity);
+        // Connect with layers panel
+        this.$refs['layers'].setFEffortOpacity(opacity);
+      }
     },
     setEffortMap: function(inUrl){
       this.$emit('setEffortMap', inUrl);
+    },
+    // Layer panel
+    setBaseLayer: function(baseLayerName){
+      this.$emit('setBaseLayer', baseLayerName);
+    },
+    setLayerOpacity: function(params){
+      if (this.selTab == 'layers'){ // Only when the tab is open can send events
+        this.$emit('setLayerOpacity', params);
+        // If the layer is fishing effort
+        if (params[0] == 'fishingEffort'){
+          this.$refs['fishing-effort'].setLayerOpacity(params[1]);
+        }
+      }
     },
 
     // PUBLIC METHODS
@@ -217,12 +245,13 @@ export default {
   background-color: #a0d7f2;
   border-color: #72b0cf;
   min-width: 18px;
+  box-shadow: 1px 0px 2px #0a3142;
 }
 .tab.active {
   color: rgb(0, 0, 0);
   background-color: #7dc8e8;
   border-color: #569ab8;
-  box-shadow: 1px 0px 2px #0a3142;
+  box-shadow: 2px 0px 5px #0a3142;
 }
 
 

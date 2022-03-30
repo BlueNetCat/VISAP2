@@ -82,8 +82,8 @@ export default {
   },
   watch: {
     layerOpacity(vv){
-      // TODO: callback to change layer opacity. vv is the opacity (from 0 to 1)
       this.$refs['effortImg'].style.opacity = vv*100 + '%';
+      // Callback to change layer opacity. vv is the opacity (from 0 to 1)
       this.$emit('effortLayerOpacityChange', vv);
     },
     selEffortType(et){
@@ -134,8 +134,9 @@ export default {
 
 
     // PUBLIC METHODS
-    // foo: function(){
-    // },
+    setLayerOpacity: function(opacity){ // Event coming from LayerPanel.vue
+      this.layerOpacity = opacity;
+    }
 
     
 
