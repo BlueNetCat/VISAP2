@@ -35,6 +35,23 @@
       </div>
     </div>
 
+
+    <!-- Row - Weather layers-->
+    <div class="row p-3" style='justify-content: center; flex-wrap: nowrap'>
+      <!-- Column - Title -->
+      <div class="col-md-auto centered" style='flex-direction:column'>
+        <div class='row'> Climatological layer </div>
+        <div class='row'> Date: {{currentDate}} </div>
+        <div class='row'> {{timeScale}} </div>
+      </div>
+      <div class="col-md-auto centered">
+      <!-- Button group - Base layers-->
+        <div class="btn-group" role="group" style='flex-direction: column;'>
+          <button type="button" class="btn" :class="[selClimaLayer == cLayer ? 'btn-active' : '']" @click='climaLayerClicked' :key="cLayer" v-for="cLayer in climaLayers">{{cLayer}}</button>
+        </div>
+      </div>
+    </div>
+
   </div>
 </template>
 
@@ -45,6 +62,25 @@
 export default {
   name: "layer-panel",
   created(){
+    // TODO: WMSDataRetriever could return a openlayers source or similar
+    // LayerPanel > WMSDataRetriever: give me parameters for that data type and date
+    // LayerPanel > Map: send parameters. Map can create layer from a dataset (and also animation layer)
+
+    // Fishing Track changed
+    // Send to LayerPanel, get parameters from WMSDataRetriever and change WMS clima layer in map.
+    this.climaData = {
+      'None': {},
+      'Sea Surface Temperature': {
+
+      },
+      'Sea Bottom Temperature': {},
+      'Chlorophyll': {},
+      'Salinity': {},
+      'Wind': {},
+      'Wave Significant Height': {},
+      'Current': {},
+      
+    }
 
   },
   mounted(){
@@ -59,6 +95,12 @@ export default {
       fEffortOpacity: 1,
       baseLayers: ['Bathymetry', 'OSM', 'Imagery', 'Ocean'], // TODO: get layers from map when created
       selBaseLayer: 'Bathymetry',
+      climaLayers: ['None', 'Sea Surface Temperature', 'Sea Bottom Temperature', 'Chlorophyll', 'Salinity', 'Wind', 'Wave Significant Height', 'Current'],
+      selClimaLayer: 'None',
+
+      currentDate: '13 April 2019',
+      timeScale: 'Daily mean',
+      
     }
   },
   watch: {
@@ -75,6 +117,10 @@ export default {
     baseLayerClicked: function(e){
       this.selBaseLayer = e.target.innerText;
       this.$emit('baseLayerChange', this.selBaseLayer);
+    },
+    climaLayerClicked: function(e){
+      this.selClimaLayer = e.target.innerText;
+      this.$emit('climaLayerChange', this.selClimaLayer);
     },
     // Fishing tracks layer opacity
     fTracksClicked: function(e){
@@ -94,6 +140,14 @@ export default {
     // Connected to Fishing Effort panel
     setFEffortOpacity: function(opacity){
       this.fEffortOpacity = opacity;
+    },
+    // Set the date
+    setDate: function(date){
+      // Get available date from WMSDataRetriever
+      // Send parameters to Map.vue
+      // Update HTML info
+      this.currentDate;
+      this.timeScale;
     },
 
     
@@ -121,6 +175,11 @@ export default {
 
 .btn-active {
   background: rgb(125 200 232);
+}
+
+.btn:hover {
+  background: rgba(169, 231, 255, 0.8);
+  box-shadow: 0 0 4px #02488e33;
 }
 
 .centered {

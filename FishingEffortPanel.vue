@@ -139,7 +139,7 @@ export default {
       this.$refs['effortImg'].src = outUrl;
       this.$emit('effortParamsChange', outUrl);
       // Legend
-      let legUrl = 'data/fishingEffort_' + this.selEffortType + '_' +  this.selYear + '_' + selGear + '_legend.png';
+      let legUrl = 'data/fishingEffort_' + this.selEffortType + '_' + selGear + '_legend.png';
       this.$refs['effortLegend'].src = legUrl;
       this.loading = true;
     },

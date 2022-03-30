@@ -1,6 +1,8 @@
 <template>
   <div id="app-side" style="display:flex; height: 100%">
 
+    
+
     <!-- Tabs -->
     <div class="position-relative" ref="buttonGroup" style="margin-top:50px; display:flex; flex-direction:column; height: fit-content;">
       <div  class="btn tab vertical-button" :class="{active: tab.isSelected}" type="button" :title="tab.name" :id="tab.id" @click="onTabClicked" :key="tab.name" v-for="tab in tabs">
@@ -11,6 +13,11 @@
 
     <!-- Panel -->
     <div class="collapse width" ref="panel" :class="{show: isPanelOpen}">
+
+      <!-- Closing button -->
+      <div class='row m-0' style='position: relative'>
+        <button type="button" class="btn-close p-0" aria-label="Close" @click='closePanel' style='position: absolute; top: 16px; right: 16px'></button>
+      </div>
 
       <!-- Info container -->
       <div class="side-panel-content g-0">
@@ -108,8 +115,6 @@ export default {
       // If tab is selected and panel is open, close panel
       if (tab.isSelected){
         this.closePanel();
-        tab.isSelected = false;
-        this.selTab = "";
       }
       // If tab is not selected, open panel
       else {
@@ -136,6 +141,10 @@ export default {
     },
     closePanel: function(){
       this.isPanelOpen = false;
+      // Deselect tabs
+      Object.keys(this.tabs).forEach(kk => this.tabs[kk].isSelected = false);
+      this.selTab = "";
+
       // HACK Fix Force openlayers canvas to fill window after 0.5 s
       for (let i = 10; i<500; i+=10){
         setTimeout(() => window.dispatchEvent(new Event('resize')), i);
