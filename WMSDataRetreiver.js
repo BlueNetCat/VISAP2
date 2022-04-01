@@ -5,12 +5,14 @@ class WMSDataRetriever{
 domainURL = 'https://my.cmems-du.eu/thredds/wms/';//"https://nrt.cmems-du.eu/thredds/wms/";
 
 // Variables:
+// DATA TYPES ARE STORED ELSEWHERE (WMSDataTypes.js). If you modify them, reload capabilities in the constructor and store in WMSDataTypes.js
 dataTypes = {
   "Sea surface velocity": {
     // https://my.cmems-du.eu/thredds/wms/med-cmcc-cur-rean-d?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&FORMAT=image/png&TRANSPARENT=TRUE&LAYERS=sea_water_velocity&STYLES=boxfill/ncview&LOGSCALE=false&SRS=EPSG:4326&BBOX=0,22.5,22.5,45&WIDTH=512&HEIGHT=512&COLORSCALERANGE=0.008134,0.3748&BELOWMINCOLOR=0x0000ff&ABOVEMAXCOLOR=0xff0001&TIME=2005-03-25T12:00:00.000Z&ELEVATION=-1.0182366371154785
     // https://my.cmems-du.eu/thredds/wms/med-cmcc-cur-rean-d?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities
     // https://my.cmems-du.eu/thredds/wms/med-cmcc-cur-rean-m?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities
     name: 'Sea surface velocity',
+    altNames: ['Sea surface velocity', 'Current', 'Sea velocity'],
     url: 'med-cmcc-cur-rean', // Forecast 'med-cmcc-cur-an-fc',
     domainURL: 'https://my.cmems-du.eu/thredds/wms/',
     version: '1.1.1',
@@ -18,7 +20,7 @@ dataTypes = {
     timeScales: ['d', 'd3', 'm'], // In reanalysis, no hourly; 'h', 'h3', 'h6', 'h12', 
     range: [0, 1.5],
     units: 'm/s',
-    style: "boxfill%2Foccam",//"vector%2Foccam",
+    style: "boxfill/occam",//"vector/occam",
     animation: {
       layerNames: ['uo', 'vo'], // East, North
       format: 'east_north',
@@ -36,6 +38,7 @@ dataTypes = {
     // 'https://my.cmems-du.eu/thredds/wms/med-cmcc-tem-rean-m?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities'
     // https://my.cmems-du.eu/thredds/wms/med-cmcc-tem-rean-d?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities
     name: 'Sea temperature',
+    altNames: ['Sea temperature', 'SST', 'Sea Surface Temperature'],
     url: 'med-cmcc-tem-rean', // Forecast: 'med-cmcc-tem-an-fc',
     domainURL: 'https://my.cmems-du.eu/thredds/wms/',
     version: '1.1.1',
@@ -43,7 +46,7 @@ dataTypes = {
     timeScales: ['d', 'd3', 'm'], // In reanalysis, not hourly available: 'h', 'h3', 'h6', 'h12', 
     range: [1, 40],
     units: 'ºC',
-    style: "boxfill%2Foccam",
+    style: "boxfill/occam",
     forecast: {
       url: 'med-cmcc-tem-an-fc',
       domainURL: 'https://nrt.cmems-du.eu/thredds/wms/',
@@ -56,14 +59,15 @@ dataTypes = {
     // 'https://my.cmems-du.eu/thredds/wms/med-cmcc-tem-rean-m?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities'
     // https://my.cmems-du.eu/thredds/wms/med-cmcc-tem-rean-d?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities
     name: 'Sea bottom temperature',
+    altNames: ['Sea bottom temperature', 'SBT'],
     url: 'med-cmcc-tem-rean', // Forecast: 'med-cmcc-tem-an-fc',
     domainURL: 'https://my.cmems-du.eu/thredds/wms/',
     version: '1.1.1',
     layerName: 'bottomT',
     timeScales: ['d', 'd3', 'm'], // In reanalysis, not hourly available: 'h', 'h3', 'h6', 'h12', 
-    range: [1, 40],
+    range: [1, 30],
     units: 'ºC',
-    style: "boxfill%2Foccam",
+    style: "boxfill/occam",
     forecast: {
       url: 'med-cmcc-tem-an-fc',
       domainURL: 'https://nrt.cmems-du.eu/thredds/wms/',
@@ -75,6 +79,7 @@ dataTypes = {
     // https://my.cmems-du.eu/thredds/wms/med-cmcc-sal-rean-m?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities
     // https://my.cmems-du.eu/thredds/wms/med-cmcc-sal-rean-d?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities
     name: 'Salinity',
+    altNames: ['Salinity', 'Sal', 'Sea surface salinity'],
     url: 'med-cmcc-sal-rean',// Forecast 'med-cmcc-sal-an-fc', 
     domainURL: 'https://my.cmems-du.eu/thredds/wms/',
     version: '1.1.1',
@@ -82,7 +87,7 @@ dataTypes = {
     timeScales: ['d', 'd3', 'm'], // In reanalysis, only daily and monthly; 'h', 'h3', 'h6', 'h12', 
     range: [32, 41],
     units: '‰',
-    style: "boxfill%2Foccam",
+    style: "boxfill/occam",
     forecast: {
       url: 'med-cmcc-sal-an-fc',
       domainURL: 'https://nrt.cmems-du.eu/thredds/wms/',
@@ -94,6 +99,7 @@ dataTypes = {
     // https://my.cmems-du.eu/thredds/wms/med-hcmr-wav-rean-h?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities
     // https://my.cmems-du.eu/thredds/wms/med-hcmr-wav-rean-h?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&FORMAT=image/png&TRANSPARENT=TRUE&LAYERS=VHM0&STYLES=boxfill/ncview&LOGSCALE=false&SRS=EPSG:4326&BBOX=-22.5,22.5,0,45&WIDTH=512&HEIGHT=512&COLORSCALERANGE=0,10&BELOWMINCOLOR=0x0000ff&ABOVEMAXCOLOR=0xff0001&TIME=2007-02-20T22:00:00.000Z
     name: 'Wave significant height',
+    altNames: ['Wave significant height', 'Waves', 'WSH'],
     url: 'med-hcmr-wav-rean',// Forecast 'med-hcmr-wav-an-fc',
     domainURL: 'https://my.cmems-du.eu/thredds/wms/',
     version: '1.1.1',
@@ -116,6 +122,7 @@ dataTypes = {
   },
   "Wind wave significant height": {
     name: 'Wind wave significant height',
+    altNames: ['Wind wave significant height', 'Wind waves', 'WWSH'],
     url: 'med-hcmr-wav-rean',// Forecast 'med-hcmr-wav-an-fc',
     domainURL: 'https://my.cmems-du.eu/thredds/wms/',
     version: '1.1.1',
@@ -138,6 +145,7 @@ dataTypes = {
   },
   "Wave period": {
     name: 'Wave period',
+    altNames: ['Wave period', 'Period'],
     scientificName: 'Sea surface wave mean period from variance spectral density inverse frequency moment',
     url: 'med-hcmr-wav-rean',// Forecast 'med-hcmr-wav-an-fc',
     domainURL: 'https://my.cmems-du.eu/thredds/wms/',
@@ -158,6 +166,7 @@ dataTypes = {
     // https://my.cmems-du.eu/thredds/wms/med-ogs-pft-rean-d?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities
     // https://my.cmems-du.eu/thredds/wms/med-ogs-pft-rean-m?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities
     name: 'Chlorophyll',
+    altNames: ['Chlorophyll', 'Chl'],
     url: 'med-ogs-pft-rean',// Forecast: 'med-ogs-pft-an-fc',
     domainURL: 'https://my.cmems-du.eu/thredds/wms/',
     version: '1.1.1',
@@ -165,17 +174,18 @@ dataTypes = {
     timeScales: ['d', 'd3', 'm'],
     range: [0.01, 1],
     units: 'mg/m3',
-    style: 'boxfill%2Foccam',
+    style: 'boxfill/occam',
     forecast: {
       url: 'med-ogs-pft-an-fc',
       domainURL: 'https://nrt.cmems-du.eu/thredds/wms/',
       version: '1.1.1',
       // CRS instead of SRS
     },
-    // https://nrt.cmems-du.eu/thredds/wms/med-ogs-pft-an-fc-d?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&FORMAT=image%2Fpng&TRANSPARENT=true&TILED=true&COLORSCALERANGE=0.028321734%2C2.3005204&ELEVATION=-1.0182366371154785&LAYERS=chl&STYLES=boxfill%2Frainbow&TIME=2021-10-06T12%3A00%3A00.000Z&WIDTH=256&HEIGHT=256&CRS=EPSG%3A4326&BBOX=28.125%2C16.875%2C33.75%2C22.5
+    // https://nrt.cmems-du.eu/thredds/wms/med-ogs-pft-an-fc-d?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&FORMAT=image/png&TRANSPARENT=true&TILED=true&COLORSCALERANGE=0.028321734%2C2.3005204&ELEVATION=-1.0182366371154785&LAYERS=chl&STYLES=boxfill/rainbow&TIME=2021-10-06T12%3A00%3A00.000Z&WIDTH=256&HEIGHT=256&CRS=EPSG%3A4326&BBOX=28.125%2C16.875%2C33.75%2C22.5
   },
-  "Wind": {
+  "Wind": { // https://doi.org/10.48670/moi-00184, https://doi.org/10.48670/moi-00185
     name: 'Wind',
+    altNames: ['Wind'],
     url: 'CERSAT-GLO-BLENDED_WIND_L4_REP-V6-OBS_FULL_TIME_SERIE',
     domainURL: 'https://my.cmems-du.eu/thredds/wms/',
     urlLocked: true,
@@ -184,7 +194,7 @@ dataTypes = {
     timeScales: ['h6'],
     range: [0, 30],
     units: 'm/s',
-    style: "boxfill%2Foccam",//"vector%2Foccam",
+    style: "boxfill/occam",//"vector/occam",
     animation: {
       layerNames: ['eastward_wind', 'northward_wind'], // East, North
       format: 'east_north',
@@ -223,9 +233,11 @@ dataTypes = {
       this.printWarn = ()=> {};
     }
 
+    // Preloaded data types
     this.dataTypes = JSON.parse(preLoadedDataTypes);
     if (onLoadCallback !== undefined) onLoadCallback();
     return
+
     // Iterate over data types and connect with the WMS service
     // Adds the time intervals to the dataTypes.
     // Adds elevation parameter if available. This might be useful to make plots time-depth
@@ -250,9 +262,12 @@ dataTypes = {
             .then(() => {
               // Callback when all capabilities have been loaded
               loaded++;
-              if (loading - loaded == 0 & onLoadCallback !== undefined){
-                onLoadCallback();
-                console.log(JSON.stringify(dataTypes));
+              if (loading - loaded == 0){
+                debugger;
+                if (onLoadCallback !== undefined)
+                  onLoadCallback();
+                
+                  console.log(JSON.stringify(dataTypes));
               }
               console.log("Total left to load: " + (loading - loaded));
               
@@ -355,6 +370,104 @@ dataTypes = {
   }
 
   
+
+  // Get url and parameters for a given data type and date
+  getDataTypeURL = function(dataName, date, timeScale){
+    // Find data type with that name
+    let dataType = undefined;
+    Object.keys(this.dataTypes).forEach(dKey => {
+      this.dataTypes[dKey].altNames.forEach(altN => {
+        if (altN.toLowerCase() == dataName.toLowerCase())
+          dataType = this.dataTypes[dKey];
+      })
+      //if (dKey == dataName) dataType = this.dataTypes[dKey] 
+    });
+    if (dataType == undefined) {
+      console.error("Data type does not exists: " + dataName);
+      return;
+    }
+
+    // Check timescale
+    let tScale = undefined
+    dataType.timeScales.forEach(tS => { if (tS == timeScale) tScale = timeScale });
+    if (tScale == undefined) {
+      tScale = dataType.timeScales[0];
+      this.printWarn("Time scale petitioned does not exist in the ocean prodcut. Ocean product: " + dataType.name + ". Time scale petitioned: " + timeScale + ". Available time scales: " + dataType.timeScales);
+    }
+
+    // Check if WMS capabilities were loaded
+    if (dataType.timeScaleCorrection == undefined) {
+      this.printWarn("WMS Capabilities were not yet loaded. Loading now");
+      return;
+      // Get Capabilities
+      //await this.loadWMSCapabilities(dataType, this.domainURL + dataType.url + "-" + currTimeScale, currTimeScale);
+    }
+
+    // Check if the date is smaller than the lastDate of the WMS reanlysis
+    // TODO: check if the timeScalesCorrection is also equivalent for forecast service. If not, we need to GetCapabilities of each forecast
+    let domainURL = dataType.domainURL;
+    let serviceURL = dataType.url;
+    let version = dataType.version; // 1.1.1 or 1.3.0 (then CRS should be instead of SRS)
+    if (date > dataType.lastDate) {
+      this.printWarn("Using forecast instead of reanalysis CMEMS data.");
+      domainURL = dataType.forecast.domainURL;
+      serviceURL = dataType.forecast.url;
+      version = dataType.forecast.version;
+    }
+
+    var params = {
+      'LAYERS': dataType.layerName,
+      'COLORSCALERANGE': String(dataType.range),
+      //'BBOX': String(long - 0.2) + "," + String(lat - 0.2) + "," + String(long + 0.2) + "," + String(lat + 0.2),
+      //'STYLES': 'boxfill/greyscale', // TODO: check that the gradient from black to white is linear
+      // Other default parameters
+      'SRS': 'EPSG:4326', // Should be CRS if version is 1.3.0
+      'CRS': 'EPSG:4326', // If I add SRC and CRS the problem is solved?
+      'TILED': 'true',
+      'LOGSCALE': 'false',
+      'TRANSPARENT': 'true',
+      'STYLES': dataType.style,
+      //'WIDTH': 1,
+      //'HEIGHT': 1,
+    }
+
+    // Add elevation
+    if (dataType.elevation !== undefined)
+      params['ELEVATION'] = String(dataType.elevation[0]);
+
+    // Add time parameter
+    date = date.substring(0, 11) + '00:00:00.000Z'// Clean date
+    if (tScale.includes('d')) {
+      let tCorr = dataType.timeScaleCorrection.d;
+      let hString = String(tCorr.h).padStart(2, '0');
+      let minString = String(tCorr.min).padStart(2, '0');
+      date = date.substring(0, 11) + hString + ':' + minString + ':00.000Z';
+    } else if (tScale.includes('m')) {
+      let tCorr = dataType.timeScaleCorrection.m;
+      // Find corresponding month
+      let mmyy = date.substring(0, 7);
+      date = tCorr.dates.find((dd) => dd.substring(0, 7) == mmyy);
+    }
+    // SHOULD BE DEPENDANT ON SELECTED TIME SCALE (for now daily? - wave does not have daily, only hourly
+    params['TIME'] = date;
+
+    // Construct WMS url
+    let url = domainURL + serviceURL;
+    if (!dataType.urlLocked)
+      url += '-' + tScale[0];
+    
+    
+    return {
+      url: url, 
+      params: params,
+      // name: dataType.name, not necessary?
+      // attributions
+      // animation
+    }
+  }
+
+
+
   // Get data at a specific point
   getDataAtPoint = async function(dataName, date, lat, long, timeScale, direction){
     

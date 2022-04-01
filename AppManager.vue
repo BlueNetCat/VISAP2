@@ -15,6 +15,7 @@
       @setEffortMap='setEffortMap'
       @setBaseLayer='setBaseLayer'
       @setLayerOpacity='setLayerOpacity'
+      @setClimaLayer='setClimaLayer'
     ></app-side-panel>
 
     <!-- <weather-widget></weather-widget> -->
@@ -98,7 +99,15 @@ export default {
     // Change the opacity of a layer. Event coming from LayerPanel.vue. params = [layerName, opacity]
     setLayerOpacity: function(params){
       this.$refs.map.setLayerOpacity(params);
-    }
+    },
+    // Change the layer with weather and oceanographic data. Event from LayerPanel.vue. urlParams = {url: '', params: {}}
+    setClimaLayer: function(urlParams){
+      this.$refs.map.setClimaLayer(urlParams);//this.$refs.map.updateSourceWMS(urlParams);
+    },
+    // Clima layer should change the date when a different track is clicked. Map.vue can change the track. HaulInfo.vue can also.
+    setWMSDate: function(date){
+
+    },
   },
   components: {
     "ol-map": Map,

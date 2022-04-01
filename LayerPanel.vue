@@ -66,6 +66,9 @@ export default {
     // LayerPanel > WMSDataRetriever: give me parameters for that data type and date
     // LayerPanel > Map: send parameters. Map can create layer from a dataset (and also animation layer)
 
+    // Create data retreiver
+    this.dataRetriever = new WMSDataRetriever(); // TODO: change data retriever constructor to getInstance static method
+
     // Fishing Track changed
     // Send to LayerPanel, get parameters from WMSDataRetriever and change WMS clima layer in map.
     this.climaData = {
@@ -120,7 +123,14 @@ export default {
     },
     climaLayerClicked: function(e){
       this.selClimaLayer = e.target.innerText;
-      this.$emit('climaLayerChange', this.selClimaLayer);
+      // Get date
+      let ff = FishingTracks.getFeatureById(FishingTracks.getSelectedTrack());
+      this.currentDate = ff.properties.info.Data;
+      let date = ff.properties.info.Data + 'T12:00:00.000Z';
+      // Get clima URL
+      let source = this.dataRetriever.getDataTypeURL(this.selClimaLayer, date, 'd');
+      // If source is not found, it will send undefined
+      this.$emit('climaLayerChange', source);
     },
     // Fishing tracks layer opacity
     fTracksClicked: function(e){

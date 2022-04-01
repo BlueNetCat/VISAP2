@@ -33,6 +33,7 @@
         <layer-panel ref="layers" 
           @baseLayerChange='setBaseLayer' 
           @layerOpacityChange='setLayerOpacity'
+          @climaLayerChange='setClimaLayer'
           v-show="selTab === 'layers'"></layer-panel>
         <!-- <div v-show="selTab === 'layers'">
           <h4>Layer panels</h4>
@@ -172,11 +173,14 @@ export default {
     setLayerOpacity: function(params){
       if (this.selTab == 'layers'){ // Only when the tab is open can send events
         this.$emit('setLayerOpacity', params);
-        // If the layer is fishing effort
+        // If the layer is fishing effort, connect with tab Fishing effort
         if (params[0] == 'fishingEffort'){
           this.$refs['fishing-effort'].setLayerOpacity(params[1]);
         }
       }
+    },
+    setClimaLayer: function(urlParams){
+      this.$emit('setClimaLayer', urlParams);
     },
 
     // PUBLIC METHODS
