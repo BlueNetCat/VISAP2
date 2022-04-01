@@ -43,6 +43,7 @@
         <div class='row'> Climatological layer </div>
         <div class='row'> Date: {{currentDate}} </div>
         <div class='row'> {{timeScale}} </div>
+        <input class='row slider m-2' type="range" min="0" max="1" step="0.01" v-model="climaOpacity" id="fEffortOpacity">
       </div>
       <div class="col-md-auto centered">
       <!-- Button group - Base layers-->
@@ -69,22 +70,6 @@ export default {
     // Create data retreiver
     this.dataRetriever = new WMSDataRetriever(); // TODO: change data retriever constructor to getInstance static method
 
-    // Fishing Track changed
-    // Send to LayerPanel, get parameters from WMSDataRetriever and change WMS clima layer in map.
-    this.climaData = {
-      'None': {},
-      'Sea Surface Temperature': {
-
-      },
-      'Sea Bottom Temperature': {},
-      'Chlorophyll': {},
-      'Salinity': {},
-      'Wind': {},
-      'Wave Significant Height': {},
-      'Current': {},
-      
-    }
-
   },
   mounted(){
 
@@ -96,6 +81,7 @@ export default {
     return {
       fTracksOpacity: 1,
       fEffortOpacity: 1,
+      climaOpacity: 1,
       baseLayers: ['Bathymetry', 'OSM', 'Imagery', 'Ocean'], // TODO: get layers from map when created
       selBaseLayer: 'Bathymetry',
       climaLayers: ['None', 'Sea Surface Temperature', 'Sea Bottom Temperature', 'Chlorophyll', 'Salinity', 'Wind', 'Wave Significant Height', 'Current'],
@@ -113,6 +99,9 @@ export default {
     },
     fEffortOpacity(vv){
       this.$emit('layerOpacityChange', ['fishingEffort', vv]);
+    },
+    climaOpacity(vv){
+      this.$emit('layerOpacityChange', ['data', vv]);
     }
   },
   methods: {
