@@ -435,7 +435,7 @@ export default {
       let extent = ol.proj.get('EPSG:3857').getExtent();
       let tileSize = 512;
       let maxResolution = ol.extent.getWidth(extent) / tileSize;
-      let resolutions = new Array(5);
+      let resolutions = new Array(6);
       for (let i = 0; i < resolutions.length; i++){
         resolutions[i] = maxResolution / Math.pow(2,i);
       }
