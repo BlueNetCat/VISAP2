@@ -65,7 +65,7 @@ dataTypes = {
     version: '1.1.1',
     layerName: 'bottomT',
     timeScales: ['d', 'd3', 'm'], // In reanalysis, not hourly available: 'h', 'h3', 'h6', 'h12', 
-    range: [1, 40],
+    range: [1, 30],
     units: 'ºC',
     style: "boxfill/occam",
     forecast: {
