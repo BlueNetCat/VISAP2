@@ -435,7 +435,7 @@ export default {
       let extent = ol.proj.get('EPSG:3857').getExtent();
       let tileSize = 512;
       let maxResolution = ol.extent.getWidth(extent) / tileSize;
-      let resolutions = new Array(5);
+      let resolutions = new Array(6);
       for (let i = 0; i < resolutions.length; i++){
         resolutions[i] = maxResolution / Math.pow(2,i);
       }
@@ -455,7 +455,7 @@ export default {
       this.getMapLayer('data').setSource(source);
       // Tracking the load progress
       this.registerLoadTilesEvents(source);
-
+      
       // Update legend
       if (this.$refs.legendWMS)
         this.$refs.legendWMS.setWMSLegend(infoWMS);
@@ -469,24 +469,33 @@ export default {
       }
     },
 
+    
+    // HIDDEN BECAUSE: it is not as simple as updating the date. Each data type has two WMS services associated sometimes (reanalysis and forecast).
+    //                 Depending on the date one or the other service will be used. Additionally, the date in Layers panel need to change, thus the connection
+    //                  between Map.vue and LayerPanel.vue has to be made anyway.
     // Update the date of the WMS source
-    updateWMSDate: function(date){ // yyyy-mm-dd
-      // Get data layer
-      let dataLayer = this.getMapLayer('data');
-      if (dataLayer == undefined) // No data layer is present
-        return;
+    // updateWMSDate: function(date){ // yyyy-mm-dd
+    //   // Get data layer
+    //   let dataLayer = this.getMapLayer('data');
+    //   if (dataLayer == undefined) // No data layer is present
+    //     return;
         
-      let wmsSource = dataLayer.getSource();
-      if (wmsSource == null) // No source yet
-        return;
-      // Get parameters and modify them
-      let params = wmsSource.getParams();
-      // TODO: We are adding yyyy-mm-dd with Thh:mm:ss:mmm. It can be that the hours/minutes change depending on the WMS service and the date. Be careful
-      params.TIME = date + params.TIME.substring(10);
+    //   let wmsSource = dataLayer.getSource();
+    //   if (wmsSource == null) // No source yet
+    //     return;
+    //   // Get parameters and modify them
+    //   debugger;
+    //   let params = wmsSource.getParams();
+    //   // TODO: We are adding yyyy-mm-dd with Thh:mm:ss:mmm. It can be that the hours/minutes change depending on the WMS service and the date. Be careful
+    //   params.TIME = date + params.TIME.substring(10);
+    //   // Use params.TIME to change from reanalysis to forecast and viceversa
+    //   let dataTypes = preLoadedDataTypes;
+    //   debugger;
       
-      wmsSource.updateParams(params);
+    //   wmsSource.updateParams(params);
+    //   // TODO: not as simple as that, because it can switch from reanalysis to forecast.
 
-    },
+    // },
 
     
     // Get OL map object
@@ -529,11 +538,9 @@ export default {
       FishingTracks.setSelectedTrack(id);
       this.fishingTracks.updateStyle();
 
-      // Update WMS date
-      let ff = FishingTracks.getFeatureById(id);
-      this.updateWMSDate(ff.properties.info.Data);
+      
 
-      // Emit to open side panel fishing tracks
+      // Emit to open side panel fishing tracks and to udate WMS date in layers panel
       this.$emit('onTrackClicked', id);
       
     },

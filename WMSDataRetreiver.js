@@ -460,8 +460,8 @@ dataTypes = {
     return {
       url: url, 
       params: params,
-      // name: dataType.name, not necessary?
-      // attributions
+      name: dataType.name, // not necessary?
+      attributions: '© CMEMS', // TODO
       // animation
     }
   }

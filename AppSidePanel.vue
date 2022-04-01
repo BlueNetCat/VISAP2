@@ -24,20 +24,20 @@
         <!-- Haul info -->
         <haul-info @selectedTrack="selectedTrack" ref="haul-info" v-show="selTab == 'tracks'">
         </haul-info>
+
         <!-- Fishing effort -->
         <fishing-effort ref="fishing-effort" 
           @effortParamsChange='setEffortMap' 
           @effortLayerOpacityChange='setEffortLayerOpacity' 
           v-show="selTab === 'effort'"></fishing-effort>
+
         <!-- Layers -->
         <layer-panel ref="layers" 
           @baseLayerChange='setBaseLayer' 
           @layerOpacityChange='setLayerOpacity'
           @climaLayerChange='setClimaLayer'
           v-show="selTab === 'layers'"></layer-panel>
-        <!-- <div v-show="selTab === 'layers'">
-          <h4>Layer panels</h4>
-        </div> -->
+       
       </div>
 
     </div>
@@ -152,7 +152,11 @@ export default {
       }
       //setTimeout(() => window.dispatchEvent(new Event('resize')), 500);
     },
+    // Event coming from HaulInfo.vue, when a track is clicked in the dropdown list.
     selectedTrack: function(id){
+      // Change the date on the WMS Layer panel
+      this.$refs.layers.fishingTrackSelected(id);
+      // Emit
       this.$emit('selectedTrack', id);
     },
     // Effort panel
@@ -192,10 +196,12 @@ export default {
     // iteratively until fishing tracks exist. Not so clean, as the tab Fishing Tracks should only exist once the fishing tracks
     // have been loaded. If there is an error with loading the fishing tracks, the tab should not exist?
 
-    // setFishingTracks: function(tracks){
-    //   if (this.$refs['haul-info'])
-    //     this.$refs['haul-info'].setTracks(tracks);
-    // },
+    // Fishing track clicked
+    fishingTrackClicked: function(id){
+      this.openFishingTab(id);
+      // Send event to layers panel
+      this.$refs.layers.fishingTrackSelected(id);
+    },
 
     // Opens the fishing tracks tab with the corresponding track id selected
     openFishingTab: function(id){
