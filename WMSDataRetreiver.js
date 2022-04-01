@@ -20,7 +20,7 @@ dataTypes = {
     timeScales: ['d', 'd3', 'm'], // In reanalysis, no hourly; 'h', 'h3', 'h6', 'h12', 
     range: [0, 1.5],
     units: 'm/s',
-    style: "boxfill%2Foccam",//"vector%2Foccam",
+    style: "boxfill/occam",//"vector/occam",
     animation: {
       layerNames: ['uo', 'vo'], // East, North
       format: 'east_north',
@@ -46,7 +46,7 @@ dataTypes = {
     timeScales: ['d', 'd3', 'm'], // In reanalysis, not hourly available: 'h', 'h3', 'h6', 'h12', 
     range: [1, 40],
     units: 'ºC',
-    style: "boxfill%2Foccam",
+    style: "boxfill/occam",
     forecast: {
       url: 'med-cmcc-tem-an-fc',
       domainURL: 'https://nrt.cmems-du.eu/thredds/wms/',
@@ -67,7 +67,7 @@ dataTypes = {
     timeScales: ['d', 'd3', 'm'], // In reanalysis, not hourly available: 'h', 'h3', 'h6', 'h12', 
     range: [1, 40],
     units: 'ºC',
-    style: "boxfill%2Foccam",
+    style: "boxfill/occam",
     forecast: {
       url: 'med-cmcc-tem-an-fc',
       domainURL: 'https://nrt.cmems-du.eu/thredds/wms/',
@@ -87,7 +87,7 @@ dataTypes = {
     timeScales: ['d', 'd3', 'm'], // In reanalysis, only daily and monthly; 'h', 'h3', 'h6', 'h12', 
     range: [32, 41],
     units: '‰',
-    style: "boxfill%2Foccam",
+    style: "boxfill/occam",
     forecast: {
       url: 'med-cmcc-sal-an-fc',
       domainURL: 'https://nrt.cmems-du.eu/thredds/wms/',
@@ -174,14 +174,14 @@ dataTypes = {
     timeScales: ['d', 'd3', 'm'],
     range: [0.01, 1],
     units: 'mg/m3',
-    style: 'boxfill%2Foccam',
+    style: 'boxfill/occam',
     forecast: {
       url: 'med-ogs-pft-an-fc',
       domainURL: 'https://nrt.cmems-du.eu/thredds/wms/',
       version: '1.1.1',
       // CRS instead of SRS
     },
-    // https://nrt.cmems-du.eu/thredds/wms/med-ogs-pft-an-fc-d?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&FORMAT=image%2Fpng&TRANSPARENT=true&TILED=true&COLORSCALERANGE=0.028321734%2C2.3005204&ELEVATION=-1.0182366371154785&LAYERS=chl&STYLES=boxfill%2Frainbow&TIME=2021-10-06T12%3A00%3A00.000Z&WIDTH=256&HEIGHT=256&CRS=EPSG%3A4326&BBOX=28.125%2C16.875%2C33.75%2C22.5
+    // https://nrt.cmems-du.eu/thredds/wms/med-ogs-pft-an-fc-d?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&FORMAT=image/png&TRANSPARENT=true&TILED=true&COLORSCALERANGE=0.028321734%2C2.3005204&ELEVATION=-1.0182366371154785&LAYERS=chl&STYLES=boxfill/rainbow&TIME=2021-10-06T12%3A00%3A00.000Z&WIDTH=256&HEIGHT=256&CRS=EPSG%3A4326&BBOX=28.125%2C16.875%2C33.75%2C22.5
   },
   "Wind": { // https://doi.org/10.48670/moi-00184, https://doi.org/10.48670/moi-00185
     name: 'Wind',
@@ -194,7 +194,7 @@ dataTypes = {
     timeScales: ['h6'],
     range: [0, 30],
     units: 'm/s',
-    style: "boxfill%2Foccam",//"vector%2Foccam",
+    style: "boxfill/occam",//"vector/occam",
     animation: {
       layerNames: ['eastward_wind', 'northward_wind'], // East, North
       format: 'east_north',
