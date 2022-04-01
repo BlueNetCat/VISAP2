@@ -104,6 +104,10 @@ export default {
     setClimaLayer: function(urlParams){
       this.$refs.map.setClimaLayer(urlParams);//this.$refs.map.updateSourceWMS(urlParams);
     },
+    // Clima layer should change the date when a different track is clicked. Map.vue can change the track. HaulInfo.vue can also.
+    setWMSDate: function(date){
+
+    },
   },
   components: {
     "ol-map": Map,

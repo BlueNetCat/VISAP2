@@ -125,6 +125,7 @@ export default {
       this.selClimaLayer = e.target.innerText;
       // Get date
       let ff = FishingTracks.getFeatureById(FishingTracks.getSelectedTrack());
+      this.currentDate = ff.properties.info.Data;
       let date = ff.properties.info.Data + 'T12:00:00.000Z';
       // Get clima URL
       let source = this.dataRetriever.getDataTypeURL(this.selClimaLayer, date, 'd');

@@ -31,6 +31,8 @@
       <!-- Legend -->
       <!--wms-legend @legendClicked="changeStyle($event)" ref="legendWMS" class="position-absolute top-0 end-0 d-sm-flex me-2 mt-5"></wms-legend-->
       
+      <!-- WMS graphic legend -->
+      <img v-if="WMSLegendURL != ''" id='wmsLegend' :src="WMSLegendURL">
 
     </div>
 </template>
@@ -201,6 +203,7 @@ export default {
         loaded: 1
       },
       isLayerDataReady: false,
+      WMSLegendURL: '',
     }
   },
   methods: {
@@ -421,6 +424,10 @@ export default {
 
 
 
+
+
+
+
     // PUBLIC METHODS
     // Update WMS data source. This function is called from AppManager.vue
     updateSourceWMS: function (infoWMS){
@@ -452,6 +459,33 @@ export default {
       // Update legend
       if (this.$refs.legendWMS)
         this.$refs.legendWMS.setWMSLegend(infoWMS);
+      if (this.WMSLegendURL != undefined){
+        let url = source.getLegendUrl(this.map.getView().getResolution()) + '&TRANSPARENT=TRUE';
+        url += '&PALETTE=' + infoWMS.params.STYLES.split('/')[1];
+        url += '&COLORSCALERANGE=' + infoWMS.params.COLORSCALERANGE;
+        this.WMSLegendURL = url;
+
+        //https://nrt.cmems-du.eu/thredds/wms/med-cmcc-sal-an-fc-d?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetLegendGraphic&FORMAT=image%2Fpng&LAYER=so&SCALE=2544411.053285503&TRANSPARENT=TRUE
+      }
+    },
+
+    // Update the date of the WMS source
+    updateWMSDate: function(date){ // yyyy-mm-dd
+      // Get data layer
+      let dataLayer = this.getMapLayer('data');
+      if (dataLayer == undefined) // No data layer is present
+        return;
+        
+      let wmsSource = dataLayer.getSource();
+      if (wmsSource == null) // No source yet
+        return;
+      // Get parameters and modify them
+      let params = wmsSource.getParams();
+      // TODO: We are adding yyyy-mm-dd with Thh:mm:ss:mmm. It can be that the hours/minutes change depending on the WMS service and the date. Be careful
+      params.TIME = date + params.TIME.substring(10);
+      
+      wmsSource.updateParams(params);
+
     },
 
     
@@ -494,6 +528,10 @@ export default {
       // Update map style
       FishingTracks.setSelectedTrack(id);
       this.fishingTracks.updateStyle();
+
+      // Update WMS date
+      let ff = FishingTracks.getFeatureById(id);
+      this.updateWMSDate(ff.properties.info.Data);
 
       // Emit to open side panel fishing tracks
       this.$emit('onTrackClicked', id);
@@ -544,6 +582,9 @@ export default {
         // Remove clima layer
         if (climaLayer != undefined)
           this.map.removeLayer(climaLayer);
+        // Remove legend url
+        this.WMSLegendURL = '';
+        
         return;
       }
       // Add layer if it is not included
@@ -633,6 +674,21 @@ export default {
   bottom: 0; 
   height: 90px; 
   width: 100%;
+}
+
+#wmsLegend {
+  top: 85px; 
+  left: 15px;
+  position: absolute; 
+  z-index: 2;
+  top: 85px;
+  left: 15px;
+  position: absolute;
+  z-index: 2;
+  box-shadow: 0 0 4px black;
+  background: #527db3cf;
+  padding: 10px;
+  max-height: 200px;
 }
 
 </style>
