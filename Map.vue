@@ -84,45 +84,8 @@ export default {
         baseLayer: new ol.layer.Tile({
           name: 'baseLayer',
           source: this.baseLayerSources['Bathymetry'],
-          zIndex: -2,
+          zIndex: -3,
         }),
-        /*bathymetry: new ol.layer.Tile({
-            name: 'bathymetry',
-            source: new ol.source.XYZ ({ // https://openlayers.org/en/latest/examples/xyz.html
-              url: 'https://tiles.emodnet-bathymetry.eu/2020/baselayer/web_mercator/{z}/{x}/{y}.png', // https://tiles.emodnet-bathymetry.eu/
-              attributions: "© EMODnet Bathymetry Consortium",
-              cacheSize: 500,
-              crossOrigin: 'anonymous',
-            }),
-            zIndex: -2,
-          }),
-        osm: new ol.layer.Tile({
-            name: 'osm',
-            source: new ol.source.OSM ({ // https://openlayers.org/en/latest/examples/canvas-tiles.html
-              cacheSize: 500,
-              crossOrigin: 'anonymous',
-            }),
-            zIndex: -2,
-          }),
-        esriOcean: new ol.layer.Tile({
-            name: 'esriOcean',
-            source: new ol.source.XYZ ({ // https://openlayers.org/en/latest/examples/canvas-tiles.html
-              url: 'https://services.arcgisonline.com/ArcGIS/rest/services/Ocean/World_Ocean_Base/MapServer/tile/{z}/{y}/{x}.png',
-              cacheSize: 500,
-              crossOrigin: 'anonymous',
-            }),
-            zIndex: -2,
-          }),
-        esriImagery: new ol.layer.Tile({
-          name: 'esriImagery',
-          source: new ol.source.XYZ ({ // https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer/0
-            url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}.png',
-            cacheSize: 500,
-            crossOrigin: 'anonymous',
-          }),
-          zIndex: -2,
-        }),*/
-
 
         graticule: new ol.layer.Graticule({
           name: 'graticule',
@@ -193,10 +156,10 @@ export default {
             })
           }),
         }),
-        // Tracks
+        // Clima data (weather and sea)
         data: new ol.layer.Tile({
           name: 'data',
-          zIndex: -1,
+          zIndex: -2,
           //opacity: 0.9
         }),
         // Fishing effort
@@ -249,7 +212,7 @@ export default {
       this.map = new ol.Map({
         layers : [
           // Data layer
-          //this.layers.data,
+          this.layers.data,
           // Base layer
           this.layers.baseLayer,
           //this.layers.bathymetry,
@@ -477,7 +440,8 @@ export default {
       });
       
       // Avoid cross origin problems when getting pixel data (The canvas has been tainted by cross-origin data.)
-      infoWMS.crossOrigin= 'anonymous';
+      infoWMS.crossOrigin='anonymous';
+      infoWMS.cacheSize = 500;
 
       // Create OL source from ForecastBar.vue object
       let source = new ol.source.TileWMS(infoWMS);
@@ -574,6 +538,23 @@ export default {
       // Set opacity
       layer.setOpacity(parseFloat(opacity));
     },
+    setClimaLayer: function(urlParams){
+      let climaLayer = this.getMapLayer('data');
+      if (urlParams == undefined){
+        // Remove clima layer
+        if (climaLayer != undefined)
+          this.map.removeLayer(climaLayer);
+        return;
+      }
+      // Add layer if it is not included
+      if (climaLayer == undefined)
+        this.map.addLayer(this.layers.data);
+      // Update parameters
+      this.updateSourceWMS(urlParams);
+      
+    },
+
+
 
 
     // Panel was open or closed by clicking a tab
