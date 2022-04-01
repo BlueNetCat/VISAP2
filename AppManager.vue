@@ -3,7 +3,10 @@
   <div id="app-manager">
 
     <!-- Map  container-->
-    <ol-map id="ol-map" @onTrackClicked="openSidePanel" @onFishingTracksLoad="fishingTracksLoad" ref="map"></ol-map>
+    <ol-map id="ol-map" ref="map"
+      @onTrackClicked="trackClicked" 
+      @onFishingTracksLoad="fishingTracksLoad"
+    ></ol-map>
     <!-- <animation-canvas ref="animcanvas"></animation-canvas> SHOULD BE ON MAP-->
     
     <!-- Side panel -->
@@ -39,6 +42,9 @@ APP STRUCTURE
       /                    |          
   RANGE-SLIDER      WEATHER-WIDGET
 
+Right now the comunication is done via the paths shown before. It might be useful to create some kind of
+whiteboard or event manager. For example, one could send and event like (from, to who, funcion name, parameters)
+
 */
 
 
@@ -70,9 +76,9 @@ export default {
       this.$refs.map.setSelectedTrack(id);
     },
     // When a track is clicked on the map (Map.vue / TracksTimeLine.vue)
-    openSidePanel: function(id){
+    trackClicked: function(id){
       // Send the id to side panel
-      this.$refs.sidePanel.openFishingTab(id);
+      this.$refs.sidePanel.fishingTrackClicked(id);
     },
     // Fishing tracks have been loaded
     fishingTracksLoad: function(geojson){

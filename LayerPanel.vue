@@ -42,7 +42,7 @@
       <div class="col-md-auto centered" style='flex-direction:column'>
         <div class='row'> Climatological layer </div>
         <div class='row'> Date: {{currentDate}} </div>
-        <div class='row'> {{timeScale}} </div>
+        <!-- <div class='row'> {{timeScale}} </div> -->
         <input class='row slider m-2' type="range" min="0" max="1" step="0.01" v-model="climaOpacity" id="fEffortOpacity">
       </div>
       <div class="col-md-auto centered">
@@ -88,7 +88,7 @@ export default {
       selClimaLayer: 'None',
 
       currentDate: '13 April 2019',
-      timeScale: 'Daily mean',
+      // timeScale: 'Daily mean',
       
     }
   },
@@ -110,8 +110,23 @@ export default {
       this.selBaseLayer = e.target.innerText;
       this.$emit('baseLayerChange', this.selBaseLayer);
     },
+    // Fishing tracks layer opacity
+    fTracksClicked: function(e){
+      this.fTracksOpacity = this.fTracksOpacity == 0 ? 1 : 0;
+    },
+    fEffortClicked: function(e){
+      this.fEffortOpacity = this.fEffortOpacity == 0 ? 0.8 : 0;
+    },
     climaLayerClicked: function(e){
       this.selClimaLayer = e.target.innerText;
+      // Update clima layer
+      this.updateClimaLayer();
+    },
+    
+    
+
+    // PRIVATE METHODS
+    updateClimaLayer: function(){
       // Get date
       let ff = FishingTracks.getFeatureById(FishingTracks.getSelectedTrack());
       this.currentDate = ff.properties.info.Data;
@@ -121,18 +136,7 @@ export default {
       // If source is not found, it will send undefined
       this.$emit('climaLayerChange', source);
     },
-    // Fishing tracks layer opacity
-    fTracksClicked: function(e){
-      this.fTracksOpacity = this.fTracksOpacity == 0 ? 1 : 0;
-    },
-    fEffortClicked: function(e){
-      this.fEffortOpacity = this.fEffortOpacity == 0 ? 0.8 : 0;
-    },
     
-
-    // PRIVATE METHODS
-    // foo: function(){
-    // },
 
 
     // PUBLIC METHODS
@@ -140,13 +144,9 @@ export default {
     setFEffortOpacity: function(opacity){
       this.fEffortOpacity = opacity;
     },
-    // Set the date
-    setDate: function(date){
-      // Get available date from WMSDataRetriever
-      // Send parameters to Map.vue
-      // Update HTML info
-      this.currentDate;
-      this.timeScale;
+    // Event coming from Map.vue, when a fishing track is clicked there
+    fishingTrackSelected: function(id){
+      this.updateClimaLayer();
     },
 
     
