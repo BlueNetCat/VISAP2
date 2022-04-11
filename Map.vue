@@ -158,11 +158,55 @@ export default {
             })
           }),
         }),
+
+        // Ports
+        portsLayer: new ol.layer.Vector({
+          source: new ol.source.Vector({
+            url: 'data/ports.geojson',
+            format: new ol.format.GeoJSON()
+          }),
+          minZoom: 3,
+          //declutter: true,
+          style: function(feature, resolution) {
+            let name = feature.get('name');
+            let paletteColor = palette[name].color || [255,255,255];
+
+            // Text size computation using resolution
+            // Min text size: 9
+            // Max text size: 16
+            let textSize = Math.min(Math.max(16*(1200 - resolution)/900, 9), 16);
+              
+            
+            return new ol.style.Style({
+              text: new ol.style.Text({
+                text: name,
+                font: textSize + 'px Arial, Helvetica, sans-serif',
+                textAlign: 'right',
+                offsetX: -10,
+                fill: new ol.style.Fill({
+                  color: 'rgba(0,0,0,0.9)',
+                }),
+                stroke: new ol.style.Stroke({
+                  color: 'rgba('+paletteColor.toString()+', 0.3)',//'rgba(255,255,255,0.5)',
+                  width: 3
+                })
+              }),
+              image: new ol.style.Circle({
+                radius: 5,
+                //fill: new ol.style.Fill({color: 'rgba(255,255,255,0.6)'}),
+                fill: new ol.style.Fill({color: 'rgba('+paletteColor.toString()+', 0.6)'}),
+                stroke: new ol.style.Stroke({color: 'rgba(0,0,0,0.8)', width: 1})
+              })
+            })
+
+
+          },
+        }),
+
         // Clima data (weather and sea)
         data: new ol.layer.Tile({
           name: 'data',
           zIndex: -2,
-          //opacity: 0.9
         }),
         // Fishing effort
         fishingEffort: new ol.layer.Image({
@@ -226,6 +270,8 @@ export default {
           // Shoreline
           this.layers.shoreline,
           
+          // Ports
+          this.layers.portsLayer,
           // Fishing effort
           this.layers.fishingEffort,
           
