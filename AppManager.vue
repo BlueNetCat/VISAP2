@@ -2,6 +2,10 @@
 <!-- Container -->
   <div id="app-manager">
 
+    <div style='position:absolute;margin-top: 100px;margin-left:100px;z-index: 1'>
+      {{ $t('hello') }}
+    </div>
+
     <!-- Map  container-->
     <ol-map id="ol-map" @onTrackClicked="openSidePanel" @onFishingTracksLoad="fishingTracksLoad" ref="map"></ol-map>
     <!-- <animation-canvas ref="animcanvas"></animation-canvas> SHOULD BE ON MAP-->
@@ -19,8 +23,19 @@
 
     <!-- <weather-widget></weather-widget> -->
   </div>
+  
 </template>
-
+<!-- https://www.codeandweb.com/babeledit/tutorials/how-to-translate-your-vue-app-with-vue-i18n -->
+<i18n>
+  {
+    "en": {
+      "hello": "hello world!"
+    },
+    "ja": {
+      "hello": "こんにちは、世界！"
+    }
+  }
+  </i18n>
 
 
 
@@ -51,10 +66,11 @@ import WeatherWidget from "WeatherWidget.vue"
 export default {
   name: "app-manager",
   created(){
-
+    
   },
   mounted () {
-
+    //localStorage.setItem('language', 'ja');
+    this.$i18n.locale = 'ja';
   },
   data () {
     return {
