@@ -5,7 +5,10 @@
     <language-selector style='position:absolute;margin-top: 4.5rem;margin-left:0.5rem;z-index: 1'>
     </language-selector>
     <!-- Map  container-->
-    <ol-map id="ol-map" @onTrackClicked="openSidePanel" @onFishingTracksLoad="fishingTracksLoad" ref="map"></ol-map>
+    <ol-map id="ol-map" ref="map"
+      @onTrackClicked="trackClicked" 
+      @onFishingTracksLoad="fishingTracksLoad"
+    ></ol-map>
     <!-- <animation-canvas ref="animcanvas"></animation-canvas> SHOULD BE ON MAP-->
     
     <!-- Side panel -->
@@ -17,6 +20,7 @@
       @setEffortMap='setEffortMap'
       @setBaseLayer='setBaseLayer'
       @setLayerOpacity='setLayerOpacity'
+      @setClimaLayer='setClimaLayer'
     ></app-side-panel>
 
     <!-- <weather-widget></weather-widget> -->
@@ -40,6 +44,9 @@ APP STRUCTURE
     TIME-RANGE-BAR    HAUL-INFO  FISHING-EFFORT  LAYER-PANEL
       /                    |          
   RANGE-SLIDER      WEATHER-WIDGET
+
+Right now the comunication is done via the paths shown before. It might be useful to create some kind of
+whiteboard or event manager. For example, one could send and event like (from, to who, funcion name, parameters)
 
 */
 
@@ -74,9 +81,9 @@ export default {
       this.$refs.map.setSelectedTrack(id);
     },
     // When a track is clicked on the map (Map.vue / TracksTimeLine.vue)
-    openSidePanel: function(id){
+    trackClicked: function(id){
       // Send the id to side panel
-      this.$refs.sidePanel.openFishingTab(id);
+      this.$refs.sidePanel.fishingTrackClicked(id);
     },
     // Fishing tracks have been loaded
     fishingTracksLoad: function(geojson){
@@ -103,7 +110,15 @@ export default {
     // Change the opacity of a layer. Event coming from LayerPanel.vue. params = [layerName, opacity]
     setLayerOpacity: function(params){
       this.$refs.map.setLayerOpacity(params);
-    }
+    },
+    // Change the layer with weather and oceanographic data. Event from LayerPanel.vue. urlParams = {url: '', params: {}}
+    setClimaLayer: function(urlParams){
+      this.$refs.map.setClimaLayer(urlParams);//this.$refs.map.updateSourceWMS(urlParams);
+    },
+    // Clima layer should change the date when a different track is clicked. Map.vue can change the track. HaulInfo.vue can also.
+    setWMSDate: function(date){
+
+    },
   },
   components: {
     "ol-map": Map,

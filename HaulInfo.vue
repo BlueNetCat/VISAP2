@@ -55,6 +55,8 @@ export default {
   name: "haul-info",
   created(){
     this.selTrack = this.options[0];
+    // Set selected fishing track
+    FishingTracks.setSelectedTrack(this.selTrack.Id);
   },
   mounted(){
     //this.getFishingTracks();

@@ -31,6 +31,8 @@
       <!-- Legend -->
       <!--wms-legend @legendClicked="changeStyle($event)" ref="legendWMS" class="position-absolute top-0 end-0 d-sm-flex me-2 mt-5"></wms-legend-->
       
+      <!-- WMS graphic legend -->
+      <img v-if="WMSLegendURL != ''" id='wmsLegend' :src="WMSLegendURL">
 
     </div>
 </template>
@@ -68,11 +70,13 @@ export default {
       }),
       'Imagery': new ol.source.XYZ ({ // https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer/0
         url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}.png',
+        attributions: '© Esri, Maxar, GeoEye, Earthstar Geographics, CNES/Airbus DS, USDA, USGS, AeroGRID, IGN, and the GIS User Community',
         cacheSize: 500,
         crossOrigin: 'anonymous',
       }),
       'Ocean': new ol.source.XYZ ({ // https://openlayers.org/en/latest/examples/canvas-tiles.html
         url: 'https://services.arcgisonline.com/ArcGIS/rest/services/Ocean/World_Ocean_Base/MapServer/tile/{z}/{y}/{x}.png',
+        attributions: 'Esri, Garmin, GEBCO, NOAA NGDC, and other contributors',
         cacheSize: 500,
         crossOrigin: 'anonymous',
       }),
@@ -82,45 +86,8 @@ export default {
         baseLayer: new ol.layer.Tile({
           name: 'baseLayer',
           source: this.baseLayerSources['Bathymetry'],
-          zIndex: -2,
+          zIndex: -3,
         }),
-        /*bathymetry: new ol.layer.Tile({
-            name: 'bathymetry',
-            source: new ol.source.XYZ ({ // https://openlayers.org/en/latest/examples/xyz.html
-              url: 'https://tiles.emodnet-bathymetry.eu/2020/baselayer/web_mercator/{z}/{x}/{y}.png', // https://tiles.emodnet-bathymetry.eu/
-              attributions: "© EMODnet Bathymetry Consortium",
-              cacheSize: 500,
-              crossOrigin: 'anonymous',
-            }),
-            zIndex: -2,
-          }),
-        osm: new ol.layer.Tile({
-            name: 'osm',
-            source: new ol.source.OSM ({ // https://openlayers.org/en/latest/examples/canvas-tiles.html
-              cacheSize: 500,
-              crossOrigin: 'anonymous',
-            }),
-            zIndex: -2,
-          }),
-        esriOcean: new ol.layer.Tile({
-            name: 'esriOcean',
-            source: new ol.source.XYZ ({ // https://openlayers.org/en/latest/examples/canvas-tiles.html
-              url: 'https://services.arcgisonline.com/ArcGIS/rest/services/Ocean/World_Ocean_Base/MapServer/tile/{z}/{y}/{x}.png',
-              cacheSize: 500,
-              crossOrigin: 'anonymous',
-            }),
-            zIndex: -2,
-          }),
-        esriImagery: new ol.layer.Tile({
-          name: 'esriImagery',
-          source: new ol.source.XYZ ({ // https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer/0
-            url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}.png',
-            cacheSize: 500,
-            crossOrigin: 'anonymous',
-          }),
-          zIndex: -2,
-        }),*/
-
 
         graticule: new ol.layer.Graticule({
           name: 'graticule',
@@ -191,11 +158,55 @@ export default {
             })
           }),
         }),
-        // Tracks
+
+        // Ports
+        portsLayer: new ol.layer.Vector({
+          source: new ol.source.Vector({
+            url: 'data/ports.geojson',
+            format: new ol.format.GeoJSON()
+          }),
+          minZoom: 3,
+          //declutter: true,
+          style: function(feature, resolution) {
+            let name = feature.get('name');
+            let paletteColor = palette[name].color || [255,255,255];
+
+            // Text size computation using resolution
+            // Min text size: 9
+            // Max text size: 16
+            let textSize = Math.min(Math.max(16*(1200 - resolution)/900, 9), 16);
+              
+            
+            return new ol.style.Style({
+              text: new ol.style.Text({
+                text: name,
+                font: textSize + 'px Arial, Helvetica, sans-serif',
+                textAlign: 'right',
+                offsetX: -10,
+                fill: new ol.style.Fill({
+                  color: 'rgba(0,0,0,0.9)',
+                }),
+                stroke: new ol.style.Stroke({
+                  color: 'rgba('+paletteColor.toString()+', 0.3)',//'rgba(255,255,255,0.5)',
+                  width: 3
+                })
+              }),
+              image: new ol.style.Circle({
+                radius: 5,
+                //fill: new ol.style.Fill({color: 'rgba(255,255,255,0.6)'}),
+                fill: new ol.style.Fill({color: 'rgba('+paletteColor.toString()+', 0.6)'}),
+                stroke: new ol.style.Stroke({color: 'rgba(0,0,0,0.8)', width: 1})
+              })
+            })
+
+
+          },
+        }),
+
+        // Clima data (weather and sea)
         data: new ol.layer.Tile({
           name: 'data',
-          zIndex: -1,
-          //opacity: 0.9
+          zIndex: -2,
         }),
         // Fishing effort
         fishingEffort: new ol.layer.Image({
@@ -236,6 +247,7 @@ export default {
         loaded: 1
       },
       isLayerDataReady: false,
+      WMSLegendURL: '',
     }
   },
   methods: {
@@ -247,7 +259,7 @@ export default {
       this.map = new ol.Map({
         layers : [
           // Data layer
-          //this.layers.data,
+          this.layers.data,
           // Base layer
           this.layers.baseLayer,
           //this.layers.bathymetry,
@@ -258,11 +270,14 @@ export default {
           // Shoreline
           this.layers.shoreline,
           
+          // Ports
+          this.layers.portsLayer,
           // Fishing effort
           this.layers.fishingEffort,
           
         ],
         target: 'map',
+        controls: ol.control.defaults({ attributionOptions: { collapsible: true } }),
         view: new ol.View({
           center: ol.proj.fromLonLat([3,41.5]),
           zoom: 6,
@@ -455,6 +470,10 @@ export default {
 
 
 
+
+
+
+
     // PUBLIC METHODS
     // Update WMS data source. This function is called from AppManager.vue
     updateSourceWMS: function (infoWMS){
@@ -462,7 +481,7 @@ export default {
       let extent = ol.proj.get('EPSG:3857').getExtent();
       let tileSize = 512;
       let maxResolution = ol.extent.getWidth(extent) / tileSize;
-      let resolutions = new Array(5);
+      let resolutions = new Array(6);
       for (let i = 0; i < resolutions.length; i++){
         resolutions[i] = maxResolution / Math.pow(2,i);
       }
@@ -474,18 +493,55 @@ export default {
       });
       
       // Avoid cross origin problems when getting pixel data (The canvas has been tainted by cross-origin data.)
-      infoWMS.crossOrigin= 'anonymous';
+      infoWMS.crossOrigin='anonymous';
+      infoWMS.cacheSize = 500;
 
       // Create OL source from ForecastBar.vue object
       let source = new ol.source.TileWMS(infoWMS);
       this.getMapLayer('data').setSource(source);
       // Tracking the load progress
       this.registerLoadTilesEvents(source);
-
+      
       // Update legend
       if (this.$refs.legendWMS)
         this.$refs.legendWMS.setWMSLegend(infoWMS);
+      if (this.WMSLegendURL != undefined){
+        let url = source.getLegendUrl(this.map.getView().getResolution()) + '&TRANSPARENT=TRUE';
+        url += '&PALETTE=' + infoWMS.params.STYLES.split('/')[1];
+        url += '&COLORSCALERANGE=' + infoWMS.params.COLORSCALERANGE;
+        this.WMSLegendURL = url;
+
+        //https://nrt.cmems-du.eu/thredds/wms/med-cmcc-sal-an-fc-d?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetLegendGraphic&FORMAT=image%2Fpng&LAYER=so&SCALE=2544411.053285503&TRANSPARENT=TRUE
+      }
     },
+
+    
+    // HIDDEN BECAUSE: it is not as simple as updating the date. Each data type has two WMS services associated sometimes (reanalysis and forecast).
+    //                 Depending on the date one or the other service will be used. Additionally, the date in Layers panel need to change, thus the connection
+    //                  between Map.vue and LayerPanel.vue has to be made anyway.
+    // Update the date of the WMS source
+    // updateWMSDate: function(date){ // yyyy-mm-dd
+    //   // Get data layer
+    //   let dataLayer = this.getMapLayer('data');
+    //   if (dataLayer == undefined) // No data layer is present
+    //     return;
+        
+    //   let wmsSource = dataLayer.getSource();
+    //   if (wmsSource == null) // No source yet
+    //     return;
+    //   // Get parameters and modify them
+    //   debugger;
+    //   let params = wmsSource.getParams();
+    //   // TODO: We are adding yyyy-mm-dd with Thh:mm:ss:mmm. It can be that the hours/minutes change depending on the WMS service and the date. Be careful
+    //   params.TIME = date + params.TIME.substring(10);
+    //   // Use params.TIME to change from reanalysis to forecast and viceversa
+    //   let dataTypes = preLoadedDataTypes;
+    //   debugger;
+      
+    //   wmsSource.updateParams(params);
+    //   // TODO: not as simple as that, because it can switch from reanalysis to forecast.
+
+    // },
 
     
     // Get OL map object
@@ -517,7 +573,7 @@ export default {
       let view = this.map.getView();
       let coord = feature.geometry.coordinates[0];
       let currentZoom = view.getZoom();
-      let longCorrection = currentZoom > 11 ? 0.1 : 0.3;
+      let longCorrection = 0;//currentZoom > 11 ? 0.1 : 0.3;
       view.animate({
         center: ol.proj.fromLonLat([coord[0] + longCorrection, coord[1]]),
         zoom: Math.max(9.5, currentZoom),
@@ -528,7 +584,9 @@ export default {
       FishingTracks.setSelectedTrack(id);
       this.fishingTracks.updateStyle();
 
-      // Emit to open side panel fishing tracks
+      
+
+      // Emit to open side panel fishing tracks and to udate WMS date in layers panel
       this.$emit('onTrackClicked', id);
       
     },
@@ -571,6 +629,26 @@ export default {
       // Set opacity
       layer.setOpacity(parseFloat(opacity));
     },
+    setClimaLayer: function(urlParams){
+      let climaLayer = this.getMapLayer('data');
+      if (urlParams == undefined){
+        // Remove clima layer
+        if (climaLayer != undefined)
+          this.map.removeLayer(climaLayer);
+        // Remove legend url
+        this.WMSLegendURL = '';
+        
+        return;
+      }
+      // Add layer if it is not included
+      if (climaLayer == undefined)
+        this.map.addLayer(this.layers.data);
+      // Update parameters
+      this.updateSourceWMS(urlParams);
+      
+    },
+
+
 
 
     // Panel was open or closed by clicking a tab
@@ -649,6 +727,21 @@ export default {
   bottom: 0; 
   height: 90px; 
   width: 100%;
+}
+
+#wmsLegend {
+  top: 85px; 
+  left: 15px;
+  position: absolute; 
+  z-index: 2;
+  top: 85px;
+  left: 15px;
+  position: absolute;
+  z-index: 2;
+  box-shadow: 0 0 4px black;
+  background: #527db3cf;
+  padding: 10px;
+  max-height: 200px;
 }
 
 </style>

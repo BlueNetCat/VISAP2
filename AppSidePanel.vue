@@ -1,6 +1,8 @@
 <template>
   <div id="app-side" style="display:flex; height: 100%">
 
+    
+
     <!-- Tabs -->
     <div class="position-relative" ref="buttonGroup" style="margin-top:50px; display:flex; flex-direction:column; height: fit-content;">
       <div  class="btn tab vertical-button" :class="{active: tab.isSelected}" type="button" :title="tab.name" :id="tab.id" @click="onTabClicked" :key="tab.name" v-for="tab in tabs">
@@ -11,26 +13,32 @@
 
 
     <!-- Panel -->
-    <div class="collapse width" ref="panel" :class="{show: isPanelOpen}" style="overflow: auto; transition: width 0.5s">
+    <div class="collapse width" ref="panel" :class="{show: isPanelOpen}">
+
+      <!-- Closing button -->
+      <div class='row m-0' style='position: relative'>
+        <button type="button" class="btn-close p-0" aria-label="Close" @click='closePanel' style='position: absolute; top: 16px; right: 16px'></button>
+      </div>
 
       <!-- Info container -->
       <div class="side-panel-content g-0">
         <!-- Haul info -->
         <haul-info @selectedTrack="selectedTrack" ref="haul-info" v-show="selTab == 'tracks'">
         </haul-info>
+
         <!-- Fishing effort -->
         <fishing-effort ref="fishing-effort" 
           @effortParamsChange='setEffortMap' 
           @effortLayerOpacityChange='setEffortLayerOpacity' 
           v-show="selTab === 'effort'"></fishing-effort>
+
         <!-- Layers -->
         <layer-panel ref="layers" 
           @baseLayerChange='setBaseLayer' 
           @layerOpacityChange='setLayerOpacity'
+          @climaLayerChange='setClimaLayer'
           v-show="selTab === 'layers'"></layer-panel>
-        <!-- <div v-show="selTab === 'layers'">
-          <h4>Layer panels</h4>
-        </div> -->
+       
       </div>
 
     </div>
@@ -128,8 +136,6 @@ export default {
       // If tab is selected and panel is open, close panel
       if (tab.isSelected){
         this.closePanel();
-        tab.isSelected = false;
-        this.selTab = "";
       }
       // If tab is not selected, open panel
       else {
@@ -148,11 +154,29 @@ export default {
     // INTERNAL EVENTS
     openPanel: function(){
       this.isPanelOpen = true;
+      // HACK Fix Force openlayers canvas to fill window after 0.5 s
+      //setTimeout(() => window.dispatchEvent(new Event('resize')), 500);
+      for (let i = 10; i<500; i+=10){
+        setTimeout(() => window.dispatchEvent(new Event('resize')), i);
+      }
     },
     closePanel: function(){
       this.isPanelOpen = false;
+      // Deselect tabs
+      Object.keys(this.tabs).forEach(kk => this.tabs[kk].isSelected = false);
+      this.selTab = "";
+
+      // HACK Fix Force openlayers canvas to fill window after 0.5 s
+      for (let i = 10; i<500; i+=10){
+        setTimeout(() => window.dispatchEvent(new Event('resize')), i);
+      }
+      //setTimeout(() => window.dispatchEvent(new Event('resize')), 500);
     },
+    // Event coming from HaulInfo.vue, when a track is clicked in the dropdown list.
     selectedTrack: function(id){
+      // Change the date on the WMS Layer panel
+      this.$refs.layers.fishingTrackSelected(id);
+      // Emit
       this.$emit('selectedTrack', id);
     },
     // Effort panel
@@ -173,11 +197,14 @@ export default {
     setLayerOpacity: function(params){
       if (this.selTab == 'layers'){ // Only when the tab is open can send events
         this.$emit('setLayerOpacity', params);
-        // If the layer is fishing effort
+        // If the layer is fishing effort, connect with tab Fishing effort
         if (params[0] == 'fishingEffort'){
           this.$refs['fishing-effort'].setLayerOpacity(params[1]);
         }
       }
+    },
+    setClimaLayer: function(urlParams){
+      this.$emit('setClimaLayer', urlParams);
     },
 
     // PUBLIC METHODS
@@ -189,10 +216,12 @@ export default {
     // iteratively until fishing tracks exist. Not so clean, as the tab Fishing Tracks should only exist once the fishing tracks
     // have been loaded. If there is an error with loading the fishing tracks, the tab should not exist?
 
-    // setFishingTracks: function(tracks){
-    //   if (this.$refs['haul-info'])
-    //     this.$refs['haul-info'].setTracks(tracks);
-    // },
+    // Fishing track clicked
+    fishingTrackClicked: function(id){
+      this.openFishingTab(id);
+      // Send event to layers panel
+      this.$refs.layers.fishingTrackSelected(id);
+    },
 
     // Opens the fishing tracks tab with the corresponding track id selected
     openFishingTab: function(id){
@@ -251,11 +280,18 @@ export default {
 }
 
 
+.collapse {
+  overflow: auto; 
+  transition: width 0.5s, min-width 0.5s;
+}
+
 .collapse.show {
-  width: 40vw;  
+  width: 40vw; 
+  min-width: 500px;
 }
 .collapse:not(.show){
   width: 0;
+  min-width: 0;
   height: initial;
   display: block;
 }
@@ -265,6 +301,7 @@ export default {
   background-color: #a0d7f2;
   border-color: #72b0cf;
   min-width: 18px;
+  max-width: 30px;
   box-shadow: 1px 0px 2px #0a3142;
 }
 .tab.active {
