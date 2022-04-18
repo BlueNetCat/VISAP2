@@ -2,7 +2,7 @@
   <div id="haul-info" class="p-4 container-fluid">
     <!-- Row -->
     <div class="row p-3">
-      <h4>Fishing tracks</h4>
+      <h4>{{$t('Fishing tracks')}}</h4>
     </div>
     <!-- Row -->
     <div class="row p-3 g-0">
@@ -33,6 +33,20 @@
   </div>
   
 </template>
+<i18n>
+{
+  "en": {
+    "Fishing tracks": "Fishing tracks"
+  },
+  "es": {
+    "Fishing tracks": "Recorridos de arrastre"
+  },
+  "ca": {
+    "Fishing tracks": "Recorreguts d'arrossegament"
+  }
+}
+</i18n>
+
 
 <script>
 import WeatherWidget from './WeatherWidget.vue';
