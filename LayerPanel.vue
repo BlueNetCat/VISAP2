@@ -2,19 +2,21 @@
   <div id="layer-panel" class="p-4 container-fluid">
     <!-- Row - Title -->
     <div class="row p-3">
-      <h4>Layers</h4>
+      <h4>{{$t('Layers')}}</h4>
     </div>
     
     <!-- Row - Base layers-->
     <div class="row p-3" style='justify-content: center;'>
       <!-- Column - Title -->
       <div class="col-md-auto centered">
-        Base layer
+        {{$t('Base layer')}}
       </div>
       <div class="col-md-auto centered">
       <!-- Button group - Base layers-->
         <div class="btn-group" role="group">
-          <button type="button" class="btn" :class="[selBaseLayer == bLayer ? 'btn-active' : '']" @click='baseLayerClicked' :key="bLayer" v-for="bLayer in baseLayers">{{bLayer}}</button>
+          <button type="button" class="btn" :class="[selBaseLayer == bLayer ? 'btn-active' : '']" @click='baseLayerClicked(bLayer)' :key="bLayer" v-for="bLayer in baseLayers">
+            {{$t(bLayer)}}
+          </button>
         </div>
       </div>
     </div>
@@ -22,7 +24,9 @@
     <!-- Row - Fishing Tracks-->
     <div class="row p-1">
       <div class="d-flex flex-row justify-content-center align-self-center">
-        <button class="btn m-2" :class="[fTracksOpacity > 0 ? '' : 'btn-active']" @click='fTracksClicked'>Fishing Tracks</button>
+        <button class="btn m-2" :class="[fTracksOpacity > 0 ? '' : 'btn-active']" @click='fTracksClicked'>
+          {{$t('Fishing tracks')}}
+        </button>
         <input class='slider m-2' type="range" min="0" max="1" step="0.01" v-model="fTracksOpacity" id="fTracksOpacity">
       </div>
     </div>
@@ -30,7 +34,9 @@
     <!-- Row - Fishing Effort -->
     <div class="row p-1">
       <div class="d-flex flex-row justify-content-center align-self-center">
-        <button class="btn m-2" :class="[fEffortOpacity > 0 ? '' : 'btn-active']" @click='fEffortClicked'>Fishing Effort</button>
+        <button class="btn m-2" :class="[fEffortOpacity > 0 ? '' : 'btn-active']" @click='fEffortClicked'>
+          {{$t('Fishing effort')}}
+        </button>
         <input class='slider m-2' type="range" min="0" max="1" step="0.01" v-model="fEffortOpacity" id="fEffortOpacity">
       </div>
     </div>
@@ -40,22 +46,73 @@
     <div class="row p-3" style='justify-content: center; flex-wrap: nowrap'>
       <!-- Column - Title -->
       <div class="col-md-auto centered" style='flex-direction:column'>
-        <div class='row'> Climatological layer </div>
-        <div class='row'> Date: {{currentDate}} </div>
+        <div class='row'> {{$t('Climatological layer')}} </div>
+        <div class='row'> {{$t('Date')}}: {{currentDate}} </div>
         <!-- <div class='row'> {{timeScale}} </div> -->
         <input class='row slider m-2' type="range" min="0" max="1" step="0.01" v-model="climaOpacity" id="fEffortOpacity">
       </div>
       <div class="col-md-auto centered">
       <!-- Button group - Base layers-->
         <div class="btn-group" role="group" style='flex-direction: column;'>
-          <button type="button" class="btn" :class="[selClimaLayer == cLayer ? 'btn-active' : '']" @click='climaLayerClicked' :key="cLayer" v-for="cLayer in climaLayers">{{cLayer}}</button>
+          <button type="button" class="btn" :class="[selClimaLayer == cLayer ? 'btn-active' : '']" @click='climaLayerClicked(cLayer)' :key="cLayer" v-for="cLayer in climaLayers">
+            {{$t(cLayer)}}
+          </button>
         </div>
       </div>
     </div>
 
   </div>
 </template>
+<i18n>
+{
+  "en": {
+    "Fishing tracks": "Fishing tracks",
+    "Fishing effort": "Fishing effort",
+    "Layers": "Layers",
+    "Base layer": "Base layer",
+    "Climatological layer": "Climatological layer",
+    "Date": "Date"
+  },
+  "es": {
+    "Fishing tracks": "Recorridos de arrastre",
+    "Fishing effort": "Esforzo pesquero",
+    "Layers": "Capas",
+    "Base layer": "Capa base",
+    "Climatological layer": "Climatología",
+    "Date": "Fecha",
+    
+    "Bathymetry": "Batimetría",
 
+    "None": "∅",
+    "Sea Surface Temperature": "Temperatura superficial del mar",
+    "Sea Bottom Temperature": "Temperatura del fondo del mar",
+    "Chlorophyll": "Clorofila",
+    "Salinity": "Salinidad",
+    "Wind": "Viento",
+    "Wave Significant Height": "Altura significativa de oleaje",
+    "Current": "Corriente marino"
+  },
+  "ca": {
+    "Fishing tracks": "Recorreguts d'arrossegament",
+    "Fishing effort": "Esforç pesquer",
+    "Layers": "Capes",
+    "Base layer": "Capa base",
+    "Climatological layer": "Climatologia",
+    "Date": "Data",
+
+    "Bathymetry": "Batimetria",
+
+    "None": "∅",
+    "Sea Surface Temperature": "Temperatura superficial del mar",
+    "Sea Bottom Temperature": "Temperatura del fons del mar",
+    "Chlorophyll": "Clorofil·la",
+    "Salinity": "Salinitat",
+    "Wind": "Vent",
+    "Wave Significant Height": "Altura significativa d'onatge",
+    "Current": "Corrent marí"
+  }
+}
+</i18n>
 
 
 
@@ -106,8 +163,8 @@ export default {
   },
   methods: {
     // USER HTML ACTIONS
-    baseLayerClicked: function(e){
-      this.selBaseLayer = e.target.innerText;
+    baseLayerClicked: function(bLayer){
+      this.selBaseLayer = bLayer;
       this.$emit('baseLayerChange', this.selBaseLayer);
     },
     // Fishing tracks layer opacity
@@ -117,8 +174,8 @@ export default {
     fEffortClicked: function(e){
       this.fEffortOpacity = this.fEffortOpacity == 0 ? 0.8 : 0;
     },
-    climaLayerClicked: function(e){
-      this.selClimaLayer = e.target.innerText;
+    climaLayerClicked: function(cLayer){
+      this.selClimaLayer = cLayer;
       // Update clima layer
       this.updateClimaLayer();
     },
