@@ -8,7 +8,9 @@
     <!-- Button group -->
     <div class="row p-3">
       <div class="btn-group" role="group">
-        <button type="button" class="btn" :class="[selEffortType == eType ? 'btn-active' : '']" @click='effortClicked' :key="eType" v-for="eType in effortTypes">{{eType}}</button>
+        <button type="button" class="btn" :class="[selEffortType == eType ? 'btn-active' : '']" @click='effortClicked' :key="eType" v-for="eType in effortTypes">
+          {{ $t('effortTypes.'+ eType)}}
+        </button>
       </div>
     </div>
 
@@ -22,14 +24,19 @@
     <!-- Button group -->
     <div class="row p-3">
       <div class="btn-group" role="group">
-        <button type="button" class="btn" :class="[selGear == fg ? 'btn-active' : '']" @click='gearClicked' :key="fg" v-for="fg in fishingGears">{{fg}}</button>
+        <button type="button" class="btn" :class="[selGear == fg ? 'btn-active' : '']" @click='gearClicked' :key="fg" v-for="fg in fishingGears">
+          {{ $t('fishingGears.' + fg)}}
+        </button>
       </div>
     </div>
 
     <!-- Layer visibility -->
     <div class="row p-3">
       <div class="d-flex flex-row justify-content-center align-self-center">
-        <button class="btn m-2" :class="[layerOpacity > 0 ? '' : 'btn-active']" @click='layerVisClicked'>Layer visibility</button>
+        <button class="btn m-2" :class="[layerOpacity > 0 ? '' : 'btn-active']" @click='layerVisClicked'>
+          {{ $t('Layer visibility')}}
+          
+        </button>
         <input class='slider m-2' type="range" min="0" max="1" step="0.01" v-model="layerOpacity" id="layerOpacity">
         <!-- <div class=''>{{layerOpacity}}</div> -->
       </div>
@@ -41,13 +48,60 @@
     </div>
 
     <div class="row p-3">
-      <i>Data from <a href="https://www.emodnet-humanactivities.eu/search-results.php?dataname=Vessel+Density+" target="_blank" rel="noreferrer noopener">EMODnet Human Activities, Vessel Density Map (Collecte Localisation Satellites (CLS)) </a></i>
+      <i>{{$t('Data from')}} <a href="https://www.emodnet-humanactivities.eu/search-results.php?dataname=Vessel+Density+" target="_blank" rel="noreferrer noopener">EMODnet Human Activities, Vessel Density Map (Collecte Localisation Satellites (CLS)) </a></i>
     <div>
 
 
   </div>
 </template>
+<i18n>
+  {
+    "en": {
+      "effortTypes": {
+        "hours": "hours",
+        "kg": "kg",
+        "euros": "euros"
+      },
+      "fishingGears": {
+        "All": "All",
+        "Bottom trawling": "Bottom trawling",
+        "Purse seine": "Purse seine"
+      },
+      "Layer visibility": "Layer Visibility",
+      "Data from": "Data from"
+    },
 
+    "es": {
+      "effortTypes": {
+        "hours": "horas",
+        "kg": "kg",
+        "euros": "euros"
+      },
+      "fishingGears": {
+        "All": "Todo",
+        "Bottom trawling": "Pesca de arrastre",
+        "Purse seine": "Pesca de cerco"
+      },
+      "Layer visibility": "Visibilidad de la capa",
+      "Data from": "Datos de"
+    },
+
+    "ca": {
+      "effortTypes": {
+        "hours": "hores",
+        "kg": "kg",
+        "euros": "euros"
+      },
+      "fishingGears": {
+        "All": "Tot",
+        "Bottom trawling": "Pesca d'arrossegament",
+        "Purse seine": "Pesca d'encerclament"
+      },
+      "Layer visibility": "Visibilitat de la capa",
+      "Data from": "Dades de"
+    }
+  }
+  </i18n>
 
 
 
