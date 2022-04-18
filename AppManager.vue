@@ -2,6 +2,8 @@
 <!-- Container -->
   <div id="app-manager">
 
+    <language-selector style='position:absolute;margin-top: 4.5rem;margin-left:0.5rem;z-index: 1'>
+    </language-selector>
     <!-- Map  container-->
     <ol-map id="ol-map" ref="map"
       @onTrackClicked="trackClicked" 
@@ -23,9 +25,10 @@
 
     <!-- <weather-widget></weather-widget> -->
   </div>
+  
 </template>
-
-
+<!-- How to organize translations -->
+<!-- https://www.codeandweb.com/babeledit/tutorials/how-to-translate-your-vue-app-with-vue-i18n -->
 
 
 
@@ -34,9 +37,9 @@
 /*
 APP STRUCTURE
 
-                APP MANAGER
-              /            \
-        OL-MAP                 APP-SIDE-PANEL
+                              APP MANAGER
+              /                   |                     \
+        OL-MAP                 APP-SIDE-PANEL             LANGUAGE-SELECTOR
         /                     /        |        \    
     TIME-RANGE-BAR    HAUL-INFO  FISHING-EFFORT  LAYER-PANEL
       /                    |          
@@ -55,10 +58,12 @@ import AppSidePanel from "AppSidePanel.vue"
 
 import WeatherWidget from "WeatherWidget.vue"
 
+import LanguageSelector from "LanguageSelector.vue"
+
 export default {
   name: "app-manager",
   created(){
-
+    
   },
   mounted () {
 
@@ -120,7 +125,9 @@ export default {
     "animation-canvas": AnimationCanvas,
     "app-side-panel": AppSidePanel,
 
-    "weather-widget": WeatherWidget
+    "weather-widget": WeatherWidget,
+
+    "language-selector": LanguageSelector
     
   },
   computed: {
