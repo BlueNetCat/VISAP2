@@ -4,7 +4,8 @@
     <!-- Tabs -->
     <div class="position-relative" ref="buttonGroup" style="margin-top:50px; display:flex; flex-direction:column; height: fit-content;">
       <div  class="btn tab vertical-button" :class="{active: tab.isSelected}" type="button" :title="tab.name" :id="tab.id" @click="onTabClicked" :key="tab.name" v-for="tab in tabs">
-       {{tab.name}}
+       <!--{{tab.name}}-->
+       {{ $t(tab.name)}}
       </div>
     </div>
 
@@ -40,6 +41,25 @@
 
   </div>
 </template>
+<i18n>
+  {
+    "en": {
+      "Fishing tracks": "Fishing tracks",
+      "Fishing effort": "Fishing effort",
+      "Layers": "Layers"
+    },
+    "es": {
+      "Fishing tracks": "Recorridos de arrastre",
+      "Fishing effort": "Esfuerzo pesquero",
+      "Layers": "Capas"
+    },
+    "ca": {
+      "Fishing tracks": "Recorreguts d'arrossegament",
+      "Fishing effort": "Esforç pesquer",
+      "Layers": "Capes"
+    }
+  }
+  </i18n>
 
 
 
