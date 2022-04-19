@@ -2,8 +2,9 @@
 <!-- Container -->
   <div id="app-manager">
 
-    <language-selector style='position:absolute;margin-top: 4.5rem;margin-left:0.5rem;z-index: 1'>
-    </language-selector>
+    <!-- Language selector -->
+    <language-selector style='position:absolute;margin-top: 4.5rem;margin-left:0.5rem;z-index: 1'></language-selector>
+
     <!-- Map  container-->
     <ol-map id="ol-map" ref="map"
       @onTrackClicked="trackClicked" 

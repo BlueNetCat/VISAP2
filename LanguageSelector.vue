@@ -2,7 +2,7 @@
 
   <div class="dropdown">
     <div class="dropbtnBackground">
-      <button @click="dropdownClick" class="dropbtn">	&#127760;</button>
+      <button @click="dropdownClick" class="dropbtn">&#127760;</button>
     </div>
     <div id="myDropdown" class="dropdown-content">
       <div class="lgItem cat" value='ca' @click='changeLanguage' href="#">Català</div>
@@ -19,6 +19,8 @@
 export default {
   name: "app-manager",
   created(){
+    // Set default navigator language
+    this.$i18n.locale = navigator.language;
     // Close the dropdown menu if the user clicks outside of it
     window.onclick = function(event) {
       if (!event.target.matches('.dropbtn')) {

@@ -8,7 +8,7 @@
     <!-- Button group -->
     <div class="row p-3">
       <div class="btn-group" role="group">
-        <button type="button" class="btn" :class="[selEffortType == eType ? 'btn-active' : '']" @click='effortClicked' :key="eType" v-for="eType in effortTypes">
+        <button type="button" class="btn" :class="[selEffortType == eType ? 'btn-active' : '']" @click='effortClicked(eType)' :key="eType" v-for="eType in effortTypes">
           {{ $t('effortTypes.'+ eType)}}
         </button>
       </div>
@@ -24,7 +24,7 @@
     <!-- Button group -->
     <div class="row p-3">
       <div class="btn-group" role="group">
-        <button type="button" class="btn" :class="[selGear == fg ? 'btn-active' : '']" @click='gearClicked' :key="fg" v-for="fg in fishingGears">
+        <button type="button" class="btn" :class="[selGear == fg ? 'btn-active' : '']" @click='gearClicked(fg)' :key="fg" v-for="fg in fishingGears">
           {{ $t('fishingGears.' + fg)}}
         </button>
       </div>
@@ -60,8 +60,8 @@
     </div>
 
     <div class="row p-3">
-      <i v-if='selGear == "All"' style='text-align: center;'>Data from <a href="https://www.emodnet-humanactivities.eu/search-results.php?dataname=Vessel+Density+" target="_blank" rel="noreferrer noopener">EMODnet Human Activities, Vessel Density Map (Collecte Localisation Satellites (CLS)) </a></i>
-      <i v-else style='text-align: center;'>Data from <a href="http://agricultura.gencat.cat/ca/departament/dar_plans_programes_sectorials/politica-maritima/icatmar/" target="_blank" rel="noreferrer noopener">ICATMAR (Institut Català de Recerca per la Governança del Mar) </a></i>
+      <i v-if='selGear == "All"' style='text-align: center;'>{{$t('Data from')}} <a href="https://www.emodnet-humanactivities.eu/search-results.php?dataname=Vessel+Density+" target="_blank" rel="noreferrer noopener">EMODnet Human Activities, Vessel Density Map (Collecte Localisation Satellites (CLS)) </a></i>
+      <i v-else style='text-align: center;'>{{$t('Data from')}} <a href="http://agricultura.gencat.cat/ca/departament/dar_plans_programes_sectorials/politica-maritima/icatmar/" target="_blank" rel="noreferrer noopener">ICATMAR (Institut Català de Recerca per la Governança del Mar) </a></i>
     <div>
 
 
@@ -167,16 +167,16 @@ export default {
   },
   methods: {
     // USER HTML ACTIONS
-    effortClicked: function(e){
-      this.selEffortType = e.target.innerText;
+    effortClicked: function(value){
+      this.selEffortType = value;
     },
 
     yearClicked: function(e){
       this.selYear = e.target.innerText;
     },
 
-    gearClicked: function(e){
-      this.selGear = e.target.innerText;
+    gearClicked: function(value){
+      this.selGear = value;
     },
 
     layerVisClicked: function(e){

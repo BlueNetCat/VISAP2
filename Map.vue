@@ -730,13 +730,9 @@ export default {
 }
 
 #wmsLegend {
-  top: 85px; 
+  top: 130px; 
   left: 15px;
   position: absolute; 
-  z-index: 2;
-  top: 85px;
-  left: 15px;
-  position: absolute;
   z-index: 2;
   box-shadow: 0 0 4px black;
   background: #527db3cf;
