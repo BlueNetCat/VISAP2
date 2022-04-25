@@ -22,7 +22,9 @@
       <ul>
         <li style="list-style-position: inside;" :key="kk.Id" v-for="kk in Object.keys(selTrack)">
           <!-- {{$tc("TrackFeatures." + kk)}}: {{selTrack[kk]}} -->
-          <span v-if="isNaN(selTrack[kk])">{{$tc("TrackFeatures." + kk)}}: {{selTrack[kk]}}</span>
+          <!-- If is not a number -->
+          <span v-if="isNaN(selTrack[kk])">{{$tc("TrackFeatures." + kk)}}: {{$t(selTrack[kk])}}</span>
+          <!-- If it is a number -->
           <span v-else>{{$tc("TrackFeatures." + kk, parseFloat(selTrack[kk]))}}</span>
         </li>
       </ul>
@@ -45,7 +47,7 @@
       "Date": "Date",
       "Distance": "Distance: {n} meters",
       "Duration": "Duration: {n} minutes",
-      "Estacio": "Season: {n}",
+      "Estacio": "Season",
       "FishingGroundName": "Fishing ground name",
       "FishingGroundType": "Fishing ground type",
       "Id": "Identifier: {n}",
@@ -53,7 +55,15 @@
       "Port": "Port",
       "ZonaPort": "Port area",
       "name": "Name"
-    }
+    },
+    "Primavera": "Spring",
+    "Estiu": "Summer",
+    "Tardor": "Autumn",
+    "Hivern": "Winter",
+    "Nord": "North",
+    "Sud": "South",
+    "Est": "East",
+    "Oest": "West"
   },
   "es": {
     "Fishing tracks": "Recorridos de arrastre",
@@ -71,7 +81,15 @@
       "Port": "Puerto",
       "ZonaPort": "Zona del puerto",
       "name": "Nombre"
-    }
+    },
+    "Estiu": "Verano",
+    "Tardor": "Otoño",
+    "Hivern": "Invierno",
+    "Square": "Cuadrada",
+    "Nord": "Norte",
+    "Sud": "Sur",
+    "Est": "Este",
+    "Oest": "Oeste"
   },
   "ca": {
     "Fishing tracks": "Recorreguts d'arrossegament",
@@ -89,7 +107,16 @@
       "Port": "Port",
       "ZonaPort": "Zona del port",
       "name": "Nom"
-    }
+    },
+    "Square": "Quadrada",
+    "Primavera": "Primavera",
+    "Estiu": "Estiu",
+    "Tardor": "Tardor",
+    "Hivern": "Hivern",
+    "Nord": "Nord",
+    "Sud": "Sud",
+    "Est": "Est",
+    "Oest": "Oest" 
   }
 }
 
