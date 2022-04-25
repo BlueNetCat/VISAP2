@@ -75,7 +75,7 @@
   },
   "es": {
     "Fishing tracks": "Recorridos de arrastre",
-    "Fishing effort": "Esforzo pesquero",
+    "Fishing effort": "Esfuerzo pesquero",
     "Layers": "Capas",
     "Base layer": "Capa base",
     "Climatological layer": "Climatología",

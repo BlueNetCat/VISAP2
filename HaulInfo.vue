@@ -21,7 +21,11 @@
     <div class="row p-2 g-0">
       <ul>
         <li style="list-style-position: inside;" :key="kk.Id" v-for="kk in Object.keys(selTrack)">
-          {{kk}}: {{selTrack[kk]}}
+          <!-- {{$tc("TrackFeatures." + kk)}}: {{selTrack[kk]}} -->
+          <!-- If is not a number -->
+          <span v-if="isNaN(selTrack[kk])">{{$tc("TrackFeatures." + kk)}}: {{$t(selTrack[kk])}}</span>
+          <!-- If it is a number -->
+          <span v-else>{{$tc("TrackFeatures." + kk, parseFloat(selTrack[kk]))}}</span>
         </li>
       </ul>
     </div>
@@ -36,15 +40,87 @@
 <i18n>
 {
   "en": {
-    "Fishing tracks": "Fishing tracks"
+    "Fishing tracks": "Fishing tracks",
+    "TrackFeatures": {
+      "AvgDepth": "Average depth: {n} meters",
+      "Data": "Date",
+      "Date": "Date",
+      "Distance": "Distance: {n} meters",
+      "Duration": "Duration: {n} minutes",
+      "Estacio": "Season",
+      "FishingGroundName": "Fishing ground name",
+      "FishingGroundType": "Fishing ground type",
+      "Id": "Identifier: {n}",
+      "MeshType": "Fishing mesh type",
+      "Port": "Port",
+      "ZonaPort": "Port area",
+      "name": "Name"
+    },
+    "Primavera": "Spring",
+    "Estiu": "Summer",
+    "Tardor": "Autumn",
+    "Hivern": "Winter",
+    "Nord": "North",
+    "Sud": "South",
+    "Est": "East",
+    "Oest": "West"
   },
   "es": {
-    "Fishing tracks": "Recorridos de arrastre"
+    "Fishing tracks": "Recorridos de arrastre",
+    "TrackFeatures": {
+      "AvgDepth": "Profundidad media: {n} metros",
+      "Data": "Fecha",
+      "Date": "Fecha",
+      "Distance": "Distancia: {n} metros",
+      "Duration": "Duración: {n} minutos",
+      "Estacio": "Estación",
+      "FishingGroundName": "Caladero",
+      "FishingGroundType": "Fondo marino",
+      "Id": "Identificador: {n}",
+      "MeshType": "Malla de la red",
+      "Port": "Puerto",
+      "ZonaPort": "Zona del puerto",
+      "name": "Nombre"
+    },
+    "Estiu": "Verano",
+    "Tardor": "Otoño",
+    "Hivern": "Invierno",
+    "Square": "Cuadrada",
+    "Nord": "Norte",
+    "Sud": "Sur",
+    "Est": "Este",
+    "Oest": "Oeste"
   },
   "ca": {
-    "Fishing tracks": "Recorreguts d'arrossegament"
+    "Fishing tracks": "Recorreguts d'arrossegament",
+    "TrackFeatures": {
+      "AvgDepth": "Profunditat mitja: {n} metres",
+      "Data": "Data",
+      "Date": "Data",
+      "Distance": "Distancia: {n} metres",
+      "Duration": "Duració: {n} minuts",
+      "Estacio": "Estació",
+      "FishingGroundName": "Calador",
+      "FishingGroundType": "Fons marí",
+      "Id": "Identificador: {n}",
+      "MeshType": "Malla de la xarxa",
+      "Port": "Port",
+      "ZonaPort": "Zona del port",
+      "name": "Nom"
+    },
+    "Square": "Quadrada",
+    "Primavera": "Primavera",
+    "Estiu": "Estiu",
+    "Tardor": "Tardor",
+    "Hivern": "Hivern",
+    "Nord": "Nord",
+    "Sud": "Sud",
+    "Est": "Est",
+    "Oest": "Oest" 
   }
 }
+
+
 </i18n>
 
 

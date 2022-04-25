@@ -2,7 +2,7 @@
   <div id="fishing-effort" class="p-4 container-fluid">
     <!-- Row -->
     <div class="row p-3">
-      <h4>Fishing Effort</h4>
+      <h4>{{$t('Fishing effort')}}</h4>
     </div>
     
     <!-- Button group -->
@@ -96,6 +96,7 @@
         "Purse seine": "Pesca de cerco"
       },
       "Layer visibility": "Visibilidad de la capa",
+      "Fishing effort": "Esfuerzo pesquero",
       "Data from": "Datos de"
     },
 
@@ -111,6 +112,7 @@
         "Purse seine": "Pesca d'encerclament"
       },
       "Layer visibility": "Visibilitat de la capa",
+      "Fishing effort": "Esforç pesquer",
       "Data from": "Dades de"
     }
   }
