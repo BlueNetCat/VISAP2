@@ -42,6 +42,7 @@
     </div>
 
 
+
     <!-- Row - Weather layers-->
     <div class="row p-3" style='justify-content: center; flex-wrap: nowrap'>
       <!-- Column - Title -->
@@ -61,6 +62,25 @@
       </div>
     </div>
 
+
+
+    <!-- Row - Sea habitats -->
+    <div class="row p-1">
+      <div class="d-flex flex-row justify-content-center align-self-center">
+        <button class="btn m-2" :class="[seaHabOpacity > 0 ? '' : 'btn-active']" @click='seaHabClicked'>
+          {{$t('Sea habitats')}}
+        </button>
+        <input class='slider m-2' type="range" min="0" max="1" step="0.01" v-model="seaHabOpacity" id="seaHabOpacity">
+      </div>
+    </div>
+
+    <!-- Row - Legend sea habitats -->
+    <div class="row p-1" v-if="seaHabOpacity != 0">
+      <div style="overflow: auto">
+        <img src="https://ows.emodnet-seabedhabitats.eu/geoserver/emodnet_view/wms?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetLegendGraphic&LAYER=eusm2021_eunis2019_full&FORMAT=image/png&LEGEND_OPTIONS=fontAntiAliasing:true;fontColor:0x000000&TRANSPARENT=TRUE">
+      </div>
+    </div>
+
   </div>
 </template>
 <i18n>
@@ -76,6 +96,7 @@
   "es": {
     "Fishing tracks": "Recorridos de arrastre",
     "Fishing effort": "Esfuerzo pesquero",
+    "Sea habitats": "Hábitats marinos",
     "Layers": "Capas",
     "Base layer": "Capa base",
     "Climatological layer": "Climatología",
@@ -95,6 +116,7 @@
   "ca": {
     "Fishing tracks": "Recorreguts d'arrossegament",
     "Fishing effort": "Esforç pesquer",
+    "Sea habitats": "Hàbitats marins",
     "Layers": "Capes",
     "Base layer": "Capa base",
     "Climatological layer": "Climatologia",
@@ -138,6 +160,7 @@ export default {
     return {
       fTracksOpacity: 1,
       fEffortOpacity: 1,
+      seaHabOpacity: 0,
       climaOpacity: 1,
       baseLayers: ['Bathymetry', 'OSM', 'Imagery', 'Ocean'], // TODO: get layers from map when created
       selBaseLayer: 'Bathymetry',
@@ -157,6 +180,9 @@ export default {
     fEffortOpacity(vv){
       this.$emit('layerOpacityChange', ['fishingEffort', vv]);
     },
+    seaHabOpacity(vv){
+      this.$emit('layerOpacityChange', ['seaHabitats', vv]);
+    },
     climaOpacity(vv){
       this.$emit('layerOpacityChange', ['data', vv]);
     }
@@ -173,6 +199,9 @@ export default {
     },
     fEffortClicked: function(e){
       this.fEffortOpacity = this.fEffortOpacity == 0 ? 0.8 : 0;
+    },
+    seaHabClicked: function(e){
+      this.seaHabOpacity = this.seaHabOpacity == 0 ? 0.8 : 0;
     },
     climaLayerClicked: function(cLayer){
       this.selClimaLayer = cLayer;

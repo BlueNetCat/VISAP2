@@ -34,6 +34,11 @@
     <div class="row p-2 g-0">
       <weather-widget ref="weatherWidget"></weather-widget>
     </div>
+
+    <!-- Row -->
+    <div class="row p-2 g-0">
+      <sea-habitat ref="seaHabitat"></sea-habitat>
+    </div>
   </div>
   
 </template>
@@ -126,6 +131,8 @@
 
 <script>
 import WeatherWidget from './WeatherWidget.vue';
+import SeaHabitat from './SeaHabitat.vue';
+
 export default {
   // REQUIRES FishingTracks.js
   name: "haul-info",
@@ -277,14 +284,22 @@ export default {
         let middleCoordinate = coords[Math.round(coords.length/2)];
         this.$refs.weatherWidget.updateTable(new Date(this.selTrack.Date), middleCoordinate[1], middleCoordinate[0]);
       }
+      // Update sea habitat table
+      if (this.$refs.seaHabitat){
+        // Get lat long
+        let coords = FishingTracks.getFeatureById(id).geometry.coordinates;
+        //let middleCoordinate = coords[Math.round(coords.length/2)];
+        // Update sea habitat
+        this.$refs.seaHabitat.updateData(coords);
+      }
     },
 
     
 
   },
   components: {
-    "weather-widget": WeatherWidget
-
+    "weather-widget": WeatherWidget,
+    "sea-habitat": SeaHabitat,
   },
   computed: {
 
