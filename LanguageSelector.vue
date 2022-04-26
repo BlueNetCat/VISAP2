@@ -91,6 +91,7 @@ export default {
 .dropdown {
   position: relative;
   display: inline-block;
+  z-index: 3;
 }
 
 /* Dropdown Content (Hidden by Default) */
@@ -100,7 +101,6 @@ export default {
   background-color: #a0d7f2;;
   min-width: 160px;
   box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-  z-index: 1;
 }
 
 /* Links inside the dropdown */
