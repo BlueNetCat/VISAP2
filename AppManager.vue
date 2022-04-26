@@ -3,7 +3,7 @@
   <div id="app-manager">
 
     <!-- Language selector -->
-    <language-selector style='position:absolute;margin-top: 4.5rem;margin-left:0.5rem;z-index: 1'></language-selector>
+    <language-selector style='position:absolute;margin-top: 4.5rem;margin-left:0.5rem;'></language-selector>
 
     <!-- Map  container-->
     <ol-map id="ol-map" ref="map"

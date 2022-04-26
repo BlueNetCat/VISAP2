@@ -705,8 +705,20 @@ dataTypes = {
       console.log("Parameter ", paramName, " does not exist in WMS URL");
       return wmsURL + '&' + paramName + '=' + paramContent;
     }
-    let currentContent = SourceWMS.getWMSParameter(wmsURL, paramName);
+    let currentContent = WMSDataRetriever.getWMSParameter(wmsURL, paramName);
     return wmsURL.replace(currentContent, paramContent);
+  }
+
+  // Get WMS parameter
+  static getWMSParameter(wmsURL, paramName) {
+    // If parameter does not exist
+    if (wmsURL.indexOf(paramName + "=") == -1) {
+      console.log("Parameter ", paramName, " does not exist in WMS URL");
+      return '';
+    }
+    let tmpSTR = wmsURL.substr(wmsURL.indexOf(paramName + "="));
+    let endOfContent = tmpSTR.indexOf('&') == -1 ? tmpSTR.length : tmpSTR.indexOf('&');
+    return tmpSTR.substring(paramName.length + 1, endOfContent);
   }
 
 

@@ -219,6 +219,20 @@ export default {
           zIndex: -1,
           opacity: 0.8,
         }),
+        // Sea habitats
+        seaHabitats: new ol.layer.Tile({
+          name: 'seaHabitats',
+          source: new ol.source.TileWMS({
+            url: 'https://ows.emodnet-seabedhabitats.eu/geoserver/emodnet_view/wms',
+            params: {
+              'LAYERS': 'eusm2021_eunis2019_group',
+              'TILED': 'TRUE',
+            },
+            crossOrigin: 'anonymous',
+          }),
+          zIndex: -2,
+          opacity: 0.0
+        }),
     };
 
 
@@ -274,7 +288,8 @@ export default {
           this.layers.portsLayer,
           // Fishing effort
           this.layers.fishingEffort,
-          
+          // Sea habitats
+          this.layers.seaHabitats
         ],
         target: 'map',
         controls: ol.control.defaults({ attributionOptions: { collapsible: true } }),
@@ -312,6 +327,28 @@ export default {
 
       // Add interaction to map
       this.map.addInteraction(selectInteraction);
+
+      // Map single click
+      // this.map.on('singleclick',  (evt) => {
+      //   //document.getElementById('info').innerHTML = '';
+      //   debugger;
+      //   let view = this.map.getView();
+      //   const viewResolution = view.getResolution();
+      //   const url = this.layers.seaHabitats.getSource().getFeatureInfoUrl(
+      //     evt.coordinate,
+      //     viewResolution,
+      //     'EPSG:3857',
+      //     {'INFO_FORMAT': 'text/html'}
+      //   );
+      //   if (url) {
+      //     fetch(url)
+      //       .then((response) => response.text())
+      //       .then((html) => {
+      //         console.log(html);
+      //         //document.getElementById('info').innerHTML = html;
+      //       });
+      //   }
+      // });
       
       // Register tile load progress
       Object.keys(this.baseLayerSources).forEach(key => {
@@ -322,6 +359,7 @@ export default {
       // this.registerLoadTilesEvents(this.layers.osm.getSource());
       // this.registerLoadTilesEvents(this.layers.esriOcean.getSource());
       // this.registerLoadTilesEvents(this.layers.esriImagery.getSource());
+      this.registerLoadTilesEvents(this.layers.seaHabitats);
     },
 
 
