@@ -76,8 +76,12 @@
 
     <!-- Row - Legend sea habitats -->
     <div class="row p-1" v-if="seaHabOpacity != 0">
+      <div>
+        <a href="https://www.emodnet-seabedhabitats.eu/access-data/launch-map-viewer/" title="EMODnet Seabed Habitats" target="_blank">EMODnet Seabed Habitats</a>
+      </div>
       <div style="overflow: auto">
-        <img src="https://ows.emodnet-seabedhabitats.eu/geoserver/emodnet_view/wms?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetLegendGraphic&LAYER=eusm2021_eunis2019_full&FORMAT=image/png&LEGEND_OPTIONS=fontAntiAliasing:true;fontColor:0x000000&TRANSPARENT=TRUE">
+        <!-- <img src="https://ows.emodnet-seabedhabitats.eu/geoserver/emodnet_view/wms?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetLegendGraphic&LAYER=eusm2021_eunis2019_full&FORMAT=image/png&LEGEND_OPTIONS=fontAntiAliasing:true;fontColor:0x000000&TRANSPARENT=TRUE"> -->
+        <img src="data/SeaHabitats_legend.png">
       </div>
     </div>
 
@@ -272,4 +276,9 @@ export default {
     align-items: center;
     justify-content: center;
 }
+
+a:link { color: #808080; }
+a:visited { color: #808080; }
+a:hover { color: #424242; }
+a:active { color: #000000; }
 </style>

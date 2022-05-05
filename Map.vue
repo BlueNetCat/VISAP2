@@ -220,15 +220,25 @@ export default {
           opacity: 0.8,
         }),
         // Sea habitats
-        seaHabitats: new ol.layer.Tile({
+        //seaHabitats: new ol.layer.Tile({
+        seaHabitats: new ol.layer.Image({
           name: 'seaHabitats',
-          source: new ol.source.TileWMS({
-            url: 'https://ows.emodnet-seabedhabitats.eu/geoserver/emodnet_view/wms',
-            params: {
-              'LAYERS': 'eusm2021_eunis2019_group',
-              'TILED': 'TRUE',
-            },
-            crossOrigin: 'anonymous',
+          // source: new ol.source.TileWMS({
+          //   url: 'https://ows.emodnet-seabedhabitats.eu/geoserver/emodnet_view/wms',
+          //   params: {
+          //     'LAYERS': 'eusm2021_eunis2019_group',
+          //     'TILED': 'TRUE',
+          //   },
+          //   crossOrigin: 'anonymous',
+          // }),
+          
+          source: new ol.source.ImageStatic({
+            // https://ows.emodnet-seabedhabitats.eu/geoserver/emodnet_view/wms?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&FORMAT=image%2Fpng8&TRANSPARENT=true&LAYERS=eusm2021_eunis2019_group&TILED=TRUE&WIDTH=2048&HEIGHT=2048&CRS=EPSG%3A3857&STYLES=&BBOX=0.0%2C4836921.25%2C556597.45%2C5311971.85
+            url: 'data/SeaHabitats_0_39.8_5_43.png',
+            //imageExtent: [0, 39.8, 5, 43],
+            //projection: 'EPSG:4326'
+            imageExtent: [0.0, 4836921.25, 556597.45, 5311971.85],
+            projection: 'EPSG:3857'
           }),
           zIndex: -2,
           opacity: 0.0
