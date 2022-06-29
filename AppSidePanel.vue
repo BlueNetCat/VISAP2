@@ -30,14 +30,20 @@
         <fishing-effort ref="fishing-effort" 
           @effortParamsChange='setEffortMap' 
           @effortLayerOpacityChange='setEffortLayerOpacity' 
-          v-show="selTab === 'effort'"></fishing-effort>
+          v-show="selTab === 'effort'">
+        </fishing-effort>
 
         <!-- Layers -->
         <layer-panel ref="layers" 
           @baseLayerChange='setBaseLayer' 
           @layerOpacityChange='setLayerOpacity'
           @climaLayerChange='setClimaLayer'
-          v-show="selTab === 'layers'"></layer-panel>
+          v-show="selTab === 'layers'">
+        </layer-panel>
+
+        <about-panel ref="about"
+          v-show="selTab === 'about'">
+        </about-panel>
        
       </div>
 
@@ -78,6 +84,7 @@
 import HaulInfo from "HaulInfo.vue"
 import FishingEffortPanel from "FishingEffortPanel.vue"
 import LayerPanel from "LayerPanel.vue"
+import AboutPanel from "About.vue"
 //import Map from "Map.vue";
 //import AnimationCanvas from "AnimationCanvas.vue";
 
@@ -120,6 +127,11 @@ export default {
         "layers": {
           id: "layers",
           name: "Layers",
+          isSelected: false
+        },
+        "about": {
+          id: "about",
+          name: "About",
           isSelected: false
         }
       },
@@ -247,6 +259,7 @@ export default {
     "haul-info": HaulInfo,
     "fishing-effort": FishingEffortPanel,
     "layer-panel": LayerPanel,
+    "about-panel": AboutPanel,
     //"ol-map": Map,
     //"animation-canvas": AnimationCanvas,
   },
