@@ -38,12 +38,12 @@
 /*
 APP STRUCTURE
 
-                              APP MANAGER
-              /                   |                     \
-        OL-MAP                 APP-SIDE-PANEL             LANGUAGE-SELECTOR
-        /                     /        |        \    
-    TIME-RANGE-BAR    HAUL-INFO  FISHING-EFFORT  LAYER-PANEL
-      /                    |          
+                                        APP MANAGER
+              /                             |                            \
+        OL-MAP                          APP-SIDE-PANEL                    LANGUAGE-SELECTOR
+        /                     /        |          |           \    
+    TIME-RANGE-BAR   HAUL-INFO   FISHING-EFFORT   LAYER-PANEL   ABOUT 
+      /                   |          
   RANGE-SLIDER      WEATHER-WIDGET
 
 Right now the comunication is done via the paths shown before. It might be useful to create some kind of
