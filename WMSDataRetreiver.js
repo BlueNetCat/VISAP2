@@ -730,3 +730,23 @@ dataTypes = {
     console.log(message);
   }
 }
+
+
+//
+// Fetch for french data AROME - WINDS AND OTHER ATHMOSPHERIC DATA
+// Possibilities are limited because:
+// - Color cannot be changed (&COLORSCALERANGE=18,20)
+// - There are no grey color styles (only barb wire and isobars for wind for example)
+// TODO: check if it is possible to extract the legend in order to get the values
+// TODO: there is a WCS service that provides values, probably a better option
+
+// https://donneespubliques.meteofrance.fr/?fond=produit&id_produit=131
+// fetch('https://public-api.meteofrance.fr/public/arome/1.0/wms/MF-NWP-HIGHRES-AROME-001-FRANCE-WMS/GetCapabilities?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities', {
+//     headers: {
+//       'apikey': 'eyJ4NXQiOiJZV0kxTTJZNE1qWTNOemsyTkRZeU5XTTRPV014TXpjek1UVmhNbU14T1RSa09ETXlOVEE0Tnc9PSIsImtpZCI6ImdhdGV3YXlfY2VydGlmaWNhdGVfYWxpYXMiLCJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJnZXJhcmQubGxvcmFjaEBjYXJib24uc3VwZXIiLCJhcHBsaWNhdGlvbiI6eyJvd25lciI6ImdlcmFyZC5sbG9yYWNoIiwidGllclF1b3RhVHlwZSI6bnVsbCwidGllciI6IlVubGltaXRlZCIsIm5hbWUiOiJEZWZhdWx0QXBwbGljYXRpb24iLCJpZCI6MTExOCwidXVpZCI6IjNlOGU0YjllLTQzOTYtNGM5ZS1iMzZiLTliZWNhOGU5M2FiMCJ9LCJpc3MiOiJodHRwczpcL1wvcG9ydGFpbC1hcGkubWV0ZW9mcmFuY2UuZnI6NDQzXC9vYXV0aDJcL3Rva2VuIiwidGllckluZm8iOnsiNTBQZXJNaW4iOnsidGllclF1b3RhVHlwZSI6InJlcXVlc3RDb3VudCIsImdyYXBoUUxNYXhDb21wbGV4aXR5IjowLCJncmFwaFFMTWF4RGVwdGgiOjAsInN0b3BPblF1b3RhUmVhY2giOnRydWUsInNwaWtlQXJyZXN0TGltaXQiOjAsInNwaWtlQXJyZXN0VW5pdCI6InNlYyJ9fSwia2V5dHlwZSI6IlBST0RVQ1RJT04iLCJwZXJtaXR0ZWRSZWZlcmVyIjoiaHR0cHM6XC9cL2JsdWVuZXRjYXQuZ2l0aHViLmlvXC8qIiwic3Vic2NyaWJlZEFQSXMiOlt7InN1YnNjcmliZXJUZW5hbnREb21haW4iOiJjYXJib24uc3VwZXIiLCJuYW1lIjoiQVJPTUUiLCJjb250ZXh0IjoiXC9wdWJsaWNcL2Fyb21lXC8xLjAiLCJwdWJsaXNoZXIiOiJhZG1pbl9tZiIsInZlcnNpb24iOiIxLjAiLCJzdWJzY3JpcHRpb25UaWVyIjoiNTBQZXJNaW4ifV0sImV4cCI6MTc1MTgwMzE2MiwicGVybWl0dGVkSVAiOiIiLCJpYXQiOjE2NTcxOTUxNjIsImp0aSI6ImYxYWMwMGJlLWQ5M2QtNGE5Ny05MTdlLTk5ZmI3NWI2MjRhMCJ9.GlGBIsE4xSWQlbnIxhkio6silJqGiOa9_E2UrkQ-FdG3NwP59uIHIPo-RqNXPGvHrufCh0CwqN99LAGE_mgXS95oVaMMrOtZoB4rVxp7nJ5GYP4_D6-RsTowasmcg7BRj3LcQTNGCKZDoMPUJSMZTLDTCiqJYR0PaTymjQQhgmK5OWH0hPo5lb2f1wdETwygcDOMDG8jBtdXKQUlOuxgEjuXZPdr65Zv0MYfyLh7g4qOL5dP5d0-gwBzKBnTpI31blItCAJWL0BhPHRE1vHRPzaPvTpLgSREUrJAUPzEAWW9-3uYDgXaOtopKuzJKWSwdfuP7c5vPVJy3I-Shwn64w==',
+//       'Accept': '*/* ',
+//     },
+//   }).then(r => r.text()).then(res => console.log(res))
+
+
+
