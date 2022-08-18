@@ -630,7 +630,8 @@ dataTypes = {
   getPreciseValueFromURL = async function(url, range){
     let value = await this.getValueFromURL(url); // Normalized value from 0 to 1
     if (value == undefined) {
-      this.printWarn("No data at lat " + lat + ", long " + long);
+      this.printWarn("No data at " + url);
+      // TODO: this happens when a dot in timerange is clicked twice. Why?
       return;
     }
     // Put in range of the data type (normValue * (max-min) + min)
