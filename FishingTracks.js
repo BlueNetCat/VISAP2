@@ -157,7 +157,7 @@ class FishingTracks {
     // This function is called everytime the map moves. Should it be like this?
     trackStyle(feature){
         // If it is not visible
-        let featDate = new Date(feature.A.info.Date);
+        let featDate = new Date(feature.C.info.Date);
         let visible = featDate > this.selStartDate && featDate < this.selEndDate;
         if (!visible){
             return new ol.style.Style({
@@ -168,14 +168,14 @@ class FishingTracks {
             })
         }
         
-        let port = feature.A.info.Port;
-        let date = new Date(feature.A.info.Date);
-        let zonaPort = feature.A.info.Port;
+        let port = feature.C.info.Port;
+        let date = new Date(feature.C.info.Date);
+        let zonaPort = feature.C.info.Port;
         let colorPort = palette[port].color;
 
         // Check if this is the selected feature
         let isSelected = false;
-        if (feature.A.info.Id == FishingTracks.selectedTrack)
+        if (feature.C.info.Id == FishingTracks.selectedTrack)
             isSelected = true;
 
         let portStyle = new ol.style.Style({

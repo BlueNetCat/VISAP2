@@ -236,6 +236,11 @@ export default {
           if (layerName !== undefined){
             this.dataRetriever.getDataAtPoint(layerName, date.toISOString(), lat, long, 'd', rr.direction)
               .then(value => {
+                if (value == undefined){
+                  rr.data[dIndex].value = 'x';
+                  rr.data[dIndex].loading = false;
+                  return;
+                }
                 rr.data[dIndex].value = value.toFixed(2);
                 rr.data[dIndex].loading = false;
                 // Icon

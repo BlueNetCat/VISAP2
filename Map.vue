@@ -279,6 +279,7 @@ export default {
     // PRIVATE METHODS
     // Figure clicked (TODO: emit)
     initMap: function () {
+      //debugger;
       // Initialize map
       this.map = new ol.Map({
         layers : [
@@ -302,7 +303,7 @@ export default {
           this.layers.seaHabitats
         ],
         target: 'map',
-        controls: ol.control.defaults({ attributionOptions: { collapsible: true } }),
+        //controls: ol.control.defaults({ attributionOptions: { collapsible: true } }),
         view: new ol.View({
           center: ol.proj.fromLonLat([3,41.5]),
           zoom: 6,
