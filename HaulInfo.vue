@@ -281,13 +281,14 @@ export default {
       if (this.$refs.weatherWidget){
         // Get date, lat, and long
         let coords = FishingTracks.getFeatureById(id).geometry.coordinates;
-        let middleCoordinate = coords[Math.round(coords.length/2)];
+        let middleCoordinate = [...coords[Math.round(coords.length/2)]]; // copy
         this.$refs.weatherWidget.updateTable(new Date(this.selTrack.Date), middleCoordinate[1], middleCoordinate[0]);
       }
       // Update sea habitat table
       if (this.$refs.seaHabitat){
         // Get lat long
         let coords = FishingTracks.getFeatureById(id).geometry.coordinates;
+        coords = [...coords]; // copy
         //let middleCoordinate = coords[Math.round(coords.length/2)];
         // Update sea habitat
         this.$refs.seaHabitat.updateData(coords);

@@ -620,7 +620,7 @@ export default {
 
       // Center map to track
       let view = this.map.getView();
-      let coord = feature.geometry.coordinates[0];
+      let coord = [...feature.geometry.coordinates[0]];
       let currentZoom = view.getZoom();
       let longCorrection = 0;//currentZoom > 11 ? 0.1 : 0.3;
       view.animate({
