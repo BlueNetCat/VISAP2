@@ -4,7 +4,7 @@
     <div class="row p-3">
       <h4>{{$t('Layers')}}</h4>
     </div>
-    
+
     <!-- Row - Base layers-->
     <div class="row p-3" style='justify-content: center;'>
       <!-- Column - Title -->
@@ -12,9 +12,10 @@
         {{$t('Base layer')}}
       </div>
       <div class="col-md-auto centered">
-      <!-- Button group - Base layers-->
+        <!-- Button group - Base layers-->
         <div class="btn-group" role="group">
-          <button type="button" class="btn" :class="[selBaseLayer == bLayer ? 'btn-active' : '']" @click='baseLayerClicked(bLayer)' :key="bLayer" v-for="bLayer in baseLayers">
+          <button type="button" class="btn" :class="[selBaseLayer == bLayer ? 'btn-active' : '']"
+            @click='baseLayerClicked(bLayer)' :key="bLayer" v-for="bLayer in baseLayers">
             {{$t(bLayer)}}
           </button>
         </div>
@@ -50,12 +51,16 @@
         <div class='row'> {{$t('Climatological layer')}} </div>
         <div class='row'> {{$t('Date')}}: {{currentDate}} </div>
         <!-- <div class='row'> {{timeScale}} </div> -->
-        <input class='row slider m-2' type="range" min="0" max="1" step="0.01" v-model="climaOpacity" id="fEffortOpacity">
+        <input class='row slider m-2' type="range" min="0" max="1" step="0.01" v-model="climaOpacity"
+          id="fEffortOpacity">
+        <div class='row'> {{$t('Data from')}}: <a title="Weather data source" :href="sourceDoi" target="_blank">E.U.
+            Copernicus Marine Service Information</a> </div>
       </div>
       <div class="col-md-auto centered">
-      <!-- Button group - Base layers-->
+        <!-- Button group - Base layers-->
         <div class="btn-group" role="group" style='flex-direction: column;'>
-          <button type="button" class="btn" :class="[selClimaLayer == cLayer ? 'btn-active' : '']" @click='climaLayerClicked(cLayer)' :key="cLayer" v-for="cLayer in climaLayers">
+          <button type="button" class="btn" :class="[selClimaLayer == cLayer ? 'btn-active' : '']"
+            @click='climaLayerClicked(cLayer)' :key="cLayer" v-for="cLayer in climaLayers">
             {{$t(cLayer)}}
           </button>
         </div>
@@ -77,7 +82,8 @@
     <!-- Row - Legend sea habitats -->
     <div class="row p-1" v-if="seaHabOpacity != 0">
       <div>
-        <a href="https://www.emodnet-seabedhabitats.eu/access-data/launch-map-viewer/" title="EMODnet Seabed Habitats" target="_blank">EMODnet Seabed Habitats</a>
+        <a href="https://www.emodnet-seabedhabitats.eu/access-data/launch-map-viewer/" title="EMODnet Seabed Habitats"
+          target="_blank">EMODnet Seabed Habitats</a>
       </div>
       <div style="overflow: auto">
         <!-- <img src="https://ows.emodnet-seabedhabitats.eu/geoserver/emodnet_view/wms?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetLegendGraphic&LAYER=eusm2021_eunis2019_full&FORMAT=image/png&LEGEND_OPTIONS=fontAntiAliasing:true;fontColor:0x000000&TRANSPARENT=TRUE"> -->
@@ -110,6 +116,7 @@
 
     "None": "∅",
     "Sea Surface Temperature": "Temperatura superficial del mar",
+    "Sea Temperature Anomaly": "Anomalía de temperatura",
     "Sea Bottom Temperature": "Temperatura del fondo del mar",
     "Chlorophyll": "Clorofila",
     "Salinity": "Salinidad",
@@ -130,6 +137,7 @@
 
     "None": "∅",
     "Sea Surface Temperature": "Temperatura superficial del mar",
+    "Sea Temperature Anomaly": "Anomalia de temperatura",
     "Sea Bottom Temperature": "Temperatura del fons del mar",
     "Chlorophyll": "Clorofil·la",
     "Salinity": "Salinitat",
@@ -168,10 +176,11 @@ export default {
       climaOpacity: 1,
       baseLayers: ['Bathymetry', 'OSM', 'Imagery', 'Ocean'], // TODO: get layers from map when created
       selBaseLayer: 'Bathymetry',
-      climaLayers: ['None', 'Sea Surface Temperature', 'Sea Bottom Temperature', 'Chlorophyll', 'Salinity', 'Wind', 'Wave Significant Height', 'Current'],
+      climaLayers: ['None', 'Sea Surface Temperature', 'Sea Temperature Anomaly', 'Sea Bottom Temperature', 'Chlorophyll', 'Salinity', 'Wind', 'Wave Significant Height', 'Current'],
       selClimaLayer: 'None',
 
       currentDate: '13 April 2019',
+      sourceDoi: 'https://resources.marine.copernicus.eu/products',
       // timeScale: 'Daily mean',
       
     }
@@ -223,6 +232,7 @@ export default {
       let date = ff.properties.info.Data + 'T12:00:00.000Z';
       // Get clima URL
       let source = this.dataRetriever.getDataTypeURL(this.selClimaLayer, date, 'd');
+      this.sourceDoi = source == undefined ? 'https://resources.marine.copernicus.eu/products' : source.doi;
       // If source is not found, it will send undefined
       this.$emit('climaLayerChange', source);
     },

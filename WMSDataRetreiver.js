@@ -1,9 +1,6 @@
 // Scripts that obtain data from the CMEMS WMS API
 class WMSDataRetriever{
 
-// CMEMS base url
-domainURL = 'https://my.cmems-du.eu/thredds/wms/';//"https://nrt.cmems-du.eu/thredds/wms/";
-
 // Variables:
 // DATA TYPES ARE STORED ELSEWHERE (WMSDataTypes.js). If you modify them, reload capabilities in the constructor and store in WMSDataTypes.js
 dataTypes = {
@@ -13,6 +10,7 @@ dataTypes = {
     // https://my.cmems-du.eu/thredds/wms/med-cmcc-cur-rean-m?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities
     name: 'Sea surface velocity',
     altNames: ['Sea surface velocity', 'Current', 'Sea velocity'],
+    doi: "https://doi.org/10.25423/CMCC/MEDSEA_ANALYSISFORECAST_PHY_006_013_EAS6",
     url: 'med-cmcc-cur-rean', // Forecast 'med-cmcc-cur-an-fc',
     domainURL: 'https://my.cmems-du.eu/thredds/wms/',
     version: '1.1.1',
@@ -39,6 +37,7 @@ dataTypes = {
     // https://my.cmems-du.eu/thredds/wms/med-cmcc-tem-rean-d?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities
     name: 'Sea temperature',
     altNames: ['Sea temperature', 'SST', 'Sea Surface Temperature'],
+    doi: "https://doi.org/10.25423/CMCC/MEDSEA_ANALYSISFORECAST_PHY_006_013_EAS6",
     url: 'med-cmcc-tem-rean', // Forecast: 'med-cmcc-tem-an-fc',
     domainURL: 'https://my.cmems-du.eu/thredds/wms/',
     version: '1.1.1',
@@ -54,12 +53,29 @@ dataTypes = {
       // CRS instead of SRS
     },
   },
+  "Sea temperature anomaly": {
+    // https://nrt.cmems-du.eu/thredds/wms/SST_MED_SSTA_L4_NRT_OBSERVATIONS_010_004_d?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&FORMAT=image/png&TRANSPARENT=TRUE&LAYERS=sst_anomaly&STYLES=boxfill/ncview&LOGSCALE=false&SRS=EPSG:4326&BBOX=2.8125,38.671875,3.515625,39.375&WIDTH=256&HEIGHT=256&COLORSCALERANGE=-5,5&BELOWMINCOLOR=0x0000ff&ABOVEMAXCOLOR=0xff0001&TIME=2022-08-24T00:00:00.000Z
+    // https://nrt.cmems-du.eu/thredds/wms/SST_MED_SSTA_L4_NRT_OBSERVATIONS_010_004_d?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities
+    name: 'Sea temperature anomaly',
+    altNames: ['Sea temperature anomaly', 'Sea surface temperature anomaly', 'SSTA'],
+    doi: "https://doi.org/10.48670/moi-00172",
+    url: 'SST_MED_SSTA_L4_NRT_OBSERVATIONS_010_004_d', 
+    domainURL: 'https://nrt.cmems-du.eu/thredds/wms/',
+    version: '1.3.0',
+    urlLocked: true,
+    layerName: 'sst_anomaly',
+    timeScales: ['d'], 
+    range: [-5, 5],
+    units: 'ºC',
+    style: "boxfill/redblue",
+  },
   "Sea bottom temperature": {
     // Reanalysis comes from a different base URL. Only monthly and daily
     // 'https://my.cmems-du.eu/thredds/wms/med-cmcc-tem-rean-m?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities'
     // https://my.cmems-du.eu/thredds/wms/med-cmcc-tem-rean-d?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities
     name: 'Sea bottom temperature',
     altNames: ['Sea bottom temperature', 'SBT'],
+    doi: "https://doi.org/10.25423/CMCC/MEDSEA_ANALYSISFORECAST_PHY_006_013_EAS6",
     url: 'med-cmcc-tem-rean', // Forecast: 'med-cmcc-tem-an-fc',
     domainURL: 'https://my.cmems-du.eu/thredds/wms/',
     version: '1.1.1',
@@ -80,6 +96,7 @@ dataTypes = {
     // https://my.cmems-du.eu/thredds/wms/med-cmcc-sal-rean-d?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities
     name: 'Salinity',
     altNames: ['Salinity', 'Sal', 'Sea surface salinity'],
+    doi: "https://doi.org/10.25423/CMCC/MEDSEA_ANALYSISFORECAST_PHY_006_013_EAS6",
     url: 'med-cmcc-sal-rean',// Forecast 'med-cmcc-sal-an-fc', 
     domainURL: 'https://my.cmems-du.eu/thredds/wms/',
     version: '1.1.1',
@@ -100,6 +117,7 @@ dataTypes = {
     // https://my.cmems-du.eu/thredds/wms/med-hcmr-wav-rean-h?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&FORMAT=image/png&TRANSPARENT=TRUE&LAYERS=VHM0&STYLES=boxfill/ncview&LOGSCALE=false&SRS=EPSG:4326&BBOX=-22.5,22.5,0,45&WIDTH=512&HEIGHT=512&COLORSCALERANGE=0,10&BELOWMINCOLOR=0x0000ff&ABOVEMAXCOLOR=0xff0001&TIME=2007-02-20T22:00:00.000Z
     name: 'Wave significant height',
     altNames: ['Wave significant height', 'Waves', 'WSH'],
+    doi: 'https://doi.org/10.25423/cmcc/medsea_analysisforecast_wav_006_017_medwam3',
     url: 'med-hcmr-wav-rean',// Forecast 'med-hcmr-wav-an-fc',
     domainURL: 'https://my.cmems-du.eu/thredds/wms/',
     version: '1.1.1',
@@ -123,6 +141,7 @@ dataTypes = {
   "Wind wave significant height": {
     name: 'Wind wave significant height',
     altNames: ['Wind wave significant height', 'Wind waves', 'WWSH'],
+    doi: 'https://doi.org/10.25423/cmcc/medsea_analysisforecast_wav_006_017_medwam3',
     url: 'med-hcmr-wav-rean',// Forecast 'med-hcmr-wav-an-fc',
     domainURL: 'https://my.cmems-du.eu/thredds/wms/',
     version: '1.1.1',
@@ -146,6 +165,7 @@ dataTypes = {
   "Wave period": {
     name: 'Wave period',
     altNames: ['Wave period', 'Period'],
+    doi: 'https://doi.org/10.25423/cmcc/medsea_analysisforecast_wav_006_017_medwam3',
     scientificName: 'Sea surface wave mean period from variance spectral density inverse frequency moment',
     url: 'med-hcmr-wav-rean',// Forecast 'med-hcmr-wav-an-fc',
     domainURL: 'https://my.cmems-du.eu/thredds/wms/',
@@ -167,6 +187,7 @@ dataTypes = {
     // https://my.cmems-du.eu/thredds/wms/med-ogs-pft-rean-m?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities
     name: 'Chlorophyll',
     altNames: ['Chlorophyll', 'Chl'],
+    doi: 'https://doi.org/10.25423/cmcc/medsea_analysisforecast_bgc_006_014_medbfm3',
     url: 'med-ogs-pft-rean',// Forecast: 'med-ogs-pft-an-fc',
     domainURL: 'https://my.cmems-du.eu/thredds/wms/',
     version: '1.1.1',
@@ -186,6 +207,7 @@ dataTypes = {
   "Wind": { // https://doi.org/10.48670/moi-00184, https://doi.org/10.48670/moi-00185
     name: 'Wind',
     altNames: ['Wind'],
+    doi: 'https://doi.org/10.48670/moi-00185',
     url: 'CERSAT-GLO-BLENDED_WIND_L4_REP-V6-OBS_FULL_TIME_SERIE',
     domainURL: 'https://my.cmems-du.eu/thredds/wms/',
     urlLocked: true,
@@ -234,6 +256,7 @@ dataTypes = {
     }
 
     // Preloaded data types
+    // Comment this three lines to update the WMSDataTypes
     this.dataTypes = JSON.parse(preLoadedDataTypes);
     if (onLoadCallback !== undefined) onLoadCallback();
     return
@@ -251,14 +274,13 @@ dataTypes = {
       for (let i = 0; i < timeScales.length; i++) {
         let currTimeScale = timeScales[i];
         // Skip if time scale is not present in datatype
-
         if (dataType.timeScales.includes(currTimeScale)){
           let oPURL = dataType.url;
           if (!dataType.urlLocked) // Wind product does not use the '-timeScale' url format
             oPURL += "-" + currTimeScale[0]; // TODO: currTimeScale[0] instead of currTimeScale is a HACK for TODO Note 1
           // Get Capabilities
           loading++;
-          this.loadWMSCapabilities(dataType, this.domainURL + oPURL, currTimeScale)
+          this.loadWMSCapabilities(dataType, dataType.domainURL + oPURL, currTimeScale)
             .then(() => {
               // Callback when all capabilities have been loaded
               loaded++;
@@ -296,11 +318,12 @@ dataTypes = {
     const parser = new DOMParser();
     let xml = parser.parseFromString(data, "application/xml");
     let layers = xml.querySelectorAll('Layer');
+
     // Iterate through layers
     layers.forEach(ll => {
       // Get layer by its name
       if (ll.querySelector("Name").innerHTML == dataType.layerName && ll.attributes.queryable) {
-        this.printLog("Layer name: " + ll.querySelector("Name").innerHTML + ", Variable name: " + dataType.name);
+        this.printLog("Layer name: " + ll.querySelector("Name").innerHTML + ", Variable name: " + dataType.name);        
         // Iterate through Dimensions (elevation, time)
         ll.querySelectorAll("Dimension").forEach(dd => {
           this.printLog("Dimension name: " + dd.attributes.name.nodeValue);
@@ -461,6 +484,7 @@ dataTypes = {
       url: url, 
       params: params,
       name: dataType.name, // not necessary?
+      doi: dataType.doi,
       attributions: '© CMEMS', // TODO
       // animation
     }
@@ -504,7 +528,7 @@ dataTypes = {
     if (dataType.timeScaleCorrection == undefined){
       this.printWarn("WMS Capabilities were not yet loaded. Loading now");
       // Get Capabilities
-      await this.loadWMSCapabilities(dataType, this.domainURL + dataType.url + "-" + currTimeScale, currTimeScale);
+      await this.loadWMSCapabilities(dataType, dataType.domainURL + dataType.url + "-" + currTimeScale, currTimeScale);
     }
     
 
