@@ -45,7 +45,7 @@
       <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.5.0/build/ol.js"></script-->
       
       <!-- Vue client parser-->
-      <script src="vueParser.js"></script>
+      <script type="module" src="vueParser.js"></script>
       
       <!-- Particle Animation -->
       <script src="../MARCAT/AnimationEngine.js"></script>
@@ -76,10 +76,10 @@
       <div id="vue-app">
       </div>
       
-      <script>
-         // Load vue component
+      <!-- <script>
+         // Load vue component -- this is done in vueParser.js
          app.mount('#vue-app');
-      </script>
+      </script> -->
       
 
    </body>
