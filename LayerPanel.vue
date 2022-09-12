@@ -93,60 +93,6 @@
 
   </div>
 </template>
-<i18n>
-{
-  "en": {
-    "Fishing tracks": "Fishing tracks",
-    "Fishing effort": "Fishing effort",
-    "Layers": "Layers",
-    "Base layer": "Base layer",
-    "Climatological layer": "Climatological layer",
-    "Date": "Date"
-  },
-  "es": {
-    "Fishing tracks": "Recorridos de arrastre",
-    "Fishing effort": "Esfuerzo pesquero",
-    "Sea habitats": "Hábitats marinos",
-    "Layers": "Capas",
-    "Base layer": "Capa base",
-    "Climatological layer": "Climatología",
-    "Date": "Fecha",
-    
-    "Bathymetry": "Batimetría",
-
-    "None": "∅",
-    "Sea Surface Temperature": "Temperatura superficial del mar",
-    "Sea Temperature Anomaly": "Anomalía de temperatura",
-    "Sea Bottom Temperature": "Temperatura del fondo del mar",
-    "Chlorophyll": "Clorofila",
-    "Salinity": "Salinidad",
-    "Wind": "Viento",
-    "Wave Significant Height": "Altura significativa de oleaje",
-    "Current": "Corriente marino"
-  },
-  "ca": {
-    "Fishing tracks": "Recorreguts d'arrossegament",
-    "Fishing effort": "Esforç pesquer",
-    "Sea habitats": "Hàbitats marins",
-    "Layers": "Capes",
-    "Base layer": "Capa base",
-    "Climatological layer": "Climatologia",
-    "Date": "Data",
-
-    "Bathymetry": "Batimetria",
-
-    "None": "∅",
-    "Sea Surface Temperature": "Temperatura superficial del mar",
-    "Sea Temperature Anomaly": "Anomalia de temperatura",
-    "Sea Bottom Temperature": "Temperatura del fons del mar",
-    "Chlorophyll": "Clorofil·la",
-    "Salinity": "Salinitat",
-    "Wind": "Vent",
-    "Wave Significant Height": "Altura significativa d'onatge",
-    "Current": "Corrent marí"
-  }
-}
-</i18n>
 
 
 

@@ -62,62 +62,11 @@
     <div class="row p-3">
       <i v-if='selGear == "All"' style='text-align: center;'>{{$t('Data from')}} <a href="https://www.emodnet-humanactivities.eu/search-results.php?dataname=Vessel+Density+" target="_blank" rel="noreferrer noopener">EMODnet Human Activities, Vessel Density Map (Collecte Localisation Satellites (CLS)) </a></i>
       <i v-else style='text-align: center;'>{{$t('Data from')}} <a href="http://agricultura.gencat.cat/ca/departament/dar_plans_programes_sectorials/politica-maritima/icatmar/" target="_blank" rel="noreferrer noopener">ICATMAR (Institut Català de Recerca per la Governança del Mar) </a></i>
-    <div>
+    </div>
 
 
   </div>
 </template>
-<i18n>
-  {
-    "en": {
-      "effortTypes": {
-        "hours": "hours",
-        "kg": "kg",
-        "euros": "euros"
-      },
-      "fishingGears": {
-        "All": "All",
-        "Bottom trawling": "Bottom trawling",
-        "Purse seine": "Purse seine"
-      },
-      "Layer visibility": "Layer Visibility",
-      "Data from": "Data from"
-    },
-
-    "es": {
-      "effortTypes": {
-        "hours": "horas",
-        "kg": "kg",
-        "euros": "euros"
-      },
-      "fishingGears": {
-        "All": "Todo",
-        "Bottom trawling": "Pesca de arrastre",
-        "Purse seine": "Pesca de cerco"
-      },
-      "Layer visibility": "Visibilidad de la capa",
-      "Fishing effort": "Esfuerzo pesquero",
-      "Data from": "Datos de"
-    },
-
-    "ca": {
-      "effortTypes": {
-        "hours": "hores",
-        "kg": "kg",
-        "euros": "euros"
-      },
-      "fishingGears": {
-        "All": "Tot",
-        "Bottom trawling": "Pesca d'arrossegament",
-        "Purse seine": "Pesca d'encerclament"
-      },
-      "Layer visibility": "Visibilitat de la capa",
-      "Fishing effort": "Esforç pesquer",
-      "Data from": "Dades de"
-    }
-  }
-  </i18n>
-
 
 
 <script>
