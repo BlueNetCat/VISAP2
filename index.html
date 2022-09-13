@@ -6,6 +6,16 @@
       <title>VISAP2</title>
       <meta name="description" content="Web application for visualization of bottom trawl surveys and fishing effort in the Catalan Sea.">
       <meta name="author" content="Gerard Llorach">
+      
+      <!-- Google tag (gtag.js) -->
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-JYL7GK1EVB"></script>
+      <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-JYL7GK1EVB');
+      </script>
 
       <!-- Vue -->
       <!-- <script src="https://unpkg.com/vue@next"></script> -->
@@ -35,7 +45,7 @@
       <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.5.0/build/ol.js"></script-->
       
       <!-- Vue client parser-->
-      <script src="vueParser.js"></script>
+      <script type="module" src="vueParser.js"></script>
       
       <!-- Particle Animation -->
       <script src="../MARCAT/AnimationEngine.js"></script>
@@ -66,10 +76,10 @@
       <div id="vue-app">
       </div>
       
-      <script>
-         // Load vue component
+      <!-- <script>
+         // Load vue component -- this is done in vueParser.js
          app.mount('#vue-app');
-      </script>
+      </script> -->
       
 
    </body>

@@ -13,18 +13,7 @@
 
   </div>
 </template>
-<i18n>
-{
-  "en": {
-  },
-  "es": {
-    "Sea habitats": "Hábitats marinos"
-  },
-  "ca": {
-    "Sea habitats": "Hàbitats marins"
-  }
-}
-</i18n>
+
 
 
 <script>

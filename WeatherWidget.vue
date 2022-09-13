@@ -221,7 +221,6 @@ export default {
   },
   methods: {
     // USER HTML ACTIONS
-    // When a track is selected
     onClick: function(event){
 
     },
@@ -366,6 +365,8 @@ export default {
       });
       // Create dates
       this.createDates(inputDate);
+      // Cancel active requests
+      this.dataRetriever.cancelActiveRequests();
       // Update data
       this.getData(lat, long);
     }

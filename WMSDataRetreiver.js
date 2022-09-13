@@ -2,6 +2,8 @@
 class WMSDataRetriever{
 
 // Variables:
+// Requests - keep track of what is requested
+activeRequests = [];
 // DATA TYPES ARE STORED ELSEWHERE (WMSDataTypes.js). If you modify them, reload capabilities in the constructor and store in WMSDataTypes.js
 dataTypes = {
   "Sea surface velocity": {
@@ -677,17 +679,21 @@ dataTypes = {
   // Returns the value from a WMS URL
   getValueFromURL = async function(url){
     let img = await this.getImageFromURL(url);
+    // Remove image from active requests
+    this.activeRequests = this.activeRequests.filter( el => el.src != url); // GC? TODO?
     return this.getNormValueFromImage(img);
   }
 
   // Create an image element and load the image
+  // HACK: errors are not catched when fetching image urls. If errors are catched, the data does not load
   getImageFromURL = function(url){
     return new Promise((resolve, reject) => {
       const img = new Image();
       img.crossOrigin = "Anonymous";
       img.addEventListener('load', () => resolve(img));
-      img.addEventListener('error', reject);
+      img.addEventListener('error', reject); // If reject(img), image does not load
       img.src = url;
+      this.activeRequests.push(img);
       //this.printLog(url);
     })
   }
@@ -718,6 +724,13 @@ dataTypes = {
     let north = await this.getPreciseValueFromURL(url, range);
     // Return values
     return Math.atan2(north, east) * (180 / Math.PI);
+  }
+
+
+  // Cancels active requests
+  cancelActiveRequests = function(){
+    this.activeRequests.forEach(el => el.src = "");
+    this.activeRequests = [];
   }
 
 

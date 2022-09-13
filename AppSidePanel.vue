@@ -55,25 +55,8 @@
 
   </div>
 </template>
-<i18n>
-{
-  "en": {
-    "Fishing tracks": "Fishing tracks",
-    "Fishing effort": "Fishing effort",
-    "Layers": "Layers"
-  },
-  "es": {
-    "Fishing tracks": "Recorridos de arrastre",
-    "Fishing effort": "Esfuerzo pesquero",
-    "Layers": "Capas"
-  },
-  "ca": {
-    "Fishing tracks": "Recorreguts d'arrossegament",
-    "Fishing effort": "Esforç pesquer",
-    "Layers": "Capes"
-  }
-}
-</i18n>
+
+
 
 
 
