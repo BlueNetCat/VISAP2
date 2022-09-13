@@ -1,4 +1,5 @@
-{
+let es;
+export default es  = {
   "Fishing tracks": "Recorridos de arrastre",
   "Fishing effort": "Esfuerzo pesquero",
   "Layers": "Capas",

@@ -1,8 +1,8 @@
 // https://github.com/FranckFreiburger/vue3-sfc-loader
 // https://github.com/FranckFreiburger/vue3-sfc-loader/blob/main/docs/examples.md#use-sfc-custom-blocks-for-i18n
-import ca from './lang/ca.json' assert {type: 'json'};
-import en from './lang/en.json' assert {type: 'json'};
-import es from './lang/es.json' assert {type: 'json'};
+import ca from './lang/ca.js';
+import en from './lang/en.js';
+import es from './lang/es.js';
 
 
 
