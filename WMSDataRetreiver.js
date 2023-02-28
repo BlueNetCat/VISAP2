@@ -27,9 +27,13 @@ dataTypes = {
       type: 'velocity'
     },
     forecast: {
-      url: 'med-cmcc-cur-an-fc',
+      url: 'cmems_mod_med_phy-cur_anfc_4.2km_P',
+      timeScales: ['1D-m', '1M-m', 'T1H-m', 'T1HTS-m', 'T15M-i'],
       domainURL: 'https://nrt.cmems-du.eu/thredds/wms/',
       version: '1.1.1',
+      doi: "https://doi.org/10.25423/CMCC/MEDSEA_ANALYSISFORECAST_PHY_006_013_EAS6",
+      timeScaleCorrection:
+        {d: {min: 0, h: 12}},
       // CRS instead of SRS
     },
   },
@@ -39,8 +43,8 @@ dataTypes = {
     // https://my.cmems-du.eu/thredds/wms/med-cmcc-tem-rean-d?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities
     name: 'Sea temperature',
     altNames: ['Sea temperature', 'SST', 'Sea Surface Temperature'],
-    doi: "https://doi.org/10.25423/CMCC/MEDSEA_ANALYSISFORECAST_PHY_006_013_EAS6",
-    url: 'med-cmcc-tem-rean', // Forecast: 'med-cmcc-tem-an-fc',
+    doi: "https://doi.org/10.25423/CMCC/MEDSEA_MULTIYEAR_PHY_006_004_E3R1",
+    url: 'med-cmcc-tem-rean', // Forecast has different format,
     domainURL: 'https://my.cmems-du.eu/thredds/wms/',
     version: '1.1.1',
     layerName: 'thetao',
@@ -49,9 +53,13 @@ dataTypes = {
     units: 'ºC',
     style: "boxfill/occam",
     forecast: {
-      url: 'med-cmcc-tem-an-fc',
+      url: 'cmems_mod_med_phy-tem_anfc_4.2km_P',
+      timeScales: ['1D-m', '1M-m', 'T1H-m', 'T1HTS-m'],
       domainURL: 'https://nrt.cmems-du.eu/thredds/wms/',
       version: '1.1.1',
+      doi: "https://doi.org/10.25423/CMCC/MEDSEA_ANALYSISFORECAST_PHY_006_013_EAS6",
+      timeScaleCorrection:
+        {d: {min: 0, h: 12}},
       // CRS instead of SRS
     },
   },
@@ -78,7 +86,7 @@ dataTypes = {
     name: 'Sea bottom temperature',
     altNames: ['Sea bottom temperature', 'SBT'],
     doi: "https://doi.org/10.25423/CMCC/MEDSEA_ANALYSISFORECAST_PHY_006_013_EAS6",
-    url: 'med-cmcc-tem-rean', // Forecast: 'med-cmcc-tem-an-fc',
+    url: 'med-cmcc-tem-rean', // Forecast has different format
     domainURL: 'https://my.cmems-du.eu/thredds/wms/',
     version: '1.1.1',
     layerName: 'bottomT',
@@ -87,9 +95,13 @@ dataTypes = {
     units: 'ºC',
     style: "boxfill/occam",
     forecast: {
-      url: 'med-cmcc-tem-an-fc',
+      url: 'cmems_mod_med_phy-tem_anfc_4.2km_P',
+      timeScales: ['1D-m', '1M-m', 'T1H-m', 'T1HTS-m'],
       domainURL: 'https://nrt.cmems-du.eu/thredds/wms/',
       version: '1.1.1',
+      doi: "https://doi.org/10.25423/CMCC/MEDSEA_ANALYSISFORECAST_PHY_006_013_EAS6",
+      timeScaleCorrection:
+        {d: {min: 0, h: 12}},
       // CRS instead of SRS
     },
   },
@@ -108,9 +120,13 @@ dataTypes = {
     units: '‰',
     style: "boxfill/occam",
     forecast: {
-      url: 'med-cmcc-sal-an-fc',
+      url: 'cmems_mod_med_phy-sal_anfc_4.2km_P',
+      timeScales: ['1D-m', '1M-m', 'T1H-m', 'T1HTS-m'],
       domainURL: 'https://nrt.cmems-du.eu/thredds/wms/',
       version: '1.1.1',
+      doi: "https://doi.org/10.25423/CMCC/MEDSEA_ANALYSISFORECAST_PHY_006_013_EAS6",
+      timeScaleCorrection:
+        {d: {min: 0, h: 12}},
       // CRS instead of SRS
     },
   },
@@ -137,6 +153,7 @@ dataTypes = {
       url: 'med-hcmr-wav-an-fc',
       domainURL: 'https://nrt.cmems-du.eu/thredds/wms/',
       version: '1.1.1',
+      timeScales: ['-h', '-h3', '-h6', '-h12'],
       // CRS instead of SRS
     },
   },
@@ -161,6 +178,7 @@ dataTypes = {
       url: 'med-hcmr-wav-an-fc',
       domainURL: 'https://nrt.cmems-du.eu/thredds/wms/',
       version: '1.1.1',
+      timeScales: ['-h', '-h3', '-h6', '-h12'],
       // CRS instead of SRS
     },
   },
@@ -181,6 +199,7 @@ dataTypes = {
       url: 'med-hcmr-wav-an-fc',
       domainURL: 'https://nrt.cmems-du.eu/thredds/wms/',
       version: '1.1.1',
+      timeScales: ['-h', '-h3', '-h6', '-h12'],
       // CRS instead of SRS
     },
   },
@@ -199,9 +218,13 @@ dataTypes = {
     units: 'mg/m3',
     style: 'boxfill/occam',
     forecast: {
-      url: 'med-ogs-pft-an-fc',
+      url: 'cmems_mod_med_bgc-pft_anfc_4.2km_P',
+      timeScales: ['1D-m', '1M-m'],
       domainURL: 'https://nrt.cmems-du.eu/thredds/wms/',
       version: '1.1.1',
+      doi: "https://doi.org/10.25423/cmcc/medsea_analysisforecast_bgc_006_014_medbfm4",
+      timeScaleCorrection:
+        {d: {min: 0, h: 12}},
       // CRS instead of SRS
     },
     // https://nrt.cmems-du.eu/thredds/wms/med-ogs-pft-an-fc-d?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&FORMAT=image/png&TRANSPARENT=true&TILED=true&COLORSCALERANGE=0.028321734%2C2.3005204&ELEVATION=-1.0182366371154785&LAYERS=chl&STYLES=boxfill/rainbow&TIME=2021-10-06T12%3A00%3A00.000Z&WIDTH=256&HEIGHT=256&CRS=EPSG%3A4326&BBOX=28.125%2C16.875%2C33.75%2C22.5
@@ -228,6 +251,9 @@ dataTypes = {
       url: 'CERSAT-GLO-BLENDED_WIND_L4-V6-OBS_FULL_TIME_SERIE',
       domainURL: 'https://nrt.cmems-du.eu/thredds/wms/',
       version: '1.1.1',
+      timeScales: ['-h6'],
+      timeScaleCorrection:
+        {d: {min: 0, h: 12}},
       // CRS instead of SRS
     },
   },
@@ -412,13 +438,6 @@ dataTypes = {
       return;
     }
 
-    // Check timescale
-    let tScale = undefined
-    dataType.timeScales.forEach(tS => { if (tS == timeScale) tScale = timeScale });
-    if (tScale == undefined) {
-      tScale = dataType.timeScales[0];
-      this.printWarn("Time scale petitioned does not exist in the ocean prodcut. Ocean product: " + dataType.name + ". Time scale petitioned: " + timeScale + ". Available time scales: " + dataType.timeScales);
-    }
 
     // Check if WMS capabilities were loaded
     if (dataType.timeScaleCorrection == undefined) {
@@ -433,11 +452,25 @@ dataTypes = {
     let domainURL = dataType.domainURL;
     let serviceURL = dataType.url;
     let version = dataType.version; // 1.1.1 or 1.3.0 (then CRS should be instead of SRS)
+    let timeScales = dataType.timeScales;
+    let isUsingForecast = false;
     if (date > dataType.lastDate) {
       this.printWarn("Using forecast instead of reanalysis CMEMS data.");
+      isUsingForecast = true;
       domainURL = dataType.forecast.domainURL;
       serviceURL = dataType.forecast.url;
       version = dataType.forecast.version;
+      if (dataType.forecast.timeScales)
+        timeScales = dataType.forecast.timeScales;
+    }
+
+
+    // Check timescale
+    let tScale = undefined
+    timeScales.forEach(tS => { if (tS == timeScale) tScale = timeScale });
+    if (tScale == undefined) {
+      tScale = timeScales[0];
+      this.printWarn("Time scale petitioned does not exist in the ocean prodcut. Ocean product: " + dataType.name + ". Time scale petitioned: " + timeScale + ". Available time scales: " + dataType.timeScales);
     }
 
     var params = {
@@ -460,15 +493,20 @@ dataTypes = {
     if (dataType.elevation !== undefined)
       params['ELEVATION'] = String(dataType.elevation[0]);
 
+    
+    let timeScaleCorrection = dataType.timeScaleCorrection;
+    if (isUsingForecast && dataType.forecast.timeScaleCorrection)
+      timeScaleCorrection = dataType.forecast.timeScaleCorrection;
+
     // Add time parameter
     date = date.substring(0, 11) + '00:00:00.000Z'// Clean date
-    if (tScale.includes('d')) {
-      let tCorr = dataType.timeScaleCorrection.d;
+    if (tScale.includes('d') || tScale.includes('1D-m')) {
+      let tCorr = timeScaleCorrection.d;
       let hString = String(tCorr.h).padStart(2, '0');
       let minString = String(tCorr.min).padStart(2, '0');
       date = date.substring(0, 11) + hString + ':' + minString + ':00.000Z';
-    } else if (tScale.includes('m')) {
-      let tCorr = dataType.timeScaleCorrection.m;
+    } else if (tScale.includes('m') || tScale.includes('1M-m')){
+      let tCorr = timeScaleCorrection.m;
       // Find corresponding month
       let mmyy = date.substring(0, 7);
       date = tCorr.dates.find((dd) => dd.substring(0, 7) == mmyy);
@@ -478,8 +516,12 @@ dataTypes = {
 
     // Construct WMS url
     let url = domainURL + serviceURL;
-    if (!dataType.urlLocked)
-      url += '-' + tScale[0];
+    if (!dataType.urlLocked){
+      if (isUsingForecast)
+        url += tScale;
+      else
+        url += '-' + tScale[0];
+    }
     
     
     return {
@@ -511,13 +553,7 @@ dataTypes = {
       console.error("Data type does not exists: " + dataName);
       return;
     }
-    // Check timescale
-    let tScale = undefined
-    dataType.timeScales.forEach(tS => { if (tS == timeScale) tScale = timeScale });
-    if (tScale == undefined) {
-      tScale = dataType.timeScales[0];
-      this.printWarn("Time scale petitioned does not exist in the ocean prodcut. Ocean product: " + dataType.name + ". Time scale petitioned: " + timeScale + ". Available time scales: " + dataType.timeScales);
-    }
+    
     // If we want the direction
     if (direction) {
       // Check if direction exists (animation)
@@ -539,11 +575,24 @@ dataTypes = {
     let domainURL = dataType.domainURL;
     let serviceURL = dataType.url;
     let version = dataType.version; // 1.1.1 or 1.3.0 (then CRS should be instead of SRS)
+    let timeScales = dataType.timeScales;
+    let isUsingForecast = false;
     if (date > dataType.lastDate){
       this.printWarn("Using forecast instead of reanalysis CMEMS data.");
+      isUsingForecast = true;
       domainURL = dataType.forecast.domainURL;
       serviceURL = dataType.forecast.url;
       version = dataType.forecast.version;
+      if (dataType.forecast.timeScales)
+        timeScales = dataType.forecast.timeScales;
+    }
+
+    // Check timescale
+    let tScale = undefined
+    timeScales.forEach(tS => { if (tS == timeScale) tScale = timeScale });
+    if (tScale == undefined) {
+      tScale = timeScales[0];
+      this.printWarn("Time scale petitioned does not exist in the ocean prodcut. Ocean product: " + dataType.name + ". Time scale petitioned: " + timeScale + ". Available time scales: " + dataType.timeScales);
     }
 
 
@@ -579,35 +628,49 @@ dataTypes = {
     // Add elevation
     if (dataType.elevation !== undefined)
       params['ELEVATION'] = String(dataType.elevation[0]);
-    
+
+    // TODO: SOME FORECASTING HAS DIFFERENT TIME SCALE CORRECTIONS. THIS IS AUTOMATICALLY CALCULATED FOR REANALYSIS, BUT NOT FOR FORECAST
+    let timeScaleCorrection = dataType.timeScaleCorrection;
+    if (isUsingForecast && dataType.forecast.timeScaleCorrection)
+      timeScaleCorrection = dataType.forecast.timeScaleCorrection;
+
+
+    if (isUsingForecast){debugger}
     // Add time parameter
     date = date.substring(0, 11) + '00:00:00.000Z'// Clean date
-    if (tScale.includes('d')){
-      let tCorr = dataType.timeScaleCorrection.d;
+    if (tScale.includes('d') || tScale.includes('1D-m')){
+      let tCorr = timeScaleCorrection.d;
       let hString = String(tCorr.h).padStart(2, '0');
       let minString = String(tCorr.min).padStart(2, '0');
       date = date.substring(0, 11) + hString + ':' + minString + ':00.000Z';
-    } else if (tScale.includes('m')){
-      let tCorr = dataType.timeScaleCorrection.m;
+    } else if ( (tScale.includes('m') && !tScale.includes('1D-m'))|| tScale.includes('1M-m')){
+      let tCorr = timeScaleCorrection.m;
       // Find corresponding month
       let mmyy = date.substring(0,7);
       date = tCorr.dates.find((dd) => dd.substring(0, 7) == mmyy);
     }
     // SHOULD BE DEPENDANT ON SELECTED TIME SCALE (for now daily? - wave does not have daily, only hourly
     params['TIME'] = date;
-
+    if (date == undefined){
+      debugger;
+    }
 
     // Construct WMS url
     let url = domainURL + serviceURL;
     if (dataType.urlLocked)
       url += '?SERVICE=WMS&VERSION=' + version + '&REQUEST=GetMap&FORMAT=image/png';
-    else
-      url += '-' + tScale[0] + '?SERVICE=WMS&VERSION='+ version +'&REQUEST=GetMap&FORMAT=image/png';
+    else{
+      if (isUsingForecast)
+        url += tScale + '?SERVICE=WMS&VERSION='+ version +'&REQUEST=GetMap&FORMAT=image/png';
+      else
+        url += '-' + tScale[0] + '?SERVICE=WMS&VERSION='+ version +'&REQUEST=GetMap&FORMAT=image/png';
+    }
+    
     Object.keys(params).forEach(ppKey => {
       url += '&' + ppKey + '=' + params[ppKey];
     });
 
-
+    console.log(url);
 
     // If no direction is requested
     if (direction == undefined){
