@@ -309,7 +309,7 @@ class PieChart {
 	    const root = d3.hierarchy(data)
 	        .sum(d => d.value) // Assing a value to each partition, based on the value of the smallest items
 	        .sort((a, b) => b.value - a.value) // Organize partitions (here from big to small)
-	  			.sort((a, b) => b.data.name == "Altres" ? -1 : 1)
+	  			.sort((a, b) => b.data.name == "Others" ? -1 : 1)
 	    return d3.partition()
 	        .size([2 * Math.PI, root.height + 1])
 	      (root);
