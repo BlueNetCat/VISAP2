@@ -670,7 +670,6 @@ dataTypes = {
       url += '&' + ppKey + '=' + params[ppKey];
     });
 
-    console.log(url);
 
     // If no direction is requested
     if (direction == undefined){
