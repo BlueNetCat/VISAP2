@@ -2,6 +2,9 @@
 <!-- Container -->
   <div id="app-manager">
 
+    <!-- No longer in dev -->
+    <nolongerindev @closed="hideNolongerindev = true" v-show="!hideNolongerindev"></nolongerindev>
+
     <!-- Language selector -->
     <language-selector style='position:absolute;margin-top: 4.5rem;margin-left:0.5rem;'></language-selector>
 
@@ -61,6 +64,8 @@ import WeatherWidget from "WeatherWidget.vue"
 
 import LanguageSelector from "LanguageSelector.vue"
 
+import NoLongerInDev from "NoLongerInDev.vue";
+
 export default {
   name: "app-manager",
   created(){
@@ -71,7 +76,7 @@ export default {
   },
   data () {
     return {
-      
+      hideNolongerindev: false,
     }
   },
   methods: {
@@ -128,7 +133,9 @@ export default {
 
     "weather-widget": WeatherWidget,
 
-    "language-selector": LanguageSelector
+    "language-selector": LanguageSelector,
+
+    "nolongerindev": NoLongerInDev
     
   },
   computed: {
